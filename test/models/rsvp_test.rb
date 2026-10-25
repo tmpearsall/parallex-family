@@ -2,8 +2,8 @@ require "test_helper"
 
 class RsvpTest < ActiveSupport::TestCase
   setup do
-    @reunion = Reunion.create!(title: "Reunion")
-    @h = Household.create!(name: "The Rowes")
+    @reunion = Reunion.create!(family: family, title: "Reunion")
+    @h = Household.create!(family: family, name: "The Rowes")
   end
 
   test "attending needs at least one person" do
@@ -19,15 +19,18 @@ class RsvpTest < ActiveSupport::TestCase
   end
 
   test "headcount only counts those coming" do
-    h2 = Household.create!(name: "The Lees")
+    h2 = Household.create!(family: family, name: "The Lees")
     @reunion.rsvps.create!(household: @h, status: "attending", adults: 2, children: 3)
     @reunion.rsvps.create!(household: h2, status: "maybe", adults: 4)
-    hc = @reunion.headcount
-    assert_equal({ households: 1, adults: 2, children: 3, maybe_households: 1, declined: 0 }, hc)
+    assert_equal({ households: 1, adults: 2, children: 3, maybe_households: 1, declined: 0 }, @reunion.headcount)
   end
 
   test "departure cannot be before arrival" do
-    r = @reunion.rsvps.new(household: @h, status: "maybe", arrival_on: "2027-07-05", departure_on: "2027-07-01")
-    assert_not r.valid?
+    assert_not @reunion.rsvps.new(household: @h, status: "maybe", arrival_on: "2027-07-05", departure_on: "2027-07-01").valid?
+  end
+
+  test "a household from another family cannot answer" do
+    other = Household.create!(family: make_family("Lee"), name: "The Lees")
+    assert_not @reunion.rsvps.new(household: other, status: "maybe").valid?
   end
 end

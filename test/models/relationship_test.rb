@@ -3,27 +3,35 @@ require "test_helper"
 class RelationshipTest < ActiveSupport::TestCase
   test "a person cannot be related to themselves" do
     a = make_person("Ann")
-    assert_not Relationship.new(from_person: a, to_person: a, kind: "parent").valid?
+    assert_not Relationship.new(family: family, from_person: a, to_person: a, kind: "parent").valid?
   end
 
   test "duplicate parent links are rejected" do
     a, c = make_person("Ann"), make_person("Cy")
     link(a, c)
-    assert_not Relationship.new(from_person: a, to_person: c, kind: "parent").valid?
+    assert_not Relationship.new(family: family, from_person: a, to_person: c, kind: "parent").valid?
   end
 
   test "a partnership is the same fact in either direction" do
     a, b = make_person("Ann"), make_person("Bob")
     pair(a, b)
-    assert_not Relationship.new(from_person: b, to_person: a, kind: "partner").valid?
+    assert_not Relationship.new(family: family, from_person: b, to_person: a, kind: "partner").valid?
   end
 
   test "nobody can become their own ancestor" do
     a, b, c = make_person("Ann"), make_person("Bob"), make_person("Cy")
     link(a, b); link(b, c)
-    r = Relationship.new(from_person: c, to_person: a, kind: "parent")
+    r = Relationship.new(family: family, from_person: c, to_person: a, kind: "parent")
     assert_not r.valid?
     assert_match(/own ancestor/, r.errors.full_messages.to_sentence)
+  end
+
+  test "people from different families cannot be related" do
+    other = make_family("Lee")
+    a, z = make_person("Ann"), make_person("Zed", "Lee", fam: other)
+    r = Relationship.new(from_person: a, to_person: z, kind: "parent")
+    assert_not r.valid?
+    assert_match(/same family/, r.errors.full_messages.to_sentence)
   end
 
   test "siblings, partners and children are derived" do

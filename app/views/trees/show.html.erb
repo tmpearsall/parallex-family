@@ -22,7 +22,7 @@
         <a href="<%= person_path(p) %>">
           <rect class="card" x="<%= n.x %>" y="<%= n.y %>" width="<%= FamilyTree::CARD_W %>" height="<%= FamilyTree::CARD_H %>" rx="8"/>
           <text x="<%= n.x + FamilyTree::CARD_W / 2 %>" y="<%= n.y + 23 %>" text-anchor="middle"><%= truncate(p.display_name, length: 20) %></text>
-          <% if p.details_visible_to?(current_user) && p.years %><text class="yrs" x="<%= n.x + FamilyTree::CARD_W / 2 %>" y="<%= n.y + 41 %>" text-anchor="middle"><%= p.years %></text><% end %>
+          <% if p.details_visible_to?(current_membership) && p.years %><text class="yrs" x="<%= n.x + FamilyTree::CARD_W / 2 %>" y="<%= n.y + 41 %>" text-anchor="middle"><%= p.years %></text><% end %>
         </a>
       <% end %>
     </svg>

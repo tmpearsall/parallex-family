@@ -1,0 +1,14 @@
+<% content_for :title, "Platform · Families" %>
+<h1>Platform</h1>
+<p class="mut2">Create a family and its first organizer's invitation. This page shows counts only, never a family's people, reunions or board.</p>
+<%= form_with scope: :family, url: platform_families_path, class: "stack" do |f| %>
+  <div class="row"><label>Family name <%= f.text_field :name, required: true, placeholder: "The Rowe Family" %></label><label>Short address <%= f.text_field :slug, placeholder: "rowe (optional)" %></label></div>
+  <label>First organizer's email <%= f.email_field :organizer_email, required: true %></label>
+  <%= f.submit "Create family and invitation" %>
+<% end %>
+<h2>Families</h2>
+<ul class="list"><% @families.each do |f| %><li><%= f.name %> <span class="mut2">/f/<%= f.slug %> · <%= pluralize(f.member_count, "member") %></span></li><% end %></ul>
+<h2>Password help</h2>
+<%= form_with url: platform_password_link_path, class: "row" do |f| %>
+  <label>Account email <%= f.email_field :email, required: true %></label><%= f.submit "New password link" %>
+<% end %>

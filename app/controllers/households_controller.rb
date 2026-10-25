@@ -1,12 +1,12 @@
-class HouseholdsController < ApplicationController
+class HouseholdsController < TenantController
   before_action :load, only: %i[show edit update]
 
-  def index = @households = Household.includes(:people).order(:name)
+  def index = @households = current_family.households.includes(:people).order(:name)
   def show = @members = @household.people.by_name
-  def new = @household = Household.new
+  def new = @household = current_family.households.new
 
   def create
-    @household = Household.new(params.require(:household).permit(:name, :city, :region, :notes))
+    @household = current_family.households.new(params.require(:household).permit(:name, :city, :region, :notes))
     @household.save ? redirect_to(@household, notice: "Household added.") : render(:new, status: :unprocessable_entity)
   end
 
@@ -18,5 +18,5 @@ class HouseholdsController < ApplicationController
 
   private
 
-  def load = @household = Household.find(params[:id])
+  def load = @household = current_family.households.find(params[:id])
 end

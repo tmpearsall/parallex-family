@@ -1,5 +1,6 @@
 # A unit that is invited and answers together: a family at one address.
 class Household < ApplicationRecord
+  belongs_to :family
   has_many :people, dependent: :nullify
   has_many :rsvps, dependent: :destroy
   validates :name, presence: true, length: { maximum: 80 }

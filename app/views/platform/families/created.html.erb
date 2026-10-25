@@ -1,0 +1,5 @@
+<% content_for :title, "Family created" %>
+<h1><%= @family.name %> created</h1>
+<p>Send this to <strong><%= @email %></strong>. It works once and expires in 7 days; this page will not show it again.</p>
+<p class="card" style="word-break:break-all"><strong><%= @url %></strong></p>
+<p><a href="<%= platform_families_path %>">&larr; Platform</a></p>

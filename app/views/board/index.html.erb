@@ -14,7 +14,7 @@
       <a class="ttl" href="<%= board_topic_path(t) %>"><%= t.title %></a>
       <% if t.pinned? %><span class="tag pub">Pinned</span><% end %><% if fresh && t.user_id != current_user.id %><span class="tag dis">New</span><% end %>
       <div class="mut2"><%= t.user.label %> &middot; <%= time_ago_in_words(t.created_at) %> ago &middot; <%= pluralize(t.reply_count.to_i, "reply") %><%= " · #{t.reunion.title}" if t.reunion %>
-        <% if current_user.admin? %><%= button_to (t.pinned? ? "Unpin" : "Pin"), board_pin_path(t), method: :patch, class: "link", form: { class: "inline" } %><% end %></div>
+        <% if organizer? %><%= button_to (t.pinned? ? "Unpin" : "Pin"), board_pin_path(t), method: :patch, class: "link", form: { class: "inline" } %><% end %></div>
     </li>
   <% end %></ul>
 <% end %>

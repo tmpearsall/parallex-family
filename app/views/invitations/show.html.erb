@@ -1,0 +1,20 @@
+<% content_for :title, "Join #{@invitation.family.name}" %>
+<h1>Join <%= @invitation.family.name %></h1>
+<p class="mut2">You were invited as <%= @invitation.role %><%= " (#{@invitation.person.display_name} in the tree)" if @invitation.person %>.</p>
+<% if user_signed_in? %>
+  <p>You are signed in as <strong><%= current_user.label %></strong> (<%= current_user.email %>).</p>
+  <%= button_to "Join #{@invitation.family.name}", accept_invitation_path(params[:token]), method: :post, class: "btn" %>
+<% elsif @existing %>
+  <p>The address <strong><%= @invitation.email %></strong> already has an account. Sign in and you will come straight back to join.</p>
+  <p><a class="btn" href="<%= new_user_session_path %>" style="padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--acc-fg);text-decoration:none;font:600 14px system-ui,sans-serif">Sign in</a></p>
+<% else %>
+  <form class="auth" method="post" action="<%= register_invitation_path(params[:token]) %>">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+    <label>Email</label><input type="email" value="<%= @invitation.email %>" disabled>
+    <label for="name">Display name <span class="fine">(what the family sees)</span></label><input id="name" type="text" name="name" maxlength="60" required autocomplete="nickname">
+    <label for="password">Choose a password</label><input id="password" type="password" name="password" autocomplete="new-password" required minlength="8">
+    <label for="pc">Confirm</label><input id="pc" type="password" name="password_confirmation" autocomplete="new-password" required minlength="8">
+    <p class="fine">Use 8 or more characters with a lowercase letter, an uppercase letter, a number and a symbol.</p>
+    <input type="submit" value="Create my account and join">
+  </form>
+<% end %>

@@ -4,7 +4,7 @@
 <ul class="list">
   <% @people.each do |p| %>
     <li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <% if p.nickname %><span class="mut2">(<%= p.nickname %>)</span><% end %>
-      <span class="mut2"><%= p.years if p.details_visible_to?(current_user) %> <%= "· #{p.household.name}" if p.household %></span></li>
+      <span class="mut2"><%= p.years if p.details_visible_to?(current_membership) %> <%= "· #{p.household.name}" if p.household %></span></li>
   <% end %>
 </ul>
 <% if @people.empty? %><p>No one yet.</p><% end %>

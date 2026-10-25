@@ -1,6 +1,6 @@
 <% content_for :title, "Reunions · Family" %>
 <h1>Reunions</h1>
-<% if current_user.admin? %><p><a href="<%= new_reunion_path %>">New reunion</a></p><% end %>
+<% if organizer? %><p><a href="<%= new_reunion_path %>">New reunion</a></p><% end %>
 <ul class="list"><% @reunions.each do |r| %>
   <li><a href="<%= reunion_path(r) %>"><%= r.title %></a> <span class="mut2"><%= r.starts_on ? r.starts_on.strftime("%B %-d, %Y") : "date not set" %></span></li>
 <% end %></ul>

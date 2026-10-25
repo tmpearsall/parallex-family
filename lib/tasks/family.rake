@@ -1,21 +1,21 @@
 namespace :family do
-  desc "Create or find an account and print a one-time set-password link: rake family:invite[email,Name,admin]"
-  task :invite, [ :email, :name, :admin ] => :environment do |_t, args|
-    email = args[:email].to_s.strip.downcase
-    abort "usage: rake 'family:invite[email,Name,admin]'" if email.blank?
-    user = User.find_or_initialize_by(email: email)
-    user.name = args[:name] if args[:name].present?
-    user.admin = true if args[:admin].to_s == "admin"
-    user.password = "#{SecureRandom.base58(30)}aZ9!" if user.new_record?
-    user.save!
-    token = user.issue_set_password_token!
+  desc "Create a family with its first organizer's invitation link: rake family:create[Name,organizer@email,slug]"
+  task :create, [ :name, :email, :slug ] => :environment do |_t, args|
+    abort "usage: rake 'family:create[Name,organizer@email,slug]'" if args[:name].blank? || args[:email].blank?
+    family = Family.create!(name: args[:name], slug: args[:slug].to_s)
+    _, raw = Invitation.issue!(family: family, email: args[:email], role: "organizer")
     host = ENV["FAMILY_HOST"].presence || "localhost:3000"
     scheme = host.start_with?("localhost") ? "http" : "https"
-    puts "#{user.name || email} <#{email}>#{' (admin)' if user.admin?}"
-    puts "One-time link (valid 7 days): #{scheme}://#{host}/set_password/#{token}"
+    puts "#{family.name} (/f/#{family.slug})\nOne-time link (valid 7 days): #{scheme}://#{host}/invite/#{raw}"
   end
 
-  desc "Issue a fresh set-password link for an existing account: rake family:reset[email]"
+  desc "Make an account a platform administrator (support only): rake family:platform_admin[email]"
+  task :platform_admin, [ :email ] => :environment do |_t, args|
+    User.find_by!(email: args[:email].to_s.strip.downcase).update!(platform_admin: true)
+    puts "ok"
+  end
+
+  desc "Fresh set-password link for an existing account: rake family:reset[email]"
   task :reset, [ :email ] => :environment do |_t, args|
     user = User.find_by!(email: args[:email].to_s.strip.downcase)
     host = ENV["FAMILY_HOST"].presence || "localhost:3000"

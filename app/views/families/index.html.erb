@@ -1,0 +1,9 @@
+<% content_for :title, "Your families" %>
+<h1>Your families</h1>
+<% if @memberships.empty? %>
+  <p>You are not in a family yet. Ask a family organizer to invite you; they will give you a link.</p>
+<% else %>
+  <ul class="list"><% @memberships.each do |m| %>
+    <li><a href="<%= family_home_path(family: m.family.slug) %>"><%= m.family.name %></a> <span class="mut2"><%= m.role %></span></li>
+  <% end %></ul>
+<% end %>

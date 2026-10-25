@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_25_100200) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_25_200100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,7 +23,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_100200) do
     t.boolean "pinned", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "family_id", null: false
     t.index ["created_at"], name: "index_board_posts_on_created_at"
+    t.index ["family_id"], name: "index_board_posts_on_family_id"
     t.index ["parent_id", "created_at"], name: "index_board_posts_on_parent_id_and_created_at"
     t.index ["parent_id"], name: "index_board_posts_on_parent_id"
     t.index ["reunion_id"], name: "index_board_posts_on_reunion_id"
@@ -49,7 +51,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_100200) do
     t.index ["date_option_id", "user_id"], name: "index_date_votes_on_date_option_id_and_user_id", unique: true
     t.index ["date_option_id"], name: "index_date_votes_on_date_option_id"
     t.index ["user_id"], name: "index_date_votes_on_user_id"
-    t.check_constraint "answer::text = ANY (ARRAY['yes'::character varying::text, 'maybe'::character varying::text, 'no'::character varying::text])", name: "date_votes_answer"
+    t.check_constraint "answer::text = ANY (ARRAY['yes'::character varying, 'maybe'::character varying, 'no'::character varying]::text[])", name: "date_votes_answer"
+  end
+
+  create_table "families", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_families_on_slug", unique: true
   end
 
   create_table "households", force: :cascade do |t|
@@ -59,6 +70,42 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_100200) do
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "family_id", null: false
+    t.index ["family_id"], name: "index_households_on_family_id"
+  end
+
+  create_table "invitations", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.string "email", null: false
+    t.string "role", default: "member", null: false
+    t.bigint "person_id"
+    t.bigint "invited_by_id"
+    t.string "token_digest", null: false
+    t.datetime "expires_at", null: false
+    t.datetime "accepted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "email"], name: "index_invitations_on_family_id_and_email"
+    t.index ["family_id"], name: "index_invitations_on_family_id"
+    t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
+    t.index ["person_id"], name: "index_invitations_on_person_id"
+    t.index ["token_digest"], name: "index_invitations_on_token_digest", unique: true
+    t.check_constraint "role::text = ANY (ARRAY['organizer'::character varying, 'member'::character varying]::text[])", name: "invitations_role"
+  end
+
+  create_table "memberships", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.bigint "user_id", null: false
+    t.string "role", default: "member", null: false
+    t.bigint "person_id"
+    t.datetime "board_seen_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "user_id"], name: "index_memberships_on_family_id_and_user_id", unique: true
+    t.index ["family_id"], name: "index_memberships_on_family_id"
+    t.index ["person_id"], name: "index_memberships_on_person_id"
+    t.index ["user_id"], name: "index_memberships_on_user_id"
+    t.check_constraint "role::text = ANY (ARRAY['organizer'::character varying, 'member'::character varying]::text[])", name: "memberships_role"
   end
 
   create_table "people", force: :cascade do |t|
@@ -78,6 +125,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_100200) do
     t.bigint "updated_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "family_id", null: false
+    t.index ["family_id"], name: "index_people_on_family_id"
     t.index ["household_id"], name: "index_people_on_household_id"
     t.index ["last_name", "first_name"], name: "index_people_on_last_name_and_first_name"
   end
@@ -91,11 +140,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_100200) do
     t.string "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "family_id", null: false
+    t.index ["family_id"], name: "index_relationships_on_family_id"
     t.index ["from_person_id", "to_person_id", "kind"], name: "index_relationships_uniqueness", unique: true
     t.index ["from_person_id"], name: "index_relationships_on_from_person_id"
     t.index ["to_person_id"], name: "index_relationships_on_to_person_id"
     t.check_constraint "from_person_id <> to_person_id", name: "relationships_no_self"
-    t.check_constraint "kind::text = ANY (ARRAY['parent'::character varying::text, 'partner'::character varying::text])", name: "relationships_kind"
+    t.check_constraint "kind::text = ANY (ARRAY['parent'::character varying, 'partner'::character varying]::text[])", name: "relationships_kind"
   end
 
   create_table "reunions", force: :cascade do |t|
@@ -109,6 +160,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_100200) do
     t.bigint "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "family_id", null: false
+    t.index ["family_id"], name: "index_reunions_on_family_id"
   end
 
   create_table "rsvps", force: :cascade do |t|
@@ -128,7 +181,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_100200) do
     t.index ["household_id"], name: "index_rsvps_on_household_id"
     t.index ["reunion_id", "household_id"], name: "index_rsvps_on_reunion_id_and_household_id", unique: true
     t.index ["reunion_id"], name: "index_rsvps_on_reunion_id"
-    t.check_constraint "status::text = ANY (ARRAY['attending'::character varying::text, 'maybe'::character varying::text, 'not_attending'::character varying::text])", name: "rsvps_status"
+    t.check_constraint "status::text = ANY (ARRAY['attending'::character varying, 'maybe'::character varying, 'not_attending'::character varying]::text[])", name: "rsvps_status"
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -158,29 +211,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_100200) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
-    t.boolean "admin", default: false, null: false
-    t.datetime "board_seen_at"
-    t.bigint "person_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "platform_admin", default: false, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["person_id"], name: "index_users_on_person_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
   add_foreign_key "board_posts", "board_posts", column: "parent_id"
+  add_foreign_key "board_posts", "families"
   add_foreign_key "board_posts", "reunions"
   add_foreign_key "board_posts", "users"
   add_foreign_key "date_options", "reunions"
   add_foreign_key "date_votes", "date_options"
   add_foreign_key "date_votes", "users"
+  add_foreign_key "households", "families"
+  add_foreign_key "invitations", "families"
+  add_foreign_key "invitations", "people"
+  add_foreign_key "invitations", "users", column: "invited_by_id"
+  add_foreign_key "memberships", "families"
+  add_foreign_key "memberships", "people"
+  add_foreign_key "memberships", "users"
+  add_foreign_key "people", "families"
   add_foreign_key "people", "households"
+  add_foreign_key "relationships", "families"
   add_foreign_key "relationships", "people", column: "from_person_id"
   add_foreign_key "relationships", "people", column: "to_person_id"
+  add_foreign_key "reunions", "families"
   add_foreign_key "rsvps", "households"
   add_foreign_key "rsvps", "reunions"
   add_foreign_key "tasks", "reunions"
   add_foreign_key "tasks", "users", column: "claimed_by_id"
-  add_foreign_key "users", "people"
 end

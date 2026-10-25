@@ -1,10 +1,12 @@
-# Accounts are issued by an administrator (Admin > People and accounts); there is no sign-up.
+# One account can belong to many families (through memberships). People join a family by invitation; there is no
+# open sign-up. platform_admin is for support and creating families, and sees no family's data.
 class User < ApplicationRecord
   # name = the display name the family sees (the person chooses it).
   validates :name, length: { maximum: 60 }
   before_validation { self.name = name.to_s.squish.presence }
 
-  belongs_to :person, optional: true
+  has_many :memberships, dependent: :destroy
+  has_many :families, through: :memberships
   has_many :board_posts, dependent: :destroy
   has_many :date_votes, dependent: :destroy
   devise :database_authenticatable, :recoverable, :rememberable, :validatable,
@@ -18,7 +20,8 @@ class User < ApplicationRecord
     errors.add(:base, "Password needs #{PASSWORD_RULE}.") unless ok
   end
 
-  def label = name.presence || person&.display_name || "A family member"
+  def label = name.presence || "A family member"
+  def organizer_of?(family) = memberships.exists?(family_id: family.id, role: "organizer")
 
   # A one-time link the person opens to set their own password. No email is sent; the administrator hands the
   # link over. Hashed with plain SHA-256 so a link issued from any machine validates on the server.

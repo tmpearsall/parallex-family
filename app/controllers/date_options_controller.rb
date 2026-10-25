@@ -1,5 +1,5 @@
-class DateOptionsController < ApplicationController
-  before_action :admin_only!, only: %i[create destroy]
+class DateOptionsController < TenantController
+  before_action :organizer_only!, only: %i[create destroy]
   before_action :load_reunion
 
   def create
@@ -21,5 +21,5 @@ class DateOptionsController < ApplicationController
 
   private
 
-  def load_reunion = @reunion = Reunion.find(params[:reunion_id])
+  def load_reunion = @reunion = current_family.reunions.find(params[:reunion_id])
 end

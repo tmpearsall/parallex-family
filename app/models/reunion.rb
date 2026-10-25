@@ -1,4 +1,5 @@
 class Reunion < ApplicationRecord
+  belongs_to :family
   has_many :date_options, -> { order(:starts_on) }, dependent: :destroy
   has_many :rsvps, dependent: :destroy
   has_many :tasks, -> { order(:done, :created_at) }, dependent: :destroy

@@ -3,10 +3,13 @@
 class Relationship < ApplicationRecord
   KINDS = %w[parent partner].freeze
 
+  belongs_to :family
   belongs_to :from_person, class_name: "Person"
   belongs_to :to_person,   class_name: "Person"
 
+  before_validation { self.family_id ||= from_person&.family_id }
   validates :kind, inclusion: { in: KINDS }
+  validate :both_people_are_in_the_family
   validates :notes, length: { maximum: 200 }
   validate :not_self
   validate :not_duplicate
@@ -16,6 +19,11 @@ class Relationship < ApplicationRecord
   scope :partners, -> { where(kind: "partner") }
 
   private
+
+  def both_people_are_in_the_family
+    return if from_person.blank? || to_person.blank?
+    errors.add(:base, "Both people must be in the same family.") unless from_person.family_id == family_id && to_person.family_id == family_id
+  end
 
   def not_self
     errors.add(:base, "A person cannot be related to themselves.") if from_person_id.present? && from_person_id == to_person_id

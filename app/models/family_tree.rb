@@ -11,9 +11,9 @@ class FamilyTree
   Node = Struct.new(:person, :x, :y)
   Layout = Struct.new(:nodes, :lines, :width, :height, :root_ids, keyword_init: true)
 
-  def initialize
-    @people = Person.all.index_by(&:id)
-    rels = Relationship.all.to_a
+  def initialize(family)
+    @people = family.people.index_by(&:id)
+    rels = family.relationships.to_a
     @parents_of  = Hash.new { |h, k| h[k] = [] }
     @children_of = Hash.new { |h, k| h[k] = [] }
     @partners_of = Hash.new { |h, k| h[k] = [] }

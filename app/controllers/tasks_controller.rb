@@ -1,4 +1,4 @@
-class TasksController < ApplicationController
+class TasksController < TenantController
   before_action :load
 
   def create
@@ -11,7 +11,7 @@ class TasksController < ApplicationController
   def toggle  = update_task(done: !@task.done, notice: "Updated.")
 
   def destroy
-    return head(:forbidden) unless current_user.admin? || @task.claimed_by_id == current_user.id || @task.claimed_by_id.nil?
+    return head(:forbidden) unless organizer? || @task.claimed_by_id == current_user.id || @task.claimed_by_id.nil?
     @task.destroy
     redirect_to @reunion, notice: "Removed."
   end
@@ -19,7 +19,7 @@ class TasksController < ApplicationController
   private
 
   def load
-    @reunion = Reunion.find(params[:reunion_id])
+    @reunion = current_family.reunions.find(params[:reunion_id])
     @task = @reunion.tasks.find(params[:id]) if params[:id]
   end
 

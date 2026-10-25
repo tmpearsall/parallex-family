@@ -1,0 +1,5 @@
+<% content_for :title, "Password link" %>
+<h1>Password link for <%= @user.email %></h1>
+<p>Works once for 7 days. This page will not show it again.</p>
+<p class="card" style="word-break:break-all"><strong><%= @url %></strong></p>
+<p><a href="<%= platform_families_path %>">&larr; Platform</a></p>

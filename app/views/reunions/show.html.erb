@@ -1,5 +1,5 @@
 <% content_for :title, "#{@reunion.title} · Family" %>
-<p class="fine"><a href="<%= reunions_path %>">&larr; Reunions</a><% if current_user.admin? %> &middot; <a href="<%= edit_reunion_path(@reunion) %>">Edit</a><% end %></p>
+<p class="fine"><a href="<%= reunions_path %>">&larr; Reunions</a><% if organizer? %> &middot; <a href="<%= edit_reunion_path(@reunion) %>">Edit</a><% end %></p>
 <h1><%= @reunion.title %></h1>
 <p class="mut2">
   <%= @reunion.dated? ? [@reunion.starts_on.strftime("%A, %B %-d, %Y"), (@reunion.ends_on ? "to #{@reunion.ends_on.strftime('%B %-d')}" : nil)].compact.join(" ") : "Date not set yet" %>
@@ -16,10 +16,10 @@
       <tr><td><%= o.starts_on.strftime("%a %b %-d") %><%= o.ends_on ? " – #{o.ends_on.strftime('%a %b %-d')}" : "" %> <span class="mut2"><%= o.note %></span></td>
         <td><%= t["yes"] %></td><td><%= t["maybe"] %></td><td><%= t["no"] %></td>
         <td><% DateVote::ANSWERS.each do |a| %><%= button_to a.capitalize, vote_reunion_date_option_path(@reunion, o, answer: a), method: :post, class: "link", form: { class: "inline" }, style: (mine&.answer == a ? "font-weight:700;text-decoration:underline" : "") %><% end %>
-          <% if current_user.admin? %><%= button_to "remove", reunion_date_option_path(@reunion, o), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this date and its votes?" } %><% end %></td></tr>
+          <% if organizer? %><%= button_to "remove", reunion_date_option_path(@reunion, o), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this date and its votes?" } %><% end %></td></tr>
     <% end %></table></div>
 <% end %>
-<% if current_user.admin? %>
+<% if organizer? %>
   <%= form_with model: DateOption.new, url: reunion_date_options_path(@reunion), class: "row" do |f| %>
     <label>Propose a date <%= f.date_field :starts_on, required: true %></label><label>to (optional) <%= f.date_field :ends_on %></label><label>Note <%= f.text_field :note, placeholder: "Memorial Day weekend" %></label><%= f.submit "Add date" %>
   <% end %>
@@ -61,7 +61,7 @@
       <span class="mut2">· <%= t.claimed_by ? "claimed by #{t.claimed_by.label}" : "nobody yet" %></span>
       <% if t.claimed_by_id.nil? %><%= button_to "I'll do it", claim_reunion_task_path(@reunion, t), method: :patch, class: "link", form: { class: "inline" } %>
       <% elsif t.claimed_by_id == current_user.id %><%= button_to (t.done ? "Not done" : "Done"), toggle_reunion_task_path(@reunion, t), method: :patch, class: "link", form: { class: "inline" } %><%= button_to "Release", unclaim_reunion_task_path(@reunion, t), method: :patch, class: "link", form: { class: "inline" } %><% end %>
-      <% if current_user.admin? || t.claimed_by_id.nil? %><%= button_to "remove", reunion_task_path(@reunion, t), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this?" } %><% end %></li>
+      <% if organizer? || t.claimed_by_id.nil? %><%= button_to "remove", reunion_task_path(@reunion, t), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this?" } %><% end %></li>
   <% end %>
 </ul>
 <%= form_with model: Task.new, url: reunion_tasks_path(@reunion), class: "row" do |f| %>

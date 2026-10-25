@@ -22,7 +22,7 @@
   <% end %>
 <% else %>
   <h1>Family</h1>
-  <p>No reunion is planned yet.<% if current_user.admin? %> <a href="<%= new_reunion_path %>">Start one</a>.<% end %></p>
+  <p>No reunion is planned yet.<% if organizer? %> <a href="<%= new_reunion_path %>">Start one</a>.<% end %></p>
 <% end %>
 
 <h2>From the board</h2>

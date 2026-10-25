@@ -1,0 +1,35 @@
+<% content_for :title, "Members · #{current_family.name}" %>
+<h1>Members</h1>
+<p class="mut2">You are an organizer. Invite relatives here: each gets a one-time link (good for 7 days) that you copy and send. No email goes out yet. Paste several addresses to make several links at once.</p>
+<%= form_with scope: :invite, url: members_path, class: "stack" do |f| %>
+  <label>Email addresses (one or more) <%= f.text_area :emails, rows: 3, required: true, value: @prefill&.email, placeholder: "cousin@example.com, aunt@example.com" %></label>
+  <div class="row">
+    <label>Who in the tree is this? (one email only) <%= f.collection_select :person_id, @people, :id, :display_name, { include_blank: "(not linked)", selected: @prefill&.id } %></label>
+    <label>Role <%= f.select :role, [["Member", "member"], ["Organizer", "organizer"]] %></label>
+  </div>
+  <%= f.submit "Create links" %>
+<% end %>
+
+<h2>Family name</h2>
+<%= form_with url: settings_path, method: :patch, class: "row" do |f| %>
+  <label>Shown at the top of every page <%= f.text_field :name, value: current_family.name, maxlength: 80, required: true %></label><%= f.submit "Rename" %>
+<% end %>
+
+<h2>In this family</h2>
+<div class="scroll"><table class="t"><tr><th>Name</th><th>Email</th><th>In the tree as</th><th>Role</th><th></th></tr>
+<% @memberships.each do |m| %>
+  <tr><td><%= m.user.label %></td><td><%= m.user.email %></td><td><%= m.person&.display_name %></td><td><%= m.role %></td>
+    <td><% if m.user_id != current_user.id %>
+      <%= button_to (m.organizer? ? "Make member" : "Make organizer"), member_path(m, role: (m.organizer? ? "member" : "organizer")), method: :patch, class: "link", form: { class: "inline" } %>
+      <%= button_to "Remove", member_path(m), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove #{m.user.label} from this family?" } %>
+    <% end %></td></tr>
+<% end %></table></div>
+
+<h2>Waiting to accept</h2>
+<% if @invitations.empty? %><p class="mut2">No pending invitations.</p><% else %>
+  <ul class="list"><% @invitations.each do |i| %>
+    <li><%= i.email %> <span class="mut2">· <%= i.role %> · expires <%= i.expires_at.strftime("%b %-d") %><%= " · for #{i.person.display_name}" if i.person %></span>
+      <%= button_to "Withdraw", revoke_member_path(i), method: :delete, class: "link", form: { class: "inline" } %></li>
+  <% end %></ul>
+  <p class="fine">Lost a link? Withdraw the invitation and invite the address again.</p>
+<% end %>

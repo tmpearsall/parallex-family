@@ -15,7 +15,7 @@
   <h2><%= label %></h2>
   <% if rels.empty? %><p class="mut2">None recorded.</p><% else %>
     <ul class="list"><% rels.each do |r| other = (r.from_person_id == @person.id ? r.to_person : r.from_person) %>
-      <li><a href="<%= person_path(other) %>"><%= other.display_name %></a> <span class="mut2"><%= other.years if other.details_visible_to?(current_user) %></span>
+      <li><a href="<%= person_path(other) %>"><%= other.display_name %></a> <span class="mut2"><%= other.years if other.details_visible_to?(current_membership) %></span>
         <%= button_to "Remove", relationship_path(r), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this link?" } %></li>
     <% end %></ul>
   <% end %>
@@ -30,5 +30,6 @@
   <%= f.submit "Link" %>
 <% end %>
 <p class="fine">Or add someone new: <a href="<%= new_person_path(relate_to: @person.id, as: 'parent') %>">a parent</a> &middot; <a href="<%= new_person_path(relate_to: @person.id, as: 'partner') %>">a partner</a> &middot; <a href="<%= new_person_path(relate_to: @person.id, as: 'child') %>">a child</a></p>
+<% if organizer? %><p class="fine"><a href="<%= members_path(person_id: @person.id) %>">Invite <%= @person.first_name %> to this site</a></p><% end %>
 <p><a href="<%= edit_person_path(@person) %>">Edit</a>
-  <% if current_user.admin? %> · <%= button_to "Delete person", person_path(@person), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Delete #{@person.display_name} and all their links?" } %><% end %></p>
+  <% if organizer? %> · <%= button_to "Delete person", person_path(@person), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Delete #{@person.display_name} and all their links?" } %><% end %></p>

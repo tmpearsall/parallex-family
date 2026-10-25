@@ -5,6 +5,7 @@ class Rsvp < ApplicationRecord
   belongs_to :reunion
   belongs_to :household
   validates :status, inclusion: { in: STATUSES }
+  validate  :household_is_in_the_reunions_family
   validates :adults, :children, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 50 }
   validates :household_id, uniqueness: { scope: :reunion_id }
   validates :dietary, :notes, length: { maximum: 1000 }
@@ -15,6 +16,10 @@ class Rsvp < ApplicationRecord
   def people = adults + children
 
   private
+
+  def household_is_in_the_reunions_family
+    errors.add(:household, "belongs to a different family") if household && reunion && household.family_id != reunion.family_id
+  end
 
   def someone_is_coming = (errors.add(:base, "Say how many are coming.") if adults + children < 1)
 end
