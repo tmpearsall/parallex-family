@@ -1,0 +1,30 @@
+<% content_for :title, "Tree · Family" %>
+<h1>Family tree</h1>
+<% if @layout.nodes.empty? %>
+  <p>No one is in the tree yet. <a href="<%= new_person_path %>">Add the first person</a>, then add their children and partners from their page.</p>
+<% else %>
+  <form method="get" action="<%= tree_path %>" class="row">
+    <label>Start from
+      <select name="root" onchange="this.form.submit()">
+        <% @layout.root_ids.each do |id| p = @roots[id] %>
+          <option value="<%= id %>" <%= "selected" if id == @selected %>><%= p.display_name %><%= " (#{p.years})" if p.years %></option>
+        <% end %>
+      </select>
+    </label>
+    <noscript><input type="submit" value="Show"></noscript>
+  </form>
+  <p class="fine">Partners are shown side by side; children hang below. Click a card for the person's page. <%= @people_count %> people in all.</p>
+  <% pad = 12 %>
+  <div class="treewrap">
+    <svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Family tree" width="<%= @layout.width + pad * 2 %>" height="<%= @layout.height + pad * 2 %>" viewBox="<%= -pad %> <%= -pad %> <%= @layout.width + pad * 2 %> <%= @layout.height + pad * 2 %>">
+      <% @layout.lines.each do |x1, y1, x2, y2| %><line x1="<%= x1 %>" y1="<%= y1 %>" x2="<%= x2 %>" y2="<%= y2 %>"/><% end %>
+      <% @layout.nodes.each do |n| p = n.person %>
+        <a href="<%= person_path(p) %>">
+          <rect class="card" x="<%= n.x %>" y="<%= n.y %>" width="<%= FamilyTree::CARD_W %>" height="<%= FamilyTree::CARD_H %>" rx="8"/>
+          <text x="<%= n.x + FamilyTree::CARD_W / 2 %>" y="<%= n.y + 23 %>" text-anchor="middle"><%= truncate(p.display_name, length: 20) %></text>
+          <% if p.details_visible_to?(current_user) && p.years %><text class="yrs" x="<%= n.x + FamilyTree::CARD_W / 2 %>" y="<%= n.y + 41 %>" text-anchor="middle"><%= p.years %></text><% end %>
+        </a>
+      <% end %>
+    </svg>
+  </div>
+<% end %>

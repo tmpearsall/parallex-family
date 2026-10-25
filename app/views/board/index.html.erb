@@ -1,0 +1,20 @@
+<% content_for :title, "Board · Family" %>
+<h1>Board</h1>
+<p class="mut2">For planning questions, ideas, and anything the family should see. Everyone here sees the display name you chose, never your email.</p>
+<%= form_with model: @topic, url: board_path, class: "stack" do |f| %>
+  <% if @topic.errors.any? %><p class="flash bad"><%= @topic.errors.full_messages.to_sentence %>.</p><% end %>
+  <label>Topic <%= f.text_field :title, maxlength: 120, required: true, placeholder: "Who has a house big enough for the cookout?" %></label>
+  <label>Say more <%= f.text_area :body, rows: 4, maxlength: 4000, required: true %></label>
+  <% if @topic.reunion_id && (r = Reunion.find_by(id: @topic.reunion_id)) %><%= f.hidden_field :reunion_id %><p class="mut2">About <a href="<%= reunion_path(r) %>"><%= r.title %></a>.</p><% end %>
+  <%= f.submit "Post topic" %>
+<% end %>
+<% if @topics.empty? %><p>No topics yet. Start one.</p><% else %>
+  <ul class="list boardlist"><% @topics.each do |t| fresh = @seen.nil? || t.last_activity.to_time > @seen %>
+    <li class="<%= 'new' if fresh && t.user_id != current_user.id %>">
+      <a class="ttl" href="<%= board_topic_path(t) %>"><%= t.title %></a>
+      <% if t.pinned? %><span class="tag pub">Pinned</span><% end %><% if fresh && t.user_id != current_user.id %><span class="tag dis">New</span><% end %>
+      <div class="mut2"><%= t.user.label %> &middot; <%= time_ago_in_words(t.created_at) %> ago &middot; <%= pluralize(t.reply_count.to_i, "reply") %><%= " · #{t.reunion.title}" if t.reunion %>
+        <% if current_user.admin? %><%= button_to (t.pinned? ? "Unpin" : "Pin"), board_pin_path(t), method: :patch, class: "link", form: { class: "inline" } %><% end %></div>
+    </li>
+  <% end %></ul>
+<% end %>

@@ -1,0 +1,20 @@
+<% content_for :title, "#{@topic.title} · Board" %>
+<p class="fine"><a href="<%= board_path %>">&larr; Board</a></p>
+<h1><%= @topic.title %> <% if @topic.pinned? %><span class="tag pub">Pinned</span><% end %></h1>
+<div class="mut2"><%= @topic.user.label %> &middot; <%= @topic.created_at.strftime("%b %-d, %Y") %>
+  <% if @topic.reunion %>&middot; about <a href="<%= reunion_path(@topic.reunion) %>"><%= @topic.reunion.title %></a><% end %>
+  <% if @topic.removable_by?(current_user) %><%= button_to "Remove topic", board_post_path(@topic), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this topic and all its replies?" } %><% end %></div>
+<div class="boardbody"><%= simple_format(h(@topic.body)) %></div>
+<h2><%= pluralize(@replies.size, "reply") %></h2>
+<% @replies.each do |r| %>
+  <div class="other" id="r<%= r.id %>">
+    <div class="who2"><strong><%= r.user.label %></strong> <span class="mut2"><%= r.created_at.strftime("%b %-d, %-l:%M %p") %></span>
+      <% if r.removable_by?(current_user) %><%= button_to "Remove", board_post_path(r), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this reply?" } %><% end %></div>
+    <%= simple_format(h(r.body)) %>
+  </div>
+<% end %>
+<%= form_with model: @reply, url: board_replies_path(@topic), class: "stack" do |f| %>
+  <% if @reply.errors.any? %><p class="flash bad"><%= @reply.errors.full_messages.to_sentence %>.</p><% end %>
+  <label>Reply <%= f.text_area :body, rows: 4, maxlength: 4000, required: true %></label>
+  <%= f.submit "Post reply" %>
+<% end %>

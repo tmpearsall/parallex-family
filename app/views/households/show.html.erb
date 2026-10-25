@@ -1,0 +1,9 @@
+<% content_for :title, "#{@household.name} · Family" %>
+<p class="fine"><a href="<%= households_path %>">&larr; Households</a></p>
+<h1><%= @household.name %></h1>
+<p class="mut2"><%= @household.place %></p>
+<%= simple_format(h(@household.notes)) if @household.notes.present? %>
+<h2>People</h2>
+<ul class="list"><% @members.each do |p| %><li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <span class="mut2"><%= p.years if p.details_visible_to?(current_user) %></span></li><% end %></ul>
+<% if @members.empty? %><p class="mut2">No one is in this household yet. Set a person's household when you add or edit them.</p><% end %>
+<p><a href="<%= new_person_path(household_id: @household.id) %>">Add a person here</a> &middot; <a href="<%= edit_household_path(@household) %>">Edit</a></p>

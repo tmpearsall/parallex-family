@@ -1,0 +1,13 @@
+<% content_for :title, "Accounts · Family" %>
+<h1>Accounts</h1>
+<p class="mut2">Invite a family member. No email is sent: you get a one-time link (good for 7 days) to hand over yourself. Link the account to their place in the tree so RSVPs and the tree know who they are.</p>
+<%= form_with scope: :user, url: admin_users_path, class: "stack" do |f| %>
+  <div class="row"><label>Email <%= f.email_field :email, required: true %></label><label>Name <%= f.text_field :name %></label></div>
+  <label>Who in the tree is this? <%= f.collection_select :person_id, @people, :id, :display_name, { include_blank: "(not in the tree yet)" } %></label>
+  <%= f.submit "Create account and show link" %>
+<% end %>
+<div class="scroll"><table class="t"><tr><th>Email</th><th>Name</th><th>In the tree as</th><th>Last signed in</th><th></th></tr>
+  <% @users.each do |u| %>
+    <tr><td><%= u.email %><%= " (admin)" if u.admin? %></td><td><%= u.name %></td><td><%= u.person&.display_name %></td><td><%= u.last_sign_in_at ? time_ago_in_words(u.last_sign_in_at) + " ago" : "never" %></td>
+      <td><%= button_to "New link", link_admin_user_path(u), method: :post, class: "link", form: { class: "inline" } %></td></tr>
+  <% end %></table></div>

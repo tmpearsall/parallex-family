@@ -1,0 +1,7 @@
+<% content_for :title, "Households · Family" %>
+<h1>Households</h1>
+<p><a href="<%= new_household_path %>">Add a household</a></p>
+<ul class="list"><% @households.each do |h| %>
+  <li><a href="<%= household_path(h) %>"><%= h.name %></a> <span class="mut2"><%= h.place %> &middot; <%= pluralize(h.people.size, "person") %></span></li>
+<% end %></ul>
+<% if @households.empty? %><p>No households yet. Reunion RSVPs are taken by household.</p><% end %>

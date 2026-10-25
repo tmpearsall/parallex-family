@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title><%= content_for(:title).presence || "Family" %></title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+  <%= javascript_importmap_tags %>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="<%= root_path %>">Family</a>
+    <% if user_signed_in? %>
+      <nav class="nav">
+        <a href="<%= tree_path %>">Tree</a>
+        <a href="<%= people_path %>">People</a>
+        <a href="<%= households_path %>">Households</a>
+        <a href="<%= reunions_path %>">Reunions</a>
+        <% board_new = BoardPost.where("created_at > ? and user_id <> ?", current_user.board_seen_at || Time.at(0), current_user.id).count %>
+        <a href="<%= board_path %>">Board<% if board_new > 0 %> <span class="tag dis"><%= board_new %> new</span><% end %></a>
+        <% if current_user.admin? %><a href="<%= admin_users_path %>">Accounts</a><% end %>
+      </nav>
+      <a class="who" href="<%= edit_account_path %>" title="Change your display name"><%= current_user.label %></a>
+      <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "link" %>
+    <% end %>
+  </header>
+  <% if notice %><p class="flash ok"><%= notice %></p><% end %>
+  <% if alert %><p class="flash bad"><%= alert %></p><% end %>
+  <main class="wrap"><%= yield %></main>
+</body>
+</html>

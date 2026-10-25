@@ -1,0 +1,29 @@
+<% content_for :title, "Set your password · Family" %>
+<h1>Set your password</h1>
+<form class="auth" method="post" action="<%= set_password_path(params[:token]) %>">
+  <input type="hidden" name="_method" value="patch">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <label>Email</label><input type="email" value="<%= @user.email %>" disabled>
+  <label for="name">Display name <span class="fine">(what the family sees; you can change it later)</span></label><input id="name" type="text" name="name" value="<%= @user.name %>" maxlength="60" required autocomplete="nickname">
+  <label for="password">New password</label><input id="password" type="password" name="password" autocomplete="new-password" required minlength="8">
+  <label for="pc">Confirm</label><input id="pc" type="password" name="password_confirmation" autocomplete="new-password" required minlength="8">
+  <label class="chk"><input type="checkbox" id="show"> Show what I type</label>
+  <p class="fine" id="match" aria-live="polite"></p>
+  <p class="fine">Use 8 or more characters with a lowercase letter, an uppercase letter, a number and a symbol.</p>
+  <input type="submit" value="Set password">
+</form>
+<script>
+  (function () {
+    var pw = document.getElementById("password"), pc = document.getElementById("pc"),
+        show = document.getElementById("show"), match = document.getElementById("match");
+    function paint() {
+      var t = show.checked ? "text" : "password"; pw.type = t; pc.type = t;
+    }
+    function check() {
+      if (!pc.value) { match.textContent = ""; return; }
+      match.textContent = pw.value === pc.value ? "The two entries match." : "The two entries do not match yet.";
+    }
+    show.addEventListener("change", paint);
+    pw.addEventListener("input", check); pc.addEventListener("input", check);
+  })();
+</script>

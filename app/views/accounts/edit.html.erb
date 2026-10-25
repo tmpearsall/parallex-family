@@ -1,0 +1,8 @@
+<% content_for :title, "Your name · Family" %>
+<h1>Your display name</h1>
+<%= form_with url: account_path, method: :patch, local: true, html: { class: "auth" } do |f| %>
+  <label for="name">Display name</label>
+  <%= text_field_tag :name, current_user.name, id: "name", maxlength: 60, required: true, autocomplete: "nickname" %>
+  <p class="fine">This is the name the family sees on the board and on tasks. Your email is never shown to the family.</p>
+  <%= submit_tag "Save" %>
+<% end %>

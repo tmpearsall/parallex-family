@@ -1,0 +1,26 @@
+<%= form_with model: person, class: "stack" do |f| %>
+  <% if person.errors.any? %><p class="flash bad"><%= person.errors.full_messages.to_sentence %>.</p><% end %>
+  <% if @relate_to && @as %>
+    <input type="hidden" name="relate_to" value="<%= @relate_to.id %>"><input type="hidden" name="as" value="<%= @as %>">
+    <p class="mut2">Adding <%= { "parent" => "a parent of", "child" => "a child of", "partner" => "a partner of" }[@as] %> <strong><%= @relate_to.display_name %></strong>.</p>
+  <% end %>
+  <div class="row">
+    <label>First name <%= f.text_field :first_name, required: true, maxlength: 80 %></label>
+    <label>Last name <%= f.text_field :last_name, maxlength: 120 %></label>
+    <label>Maiden name <%= f.text_field :maiden_name, maxlength: 120 %></label>
+    <label>Goes by <%= f.text_field :nickname, maxlength: 120 %></label>
+  </div>
+  <div class="row">
+    <label>Born <%= f.date_field :birth_date %></label>
+    <label>Died <%= f.date_field :death_date %></label>
+    <label>Birthplace <%= f.text_field :birth_place %></label>
+    <label>Work <%= f.text_field :occupation %></label>
+  </div>
+  <div class="row">
+    <label>Household <%= f.collection_select :household_id, Household.order(:name), :id, :name, { include_blank: "(none)" } %></label>
+    <label>Email (private) <%= f.email_field :email %></label>
+  </div>
+  <label>Notes <%= f.text_area :notes, rows: 4, maxlength: 4000 %></label>
+  <label class="chk"><%= f.check_box :hide_details %> Keep date of birth, notes and email private (for a child). Only an administrator and this person can see them.</label>
+  <%= f.submit(person.new_record? ? "Add person" : "Save") %>
+<% end %>

@@ -1,0 +1,10 @@
+<% content_for :title, "People · Family" %>
+<h1>People</h1>
+<form method="get" class="row"><label>Find <input type="text" name="q" value="<%= params[:q] %>" placeholder="Name"></label><input type="submit" value="Search"> <a class="btn" href="<%= new_person_path %>" style="padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--acc-fg);text-decoration:none;font:600 14px system-ui,sans-serif">Add a person</a></form>
+<ul class="list">
+  <% @people.each do |p| %>
+    <li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <% if p.nickname %><span class="mut2">(<%= p.nickname %>)</span><% end %>
+      <span class="mut2"><%= p.years if p.details_visible_to?(current_user) %> <%= "· #{p.household.name}" if p.household %></span></li>
+  <% end %>
+</ul>
+<% if @people.empty? %><p>No one yet.</p><% end %>

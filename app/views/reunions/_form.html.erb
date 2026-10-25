@@ -1,0 +1,9 @@
+<%= form_with model: reunion, class: "stack" do |f| %>
+  <% if reunion.errors.any? %><p class="flash bad"><%= reunion.errors.full_messages.to_sentence %>.</p><% end %>
+  <label>Title <%= f.text_field :title, required: true, placeholder: "Rowe family reunion 2027" %></label>
+  <div class="row"><label>Starts <%= f.date_field :starts_on %></label><label>Ends <%= f.date_field :ends_on %></label><label>Please answer by <%= f.date_field :rsvp_by %></label></div>
+  <p class="fine">Leave the dates empty while you are still choosing: propose dates on the next page and the family votes.</p>
+  <div class="row"><label>Where (name) <%= f.text_field :location_name %></label><label>Address <%= f.text_field :address %></label></div>
+  <label>What to know <%= f.text_area :description, rows: 5 %></label>
+  <%= f.submit(reunion.new_record? ? "Create reunion" : "Save") %>
+<% end %>

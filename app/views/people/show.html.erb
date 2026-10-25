@@ -1,0 +1,34 @@
+<% content_for :title, "#{@person.display_name} · Family" %>
+<p class="fine"><a href="<%= people_path %>">&larr; People</a></p>
+<h1><%= @person.display_name %> <% if @person.nickname %><span class="mut2">(<%= @person.nickname %>)</span><% end %></h1>
+<p class="mut2">
+  <% if @visible %><%= @person.birth_date&.strftime("Born %B %-d, %Y") %><%= " · died #{@person.death_date.strftime('%B %-d, %Y')}" if @person.death_date %><% else %>Details kept private<% end %>
+  <%= "· #{@person.birth_place}" if @visible && @person.birth_place.present? %>
+  <%= "· née #{@person.maiden_name}" if @person.maiden_name.present? %>
+</p>
+<% if @person.occupation.present? %><p><%= @person.occupation %></p><% end %>
+<% if @person.household %><p>Household: <a href="<%= household_path(@person.household) %>"><%= @person.household.name %></a><%= " · #{@person.household.place}" if @person.household.place %></p><% end %>
+<% if @visible && @person.email.present? %><p class="mut2">Email: <%= @person.email %></p><% end %>
+<% if @visible && @person.notes.present? %><div class="card"><%= simple_format(h(@person.notes)) %></div><% end %>
+
+<% { "Parents" => @person.parent_links.includes(:from_person), "Partners" => (@person.partner_out.includes(:to_person) + @person.partner_in.includes(:from_person)), "Children" => @person.child_links.includes(:to_person) }.each do |label, rels| %>
+  <h2><%= label %></h2>
+  <% if rels.empty? %><p class="mut2">None recorded.</p><% else %>
+    <ul class="list"><% rels.each do |r| other = (r.from_person_id == @person.id ? r.to_person : r.from_person) %>
+      <li><a href="<%= person_path(other) %>"><%= other.display_name %></a> <span class="mut2"><%= other.years if other.details_visible_to?(current_user) %></span>
+        <%= button_to "Remove", relationship_path(r), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this link?" } %></li>
+    <% end %></ul>
+  <% end %>
+<% end %>
+<% sibs = @person.siblings %>
+<% if sibs.any? %><h2>Siblings</h2><p><%= safe_join(sibs.map { |s| link_to(s.display_name, person_path(s)) }, ", ") %></p><% end %>
+
+<h2>Add a relation</h2>
+<%= form_with url: person_relationships_path(@person), scope: :relationship, class: "row" do |f| %>
+  <label>This person's <%= f.select :as, [["parent is…", "parent"], ["child is…", "child"], ["partner is…", "partner"]] %></label>
+  <label>Person <%= f.collection_select :other_id, @others, :id, :display_name, { prompt: "Choose" } %></label>
+  <%= f.submit "Link" %>
+<% end %>
+<p class="fine">Or add someone new: <a href="<%= new_person_path(relate_to: @person.id, as: 'parent') %>">a parent</a> &middot; <a href="<%= new_person_path(relate_to: @person.id, as: 'partner') %>">a partner</a> &middot; <a href="<%= new_person_path(relate_to: @person.id, as: 'child') %>">a child</a></p>
+<p><a href="<%= edit_person_path(@person) %>">Edit</a>
+  <% if current_user.admin? %> · <%= button_to "Delete person", person_path(@person), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Delete #{@person.display_name} and all their links?" } %><% end %></p>
