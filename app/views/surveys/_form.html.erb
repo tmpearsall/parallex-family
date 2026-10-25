@@ -1,6 +1,6 @@
 <%= form_with model: survey, url: (survey.persisted? ? survey_path(survey) : surveys_path), class: "stack" do |f| %>
   <% if survey.errors.any? %><p class="flash bad"><%= survey.errors.full_messages.to_sentence %>.</p><% end %>
-  <label>Title <%= f.text_field :title, maxlength: 120, required: true, placeholder: "Which dates work for the reunion?" %></label>
+  <label>Title <%= f.text_field :title, maxlength: 120, required: true, placeholder: "Which dates work for the #{terms.event}?" %></label>
   <label>A line or two to open the email (optional) <%= f.text_area :intro, rows: 3, maxlength: 2000 %></label>
   <div class="row">
     <label>Answer by (optional) <%= f.date_field :closes_on %></label>

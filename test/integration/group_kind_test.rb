@@ -27,7 +27,9 @@ class GroupKindTest < ActionDispatch::IntegrationTest
     [ family_home_path(family: @f), reunions_path(family: @f), reunion_path(@picnic, family: @f), households_path(family: @f),
       household_path(@team, family: @f), new_household_path(family: @f), people_path(family: @f), person_path(@g.people.first, family: @f),
       new_person_path(family: @f), members_path(family: @f), directory_path(family: @f), calendar_path(family: @f),
-      new_event_path(family: @f), board_path(family: @f), new_reunion_path(family: @f) ].each do |path|
+      new_event_path(family: @f), board_path(family: @f), new_reunion_path(family: @f),
+      help_path(family: @f), admin_path(family: @f), surveys_path(family: @f), new_survey_path(family: @f), new_announcement_path(family: @f),
+      announcements_path(family: @f), import_people_path(family: @f) ].each do |path|
       get path
       assert_response :success, path
       assert_no_match(FAMILY_WORDS, visible_text(response.body), path)
