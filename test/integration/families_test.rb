@@ -17,7 +17,7 @@ class FamiliesTest < ActionDispatch::IntegrationTest
 
     sign_in make_user
     get root_path
-    assert_match(/not in a group yet/, response.body)
+    assert_match(/not in an organization yet/, response.body)
   end
 
   test "an account's display name is its own" do
