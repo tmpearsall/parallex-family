@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_26_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_26_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -97,6 +97,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_130000) do
     t.bigint "updated_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "organizers_only", default: false, null: false
+    t.string "repeat", default: "none", null: false
+    t.date "repeat_until"
+    t.jsonb "skipped_dates", default: [], null: false
     t.index ["family_id", "starts_on"], name: "index_events_on_family_id_and_starts_on"
     t.index ["family_id"], name: "index_events_on_family_id"
     t.index ["reunion_id"], name: "index_events_on_reunion_id"

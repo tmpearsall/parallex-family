@@ -50,7 +50,9 @@ Rails.application.routes.draw do
 
     get "calendar" => "calendar#index", as: :calendar
     post "calendar/reset_link" => "calendar#reset_link", as: :calendar_reset_link
-    resources :events
+    resources :events do
+      member { patch :skip; patch :unskip }
+    end
 
     resources :reunions, except: :destroy do
       resources :date_options, only: [ :create, :destroy ] do

@@ -4,6 +4,16 @@
   <div class="row"><label>Date <%= f.date_field :starts_on, required: true %></label><label>Through (optional) <%= f.date_field :ends_on %></label><label>Time (optional) <%= f.text_field :time_note, maxlength: 120, placeholder: "2 pm" %></label></div>
   <div class="row"><label>Where <%= f.text_field :location, maxlength: 120 %></label>
     <label>Part of <%= terms.an_event %>? <%= f.collection_select :reunion_id, current_family.reunions.order(:title), :id, :title, { include_blank: "(no)" } %></label></div>
+  <% if organizer? %>
+    <fieldset class="stack"><legend>For organizers</legend>
+      <label class="chk"><%= f.check_box :organizers_only %> Organizers only: a meeting that only organizers see on the calendar and get reminders for</label>
+      <div class="row">
+        <label>Repeats <%= f.select :repeat, [["Does not repeat", "none"], ["Every week", "weekly"], ["Every two weeks", "biweekly"], ["Every month", "monthly"]] %></label>
+        <label>Until (optional) <%= f.date_field :repeat_until %></label>
+      </div>
+      <p class="fine">A standing meeting to prepare for <%= terms.an_event %>: pick the first date, choose how often, and attach it to the <%= terms.event %> below. With no "until" date, it stops at the <%= terms.event %> if that has a date, and otherwise after two years. You can cancel a single date later.</p>
+    </fieldset>
+  <% end %>
   <label>Notes <%= f.text_area :notes, rows: 3, maxlength: 2000 %></label>
   <%= f.submit(event.new_record? ? "Add to calendar" : "Save") %>
 <% end %>

@@ -109,8 +109,9 @@ class ReminderRunner
   end
 
   def event_items(m)
-    m.family.events.where(starts_on: @today + 1).map do |e|
-      Item.new(kind: "event", key: "event:#{e.id}:1", text: "Tomorrow: #{e.title}#{" at #{e.time_note}" if e.time_note}#{" (#{e.location})" if e.location}.",
+    day = @today + 1
+    m.family.events.visible_to(m).overlapping(day, day).select { |e| e.occurrence_days(day, day).include?(day) }.map do |e|
+      Item.new(kind: "event", key: "event:#{e.id}:#{day}", text: "Tomorrow: #{e.title}#{" at #{e.time_note}" if e.time_note}#{" (#{e.location})" if e.location}.",
                url: url(m, :event_url, e), link_label: "Details")
     end
   end

@@ -46,8 +46,11 @@ class CalendarItems
   private
 
   def events(from, to)
-    @family.events.overlapping(from, to).map do |e|
-      Item.new(kind: "event", title: e.title, on: e.starts_on, until: e.ends_on, note: [ e.time_note, e.notes ].compact.join(" · ").presence, place: e.location, record: e)
+    @family.events.visible_to(@membership).overlapping(from, to).flat_map do |e|
+      tags = [ ("organizers only" if e.meeting?), e.repeat_label, e.time_note, e.notes ].compact.join(" · ").presence
+      e.occurrence_days(from, to).map do |day|
+        Item.new(kind: "event", title: e.title, on: day, until: (day + e.duration_days if e.duration_days.positive?), note: tags, place: e.location, record: e)
+      end
     end
   end
 

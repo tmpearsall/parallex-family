@@ -2,6 +2,21 @@
 <p class="fine"><a href="<%= calendar_path(month: @event.starts_on.strftime('%Y-%m')) %>">&larr; Calendar</a></p>
 <h1><%= @event.title %></h1>
 <p class="mut2"><%= @event.starts_on.strftime("%A, %B %-d, %Y") %><%= " through #{@event.ends_on.strftime('%A, %B %-d')}" if @event.ends_on %><%= " · #{@event.time_note}" if @event.time_note %><%= " · #{@event.location}" if @event.location %></p>
+<% if @event.meeting? %><p><span class="tag dis">organizers only</span> Only organizers can see this meeting.</p><% end %>
+<% if @event.repeating? %>
+  <p class="mut2">Repeats <%= @event.repeat_label %><%= " until #{@event.repeat_until.strftime('%B %-d, %Y')}" if @event.repeat_until %>.</p>
+  <% upcoming = @event.occurrence_days(Date.current, Date.current + 120) %>
+  <% if upcoming.any? %>
+    <h2>Coming up</h2>
+    <ul class="list"><% upcoming.first(8).each do |d| %>
+      <li><%= d.strftime("%A, %B %-d") %><% if organizer? %> <%= button_to "Cancel this date", skip_event_path(@event, date: d.to_s), method: :patch, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Cancel just #{d.strftime('%B %-d')}? The rest of the series goes on." } %><% end %></li>
+    <% end %></ul>
+  <% end %>
+  <% cancelled = Array(@event.skipped_dates).select { |d| d >= Date.current.to_s } %>
+  <% if cancelled.any? && organizer? %>
+    <p class="fine">Cancelled: <%= safe_join(cancelled.map { |d| safe_join([ Date.iso8601(d).strftime("%b %-d"), button_to("Bring back", unskip_event_path(@event, date: d), method: :patch, class: "link", form: { class: "inline" }) ], " ") }, " · ") %></p>
+  <% end %>
+<% end %>
 <% if @event.reunion %><p>Part of <a href="<%= reunion_path(@event.reunion) %>"><%= @event.reunion.title %></a>.</p><% end %>
 <%= simple_format(h(@event.notes)) if @event.notes.present? %>
 <p><a href="<%= edit_event_path(@event) %>">Edit</a>

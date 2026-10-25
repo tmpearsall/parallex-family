@@ -77,3 +77,11 @@ workspace, or whoever ownership is handed to. Only the owner can invite an organ
 remove an organizer, or hand ownership to another organizer (who must already be an organizer; the old owner stays one).
 The owner cannot be demoted or removed until ownership is transferred. Any organizer can invite and remove members. Every
 change is logged (`membership_events`), shown on the Access page, and emailed to every organizer.
+
+## Organizers' meetings (2026-10-26)
+
+An event can be **organizers only** (a meeting): only organizers see it on the calendar and in their phone calendar feed,
+and only organizers get the day-before reminder; anyone else gets a 404 for it. It can **repeat** (every week, every two
+weeks, every month) until a date; with no date it stops at the attached reunion if that has one, and otherwise after two
+years. A single date can be cancelled and brought back. Only organizers can make an event organizers-only or repeating.
+Reminder keys include the date, so a weekly meeting reminds every week.
