@@ -4,6 +4,7 @@ class Rsvp < ApplicationRecord
 
   belongs_to :reunion
   belongs_to :household
+  belongs_to :answered_by, class_name: "User", foreign_key: :updated_by_id, optional: true
   validates :status, inclusion: { in: STATUSES }
   validate  :household_is_in_the_reunions_family
   validates :adults, :children, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 50 }

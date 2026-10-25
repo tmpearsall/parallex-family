@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_25_200100) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_25_300000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -51,7 +51,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_200100) do
     t.index ["date_option_id", "user_id"], name: "index_date_votes_on_date_option_id_and_user_id", unique: true
     t.index ["date_option_id"], name: "index_date_votes_on_date_option_id"
     t.index ["user_id"], name: "index_date_votes_on_user_id"
-    t.check_constraint "answer::text = ANY (ARRAY['yes'::character varying, 'maybe'::character varying, 'no'::character varying]::text[])", name: "date_votes_answer"
+    t.check_constraint "answer::text = ANY (ARRAY['yes'::character varying::text, 'maybe'::character varying::text, 'no'::character varying::text])", name: "date_votes_answer"
   end
 
   create_table "families", force: :cascade do |t|
@@ -71,6 +71,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_200100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "family_id", null: false
+    t.bigint "created_by_id"
+    t.bigint "updated_by_id"
     t.index ["family_id"], name: "index_households_on_family_id"
   end
 
@@ -90,7 +92,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_200100) do
     t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
     t.index ["person_id"], name: "index_invitations_on_person_id"
     t.index ["token_digest"], name: "index_invitations_on_token_digest", unique: true
-    t.check_constraint "role::text = ANY (ARRAY['organizer'::character varying, 'member'::character varying]::text[])", name: "invitations_role"
+    t.check_constraint "role::text = ANY (ARRAY['organizer'::character varying::text, 'member'::character varying::text])", name: "invitations_role"
   end
 
   create_table "memberships", force: :cascade do |t|
@@ -105,7 +107,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_200100) do
     t.index ["family_id"], name: "index_memberships_on_family_id"
     t.index ["person_id"], name: "index_memberships_on_person_id"
     t.index ["user_id"], name: "index_memberships_on_user_id"
-    t.check_constraint "role::text = ANY (ARRAY['organizer'::character varying, 'member'::character varying]::text[])", name: "memberships_role"
+    t.check_constraint "role::text = ANY (ARRAY['organizer'::character varying::text, 'member'::character varying::text])", name: "memberships_role"
   end
 
   create_table "people", force: :cascade do |t|
@@ -126,6 +128,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_200100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "family_id", null: false
+    t.string "phone"
     t.index ["family_id"], name: "index_people_on_family_id"
     t.index ["household_id"], name: "index_people_on_household_id"
     t.index ["last_name", "first_name"], name: "index_people_on_last_name_and_first_name"
@@ -146,7 +149,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_200100) do
     t.index ["from_person_id"], name: "index_relationships_on_from_person_id"
     t.index ["to_person_id"], name: "index_relationships_on_to_person_id"
     t.check_constraint "from_person_id <> to_person_id", name: "relationships_no_self"
-    t.check_constraint "kind::text = ANY (ARRAY['parent'::character varying, 'partner'::character varying]::text[])", name: "relationships_kind"
+    t.check_constraint "kind::text = ANY (ARRAY['parent'::character varying::text, 'partner'::character varying::text])", name: "relationships_kind"
   end
 
   create_table "reunions", force: :cascade do |t|
@@ -181,7 +184,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_200100) do
     t.index ["household_id"], name: "index_rsvps_on_household_id"
     t.index ["reunion_id", "household_id"], name: "index_rsvps_on_reunion_id_and_household_id", unique: true
     t.index ["reunion_id"], name: "index_rsvps_on_reunion_id"
-    t.check_constraint "status::text = ANY (ARRAY['attending'::character varying, 'maybe'::character varying, 'not_attending'::character varying]::text[])", name: "rsvps_status"
+    t.check_constraint "status::text = ANY (ARRAY['attending'::character varying::text, 'maybe'::character varying::text, 'not_attending'::character varying::text])", name: "rsvps_status"
   end
 
   create_table "tasks", force: :cascade do |t|

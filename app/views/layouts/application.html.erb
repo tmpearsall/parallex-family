@@ -18,6 +18,7 @@
           <a href="<%= tree_path %>">Tree</a>
           <a href="<%= people_path %>">People</a>
           <a href="<%= households_path %>">Households</a>
+          <a href="<%= directory_path %>">Who's here</a>
           <a href="<%= reunions_path %>">Reunions</a>
           <% board_new = current_family.board_posts.where("created_at > ? and user_id <> ?", current_membership.board_seen_at || Time.at(0), current_user.id).count %>
           <a href="<%= board_path %>">Board<% if board_new > 0 %> <span class="tag dis"><%= board_new %> new</span><% end %></a>

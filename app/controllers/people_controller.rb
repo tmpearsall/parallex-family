@@ -1,6 +1,5 @@
 class PeopleController < TenantController
-  before_action :load_person, only: %i[show edit update destroy]
-  before_action :organizer_only!, only: :destroy
+  before_action :load_person, only: %i[show edit update destroy claim]
 
   def index
     @people = current_family.people.includes(:household).by_name
@@ -54,8 +53,22 @@ class PeopleController < TenantController
   end
 
   def destroy
+    unless @person.removable_by?(current_membership)
+      return redirect_to(@person, alert: "Only an organizer can remove this person now. You can remove someone you added yourself for 48 hours, if no one has linked an account to them.")
+    end
     @person.destroy
     redirect_to people_path, notice: "#{@person.display_name} removed."
+  end
+
+  # "This is me": a member links their own account to their place in the tree. Only if they have none yet and
+  # nobody else has claimed this person.
+  def claim
+    if current_membership.person_id.nil? && !@person.memberships.exists?
+      current_membership.update!(person: @person)
+      redirect_to @person, notice: "Linked: you are #{@person.display_name} in the tree."
+    else
+      redirect_to @person, alert: "This can't be linked to you. Ask an organizer."
+    end
   end
 
   private
@@ -63,7 +76,7 @@ class PeopleController < TenantController
   def load_person = @person = current_family.people.find(params[:id])
 
   def person_params
-    p = params.require(:person).permit(:first_name, :last_name, :maiden_name, :nickname, :birth_date, :death_date, :birth_place, :occupation, :notes, :email, :household_id, :hide_details)
+    p = params.require(:person).permit(:first_name, :last_name, :maiden_name, :nickname, :birth_date, :death_date, :birth_place, :occupation, :notes, :email, :phone, :household_id, :hide_details)
     p[:hide_details] = false unless organizer? || params.dig(:person, :hide_details) == "1"
     p
   end

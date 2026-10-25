@@ -31,12 +31,13 @@
   <div class="card"><div class="stat"><%= @waiting.size %></div><div class="statl">households have not answered<%= " · #{@headcount[:maybe_households]} maybe" if @headcount[:maybe_households] > 0 %></div></div>
 </div>
 <% if @households.empty? %><p class="mut2">Add households first; RSVPs are taken by household. <a href="<%= new_household_path %>">Add one</a>.</p><% else %>
-  <div class="scroll"><table class="t"><tr><th>Household</th><th>Answer</th><th>People</th><th>Needs</th><th></th></tr>
+  <div class="scroll"><table class="t"><tr><th>Household</th><th>Answer</th><th>People</th><th>Needs</th><th>Answered by</th><th></th></tr>
   <% @households.each do |h| r = @rsvps[h.id] %>
     <tr><td><a href="<%= household_path(h) %>"><%= h.name %></a></td>
       <td><% if r %><span class="pill <%= r.status %>"><%= r.label %></span><% else %><span class="mut2">no answer</span><% end %></td>
       <td><%= r&.status == "attending" ? "#{r.adults} + #{r.children}" : "" %></td>
       <td><%= [(r&.lodging_needed ? "lodging" : nil), r&.dietary.presence].compact.join("; ") %></td>
+      <td class="mut2"><%= r&.answered_by&.label %></td>
       <td><a href="#answer">answer</a></td></tr>
   <% end %></table></div>
   <details id="answer" open><summary>Answer for a household</summary>

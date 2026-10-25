@@ -27,9 +27,13 @@ Rails.application.routes.draw do
 
     resources :people do
       resources :relationships, only: :create
+      post :claim, on: :member
     end
     resources :relationships, only: :destroy
-    resources :households, except: :destroy
+    resources :households, except: :destroy do
+      post :add_people, on: :member
+    end
+    get "directory" => "directory#show", as: :directory
 
     resources :reunions, except: :destroy do
       resources :date_options, only: [ :create, :destroy ] do

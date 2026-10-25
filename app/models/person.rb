@@ -6,16 +6,19 @@ class Person < ApplicationRecord
   has_many :partner_out,  -> { partners }, class_name: "Relationship", foreign_key: :from_person_id, dependent: :destroy
   has_many :partner_in,   -> { partners }, class_name: "Relationship", foreign_key: :to_person_id,   dependent: :destroy
   has_many :memberships, dependent: :nullify
+  belongs_to :creator, class_name: "User", foreign_key: :created_by_id, optional: true
+  belongs_to :editor,  class_name: "User", foreign_key: :updated_by_id, optional: true
 
   validates :first_name, presence: true, length: { maximum: 80 }
   validates :last_name, :maiden_name, :nickname, :birth_place, :occupation, length: { maximum: 120 }
   validates :notes, length: { maximum: 4000 }
   validates :email, format: { with: /\A[^@\s]+@[^@\s]+\z/ }, allow_blank: true
+  validates :phone, length: { maximum: 30 }, format: { with: /\A[0-9+().\-\sx]*\z/, message: "can only have digits, spaces and + ( ) - . x" }, allow_blank: true
   validate  :dates_in_order
   validate  :household_is_in_this_family
 
   before_validation do
-    %i[first_name last_name maiden_name nickname birth_place occupation email].each { |a| self[a] = self[a].to_s.squish.presence }
+    %i[first_name last_name maiden_name nickname birth_place occupation email phone].each { |a| self[a] = self[a].to_s.squish.presence }
   end
 
   scope :by_name, -> { order(Arel.sql("lower(coalesce(last_name,'')), lower(first_name)")) }
@@ -37,6 +40,15 @@ class Person < ApplicationRecord
   # membership: the viewer's membership in this person's family.
   def details_visible_to?(membership)
     !hide_details? || membership.organizer? || membership.person_id == id
+  end
+
+  EDIT_WINDOW = 48.hours
+
+  # An organizer can always remove someone. A member can remove a person they added in the last 48 hours (to
+  # fix a mistake) as long as that person has no account and nobody else has linked themselves to them.
+  def removable_by?(membership)
+    return true if membership.organizer?
+    created_by_id == membership.user_id && created_at > EDIT_WINDOW.ago && !memberships.exists?
   end
 
   private

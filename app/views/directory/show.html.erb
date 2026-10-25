@@ -1,0 +1,17 @@
+<% content_for :title, "Who's here · #{current_family.name}" %>
+<h1>Who's here</h1>
+<p class="mut2">Everyone with an account in <%= current_family.name %>, by the name they chose. Posts, answers and edits across the site show these names.</p>
+<ul class="list">
+  <% @memberships.each do |m| %>
+    <li><strong><%= m.user.label %></strong>
+      <% if m.organizer? %><span class="tag pub">Organizer</span><% end %>
+      <% if m.person %><span class="mut2"> · in the tree as <a href="<%= person_path(m.person) %>"><%= m.person.display_name %></a></span><% else %><span class="mut2"> · not linked to the tree yet</span><% end %>
+      <% if organizer? %><span class="mut2"> · <%= m.user.email %></span><% end %></li>
+  <% end %>
+</ul>
+<% if organizer? %><p class="fine"><a href="<%= members_path %>">Invite someone or manage access</a></p><% end %>
+<h2>In the tree, no account yet</h2>
+<% if @without_account.empty? %><p class="mut2">Everyone in the tree has an account.</p><% else %>
+  <p><%= safe_join(@without_account.map { |p| link_to(p.display_name, person_path(p)) }, ", ") %></p>
+  <% if organizer? %><p class="fine">Open a person's page and use "Invite … to this site" to give them one.</p><% end %>
+<% end %>

@@ -51,10 +51,10 @@ class PeopleTest < ActionDispatch::IntegrationTest
     assert_match(/allergic/, response.body)
   end
 
-  test "only an organizer can delete people" do
+  test "a member cannot delete someone they did not add; an organizer can delete anyone" do
     p = make_person("Ann")
     delete person_path(p, family: @f)
-    assert_response :forbidden
+    assert_redirected_to person_path(p, family: @f)
     assert Person.exists?(p.id)
     sign_in member(role: "organizer")
     assert_difference "Person.count", -1 do
