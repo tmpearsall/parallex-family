@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-# If running the rails server then create or migrate existing database
+# Migrate before serving. The app's database role owns only its own schema, so it never creates databases.
 if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
-  ./bin/rails db:prepare
+  ./bin/rails db:migrate
 fi
 
 exec "${@}"
