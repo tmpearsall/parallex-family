@@ -9,6 +9,7 @@ class Invitation < ApplicationRecord
   validates :email, presence: true, format: { with: /\A[^@\s]+@[^@\s]+\z/ }
   validates :role, inclusion: { in: Membership::ROLES }
   validate  :person_is_in_this_family
+  validate  :not_the_platform_administrator_as_organizer
   before_validation { self.email = email.to_s.strip.downcase }
 
   scope :pending, -> { where(accepted_at: nil).where("expires_at > ?", Time.current) }
@@ -46,6 +47,11 @@ class Invitation < ApplicationRecord
   end
 
   private
+
+  def not_the_platform_administrator_as_organizer
+    return if Instance.dedicated? || role != "organizer" || email.blank?
+    errors.add(:base, "The platform administrator cannot be invited as an organizer. Invite them as a member if you want them to help.") if User.exists?(email: email, platform_admin: true)
+  end
 
   def person_is_in_this_family
     errors.add(:person, "belongs to a different family") if person && person.family_id != family_id

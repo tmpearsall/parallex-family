@@ -9,6 +9,7 @@ class Membership < ApplicationRecord
   validate  :person_is_in_this_family
   validate  :family_keeps_an_organizer, on: :update
   validate  :owner_stays_an_organizer
+  validate  :platform_operator_is_not_an_organizer
 
   def organizer? = role == "organizer"
   def owner? = owner
@@ -31,6 +32,13 @@ class Membership < ApplicationRecord
 
   def person_is_in_this_family
     errors.add(:person, "belongs to a different family") if person && person.family_id != family_id
+  end
+
+  # On the commercial site the person who runs the platform is never an organizer or owner of a customer's group;
+  # they can be a plain member if the owner invites them for support. (A dedicated site can choose otherwise.)
+  def platform_operator_is_not_an_organizer
+    return if Instance.dedicated?
+    errors.add(:base, "The platform administrator cannot be an organizer or owner of a group.") if user&.platform_admin? && (role == "organizer" || owner)
   end
 
   def owner_stays_an_organizer
