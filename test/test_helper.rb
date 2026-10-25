@@ -22,6 +22,21 @@ class ActiveSupport::TestCase
   def pair(a, b) = Relationship.create!(family: a.family, from_person: a, to_person: b, kind: "partner")
 end
 
+module Overrides
+  # Temporarily replace a class method (minitest-mock is not part of Minitest 6).
+  def override(klass, name, impl)
+    original = klass.method(name)
+    klass.define_singleton_method(name, &impl)
+    yield
+  ensure
+    klass.define_singleton_method(name, original)
+  end
+end
+
+class ActiveSupport::TestCase
+  include Overrides
+end
+
 class ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
 end

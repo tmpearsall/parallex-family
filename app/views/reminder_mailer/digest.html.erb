@@ -1,0 +1,8 @@
+<div style="font-family: Georgia, serif; font-size: 16px; line-height: 1.6; color: #2a1f27; max-width: 560px">
+  <p>Hi <%= @membership.user.label %>,</p>
+  <ul style="padding-left: 20px">
+    <% @items.each do |i| %><li style="margin-bottom: 10px"><%= i.text %><br><a href="<%= i.url %>" style="color:#8e2a6b"><%= i.link_label %></a></li><% end %>
+  </ul>
+  <p><a href="<%= @home_url %>" style="color:#8e2a6b">Open <%= @family.name %></a></p>
+  <p style="font-size:13px; color:#756370">You get these because you are a member of <%= @family.name %>. <a href="<%= @unsubscribe_url %>" style="color:#756370">Stop reminder emails</a> (you can still use the site).</p>
+</div>

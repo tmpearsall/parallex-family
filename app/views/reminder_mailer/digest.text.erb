@@ -1,0 +1,10 @@
+Hi <%= @membership.user.label %>,
+
+<% @items.each do |i| %>
+* <%= i.text %>
+  <%= i.url %>
+<% end %>
+
+Open <%= @family.name %>: <%= @home_url %>
+
+You get these because you are a member of <%= @family.name %>. Stop reminder emails (you will still be able to use the site): <%= @unsubscribe_url %>

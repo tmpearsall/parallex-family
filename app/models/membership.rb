@@ -18,6 +18,11 @@ class Membership < ApplicationRecord
     calendar_token
   end
 
+  def unsubscribe_token!
+    update_columns(unsubscribe_token: SecureRandom.urlsafe_base64(24)) if unsubscribe_token.blank?
+    unsubscribe_token
+  end
+
   def reset_calendar_token! = update_columns(calendar_token: SecureRandom.urlsafe_base64(24))
 
   private

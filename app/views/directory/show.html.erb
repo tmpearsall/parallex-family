@@ -10,6 +10,10 @@
   <% end %>
 </ul>
 <% if organizer? %><p class="fine"><a href="<%= members_path %>">Invite someone or manage access</a></p><% end %>
+<h2>Reminder emails</h2>
+<p class="mut2">Reminders for the reunion: RSVP deadlines, dates to vote on, what you said you would bring, and the days before it starts. One short email a day at most.</p>
+<%= button_to (current_membership.email_reminders ? "Turn reminder emails off" : "Turn reminder emails on"), my_reminders_path(on: current_membership.email_reminders ? "0" : "1"), method: :patch, class: "link" %>
+
 <h2>In the tree, no account yet</h2>
 <% if @without_account.empty? %><p class="mut2">Everyone in the tree has an account.</p><% else %>
   <p><%= safe_join(@without_account.map { |p| link_to(p.display_name, person_path(p)) }, ", ") %></p>

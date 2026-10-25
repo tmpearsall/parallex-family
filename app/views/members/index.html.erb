@@ -7,6 +7,11 @@
     <label>Who in the tree is this? (one email only) <%= f.collection_select :person_id, @people, :id, :display_name, { include_blank: "(not linked)", selected: @prefill&.id } %></label>
     <label>Role <%= f.select :role, [["Member", "member"], ["Organizer", "organizer"]] %></label>
   </div>
+  <% if ApplicationMailer.configured? %>
+    <label class="chk"><%= f.check_box :send_email, { checked: true }, "1", "0" %> Email each person their link</label>
+  <% else %>
+    <p class="fine">Email sending is not set up yet: you get a link for each person to send yourself.</p>
+  <% end %>
   <%= f.submit "Create links" %>
 <% end %>
 
@@ -29,7 +34,9 @@
 <% if @invitations.empty? %><p class="mut2">No pending invitations.</p><% else %>
   <ul class="list"><% @invitations.each do |i| %>
     <li><%= i.email %> <span class="mut2">· <%= i.role %> · expires <%= i.expires_at.strftime("%b %-d") %><%= " · for #{i.person.display_name}" if i.person %></span>
+      <span class="mut2"><%= i.emailed_at ? "· emailed #{i.emailed_at.strftime('%b %-d')}" : "" %><%= " · email failed" if i.email_error %></span>
+      <%= button_to (ApplicationMailer.configured? ? "Resend" : "New link"), resend_member_path(i), method: :post, class: "link", form: { class: "inline" } %>
       <%= button_to "Withdraw", revoke_member_path(i), method: :delete, class: "link", form: { class: "inline" } %></li>
   <% end %></ul>
-  <p class="fine">Lost a link? Withdraw the invitation and invite the address again.</p>
+  <p class="fine">Resend makes a fresh link and withdraws the old one.</p>
 <% end %>

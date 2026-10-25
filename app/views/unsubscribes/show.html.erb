@@ -1,0 +1,4 @@
+<% content_for :title, "Stop reminder emails" %>
+<h1>Stop reminder emails?</h1>
+<p>You will stop getting reminder emails for <strong><%= @membership.family.name %></strong>. You can still sign in and use the site, and you can turn reminders back on from the Who's here page.</p>
+<%= button_to "Stop the emails", unsubscribe_path(token: params[:token]), method: :post, class: "btn" %>

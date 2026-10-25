@@ -1,9 +1,11 @@
 <% content_for :title, "Invitation links · #{current_family.name}" %>
 <h1>Invitation links</h1>
-<p>Send each person their own link. Each works once and expires in 7 days. This page will not show them again.</p>
+<% if @mail_on %><p>Emails are sent from this site. You can still copy any link below and send it yourself. Each works once and expires in 7 days, and this page will not show them again.</p>
+<% else %><p>Email sending is not set up yet, so nothing was emailed. Send each person their own link. Each works once and expires in 7 days, and this page will not show them again.</p><% end %>
 <ul class="list">
-  <% @results.each do |email, url, problem| %>
+  <% @results.each do |email, url, problem, status| %>
     <li><strong><%= email %></strong>
+      <% if status == :emailed %><span class="tag pub">Emailed</span><% elsif status == :email_failed %><span class="tag dis">Email failed: send this link yourself</span><% end %>
       <% if url %><div class="card" style="word-break:break-all;margin-top:6px"><%= url %></div><% else %><span class="mut2"> · <%= problem %></span><% end %></li>
   <% end %>
 </ul>

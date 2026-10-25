@@ -34,6 +34,7 @@ Rails.application.routes.draw do
       post :add_people, on: :member
     end
     get "directory" => "directory#show", as: :directory
+    patch "my_reminders" => "directory#reminders", as: :my_reminders
 
     get "calendar" => "calendar#index", as: :calendar
     post "calendar/reset_link" => "calendar#reset_link", as: :calendar_reset_link
@@ -53,6 +54,7 @@ Rails.application.routes.draw do
 
     resources :members, only: [ :index, :create, :update, :destroy ] do
       delete :revoke, on: :member
+      post :resend, on: :member
     end
 
     get    "board"             => "board#index",   as: :board
@@ -62,6 +64,10 @@ Rails.application.routes.draw do
     delete "board/:id"         => "board#destroy", as: :board_post
     patch  "board/:id/pin"     => "board#pin",     as: :board_pin
   end
+
+  # Stop reminder emails (public, token only).
+  get  "unsubscribe/:token" => "unsubscribes#show",   as: :unsubscribe, constraints: { token: /[\w-]+/ }
+  post "unsubscribe/:token" => "unsubscribes#create", constraints: { token: /[\w-]+/ }
 
   # Subscription feed for calendar apps (they cannot sign in): the secret token is the credential.
   get "calendar/:token" => "calendar_feeds#show", as: :calendar_feed, constraints: { token: /[\w-]+/ }, defaults: { format: "ics" }

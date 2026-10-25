@@ -10,23 +10,37 @@ class MembersController < TenantController
     @prefill = current_family.people.find_by(id: params[:person_id])
   end
 
-  # One or many emails at once (separated by spaces, commas or new lines). Each gets its own link.
+  DAILY_INVITATION_LIMIT = 60
+
+  # One or many emails at once (separated by spaces, commas or new lines). Each gets its own one-time link, and
+  # when a sending service is configured and "Email it" is ticked, the link is emailed too. The link is always
+  # shown here as well, as a fallback.
   def create
     emails = params.dig(:invite, :emails).to_s.split(/[\s,;]+/).map(&:downcase).reject(&:blank?).uniq.first(40)
     person = current_family.people.find_by(id: params.dig(:invite, :person_id))
     role = Membership::ROLES.include?(params.dig(:invite, :role)) ? params.dig(:invite, :role) : "member"
     return redirect_to(members_path, alert: "Enter at least one email address.") if emails.empty?
-    person = nil if emails.size > 1   # one person per link
-    @results = emails.map do |email|
-      if current_family.users.exists?(email: email)
-        [ email, nil, "Already a member." ]
-      else
-        inv, raw = Invitation.issue!(family: current_family, email: email, role: role, person: person, invited_by: current_user)
-        [ email, invitation_url(raw, family: nil), nil ]
-      end
-    rescue ActiveRecord::RecordInvalid => e
-      [ email, nil, e.record.errors.full_messages.to_sentence ]
+    if current_family.invitations.where("created_at > ?", 24.hours.ago).count + emails.size > DAILY_INVITATION_LIMIT
+      return redirect_to(members_path, alert: "That is more than #{DAILY_INVITATION_LIMIT} invitations in a day. Try again tomorrow.")
     end
+    person = nil if emails.size > 1   # one person per link
+    send_mail = params.dig(:invite, :send_email) == "1" && ApplicationMailer.configured?
+    @results = emails.map { |email| invite_one(email, role, person, send_mail) }
+    @mail_on = send_mail
+    render :links
+  end
+
+  # A fresh link for someone who has not accepted (the old one cannot be recovered): withdraws the old invitation
+  # and issues a new one, emailing it when email is set up.
+  def resend
+    old = current_family.invitations.pending.find(params[:id])
+    result = nil
+    Invitation.transaction do
+      old.destroy
+      result = invite_one(old.email, old.role, old.person, ApplicationMailer.configured?)
+    end
+    @results = [ result ]
+    @mail_on = ApplicationMailer.configured?
     render :links
   end
 
@@ -50,5 +64,29 @@ class MembersController < TenantController
   def revoke
     current_family.invitations.find(params[:id]).destroy
     redirect_to members_path, notice: "Invitation withdrawn."
+  end
+
+  private
+
+  # Returns [email, url_or_nil, problem_or_nil, status] where status is :emailed, :email_failed or :link_only.
+  def invite_one(email, role, person, send_mail)
+    return [ email, nil, "Already a member.", nil ] if current_family.users.exists?(email: email)
+    inv, raw = Invitation.issue!(family: current_family, email: email, role: role, person: person, invited_by: current_user)
+    url = invitation_url(raw, family: nil)
+    status = :link_only
+    if send_mail
+      begin
+        InvitationMailer.with(invitation: inv, url: url, inviter: current_user).invite.deliver_now
+        inv.mark_emailed!
+        status = :emailed
+      rescue StandardError => e
+        inv.mark_email_failed!("#{e.class}: #{e.message}")
+        Rails.logger.error("invitation email failed for #{email}: #{e.class}: #{e.message}")
+        status = :email_failed
+      end
+    end
+    [ email, url, nil, status ]
+  rescue ActiveRecord::RecordInvalid => e
+    [ email, nil, e.record.errors.full_messages.to_sentence, nil ]
   end
 end

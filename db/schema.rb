@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_25_400000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_25_500000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_400000) do
     t.index ["date_option_id"], name: "index_date_votes_on_date_option_id"
     t.index ["user_id"], name: "index_date_votes_on_user_id"
     t.check_constraint "answer::text = ANY (ARRAY['yes'::character varying::text, 'maybe'::character varying::text, 'no'::character varying::text])", name: "date_votes_answer"
+  end
+
+  create_table "email_deliveries", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.bigint "membership_id", null: false
+    t.string "kind", null: false
+    t.string "item_key", null: false
+    t.string "status", default: "sending", null: false
+    t.string "error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id"], name: "index_email_deliveries_on_family_id"
+    t.index ["membership_id", "kind", "item_key"], name: "index_email_deliveries_once", unique: true
+    t.index ["membership_id"], name: "index_email_deliveries_on_membership_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -105,6 +119,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_400000) do
     t.datetime "accepted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "emailed_at"
+    t.string "email_error"
     t.index ["family_id", "email"], name: "index_invitations_on_family_id_and_email"
     t.index ["family_id"], name: "index_invitations_on_family_id"
     t.index ["invited_by_id"], name: "index_invitations_on_invited_by_id"
@@ -122,10 +138,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_400000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "calendar_token"
+    t.boolean "email_reminders", default: true, null: false
+    t.string "unsubscribe_token"
     t.index ["calendar_token"], name: "index_memberships_on_calendar_token", unique: true
     t.index ["family_id", "user_id"], name: "index_memberships_on_family_id_and_user_id", unique: true
     t.index ["family_id"], name: "index_memberships_on_family_id"
     t.index ["person_id"], name: "index_memberships_on_person_id"
+    t.index ["unsubscribe_token"], name: "index_memberships_on_unsubscribe_token", unique: true
     t.index ["user_id"], name: "index_memberships_on_user_id"
     t.check_constraint "role::text = ANY (ARRAY['organizer'::character varying::text, 'member'::character varying::text])", name: "memberships_role"
   end
@@ -249,6 +268,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_400000) do
   add_foreign_key "date_options", "reunions"
   add_foreign_key "date_votes", "date_options"
   add_foreign_key "date_votes", "users"
+  add_foreign_key "email_deliveries", "families"
+  add_foreign_key "email_deliveries", "memberships"
   add_foreign_key "events", "families"
   add_foreign_key "events", "reunions"
   add_foreign_key "households", "families"

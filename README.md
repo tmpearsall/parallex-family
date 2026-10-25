@@ -20,3 +20,17 @@ prototype at github.com/tmpearsall/genealogy.
 bin/setup   # or: bin/rails db:create db:migrate
 bin/rails test
 ```
+
+## Email (invitations and reminders)
+
+Mail goes out over any SMTP provider using the same variables as Parallex Advisory: `SMTP_ADDRESS`, `SMTP_PORT`
+(587), `SMTP_USERNAME`, `SMTP_PASSWORD`, plus `MAIL_FROM`. With Resend: `smtp.resend.com`, username `resend`,
+password = an API key, and a verified sending domain. With no `SMTP_ADDRESS` nothing is sent: the Members page shows
+copyable links, and the reminder scheduler stays off.
+
+- Invitations: tick "Email each person their link" on the Members page; Resend makes a fresh link.
+- Reminders: one digest per member per day at most (13:00 UTC), run inside the web process
+  (`config/initializers/reminder_scheduler.rb`; `REMINDER_SCHEDULER=off` disables it, `bin/rails reminders:send`
+  runs it by hand). RSVP deadlines, dates to vote on, claimed tasks, the reunion at 30/7/1 days, events tomorrow.
+  `email_deliveries` has a unique index so no one is reminded of the same thing twice. Every digest has an
+  unsubscribe link and the one-click header; each member can also switch reminders off on Who's here.

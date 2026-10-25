@@ -24,6 +24,10 @@ class Invitation < ApplicationRecord
     [ inv, raw ]
   end
 
+  # Mail is only attempted when a sending service is configured.
+  def mark_emailed! = update_columns(emailed_at: Time.current, email_error: nil)
+  def mark_email_failed!(message) = update_columns(email_error: message.to_s.truncate(200))
+
   def pending? = accepted_at.nil? && expires_at > Time.current
 
   # Join the family as this user. Idempotent for someone already in it.
