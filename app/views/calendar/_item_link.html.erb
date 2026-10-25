@@ -1,0 +1,7 @@
+<% r = item.record %>
+<% case item.kind
+   when "event" %><a href="<%= event_path(r) %>"><%= item.title %></a>
+<% when "reunion", "proposed", "deadline" %><a href="<%= reunion_path(r) %>"><%= item.title %></a>
+<% when "birthday" %><a href="<%= person_path(r) %>"><%= item.title %></a>
+<% when "anniversary" %><a href="<%= person_path(r.from_person) %>"><%= item.title %></a>
+<% else %><%= item.title %><% end %>

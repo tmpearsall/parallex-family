@@ -13,6 +13,7 @@ class MembersTest < ActionDispatch::IntegrationTest
     end
     assert_response :success
     assert_equal 2, response.body.scan(%r{/invite/[\w-]+}).uniq.size
+    assert_no_match(/invite\/[\w-]+\?family/, response.body)
     assert_equal [ @boss.id ], Invitation.pluck(:invited_by_id).uniq
   end
 

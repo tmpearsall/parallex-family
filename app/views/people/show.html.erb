@@ -23,6 +23,9 @@
   <% if rels.empty? %><p class="mut2">None recorded.</p><% else %>
     <ul class="list"><% rels.each do |r| other = (r.from_person_id == @person.id ? r.to_person : r.from_person) %>
       <li><a href="<%= person_path(other) %>"><%= other.display_name %></a> <span class="mut2"><%= other.years if other.details_visible_to?(current_membership) %></span>
+        <% if r.kind == "partner" %>
+          <%= form_with url: relationship_path(r), method: :patch, scope: :relationship, class: "inline" do |f| %><span class="mut2">together since</span> <%= f.date_field :started_on, value: r.started_on, style: "width:auto;font:13px system-ui" %> <button class="link">Save</button><% end %>
+        <% end %>
         <%= button_to "Remove", relationship_path(r), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this link?" } %></li>
     <% end %></ul>
   <% end %>

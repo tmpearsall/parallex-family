@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_25_300000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_25_400000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -52,6 +52,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_300000) do
     t.index ["date_option_id"], name: "index_date_votes_on_date_option_id"
     t.index ["user_id"], name: "index_date_votes_on_user_id"
     t.check_constraint "answer::text = ANY (ARRAY['yes'::character varying::text, 'maybe'::character varying::text, 'no'::character varying::text])", name: "date_votes_answer"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.string "title", null: false
+    t.date "starts_on", null: false
+    t.date "ends_on"
+    t.string "time_note"
+    t.string "location"
+    t.text "notes"
+    t.bigint "reunion_id"
+    t.bigint "created_by_id"
+    t.bigint "updated_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "starts_on"], name: "index_events_on_family_id_and_starts_on"
+    t.index ["family_id"], name: "index_events_on_family_id"
+    t.index ["reunion_id"], name: "index_events_on_reunion_id"
   end
 
   create_table "families", force: :cascade do |t|
@@ -103,6 +121,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_300000) do
     t.datetime "board_seen_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "calendar_token"
+    t.index ["calendar_token"], name: "index_memberships_on_calendar_token", unique: true
     t.index ["family_id", "user_id"], name: "index_memberships_on_family_id_and_user_id", unique: true
     t.index ["family_id"], name: "index_memberships_on_family_id"
     t.index ["person_id"], name: "index_memberships_on_person_id"
@@ -229,6 +249,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_300000) do
   add_foreign_key "date_options", "reunions"
   add_foreign_key "date_votes", "date_options"
   add_foreign_key "date_votes", "users"
+  add_foreign_key "events", "families"
+  add_foreign_key "events", "reunions"
   add_foreign_key "households", "families"
   add_foreign_key "invitations", "families"
   add_foreign_key "invitations", "people"

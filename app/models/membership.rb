@@ -11,6 +11,15 @@ class Membership < ApplicationRecord
 
   def organizer? = role == "organizer"
 
+  # A secret address for subscribing to this member's calendar from a phone or computer calendar app. Calendar apps
+  # cannot sign in, so the token is the credential; it is shown only to this member and can be replaced.
+  def calendar_token!
+    update_columns(calendar_token: SecureRandom.urlsafe_base64(24)) if calendar_token.blank?
+    calendar_token
+  end
+
+  def reset_calendar_token! = update_columns(calendar_token: SecureRandom.urlsafe_base64(24))
+
   private
 
   def person_is_in_this_family

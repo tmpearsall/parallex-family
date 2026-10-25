@@ -11,7 +11,7 @@
 </head>
 <body>
   <header class="top">
-    <a class="brand" href="<%= current_family ? family_home_path(family: current_family.slug) : root_path %>"><%= current_family ? current_family.name : "Family" %></a>
+    <a class="brand" href="<%= current_family ? family_home_path(family: current_family.slug) : root_path(family: nil) %>"><%= current_family ? current_family.name : "Family" %></a>
     <% if user_signed_in? %>
       <% if current_family %>
         <nav class="nav">
@@ -20,15 +20,16 @@
           <a href="<%= households_path %>">Households</a>
           <a href="<%= directory_path %>">Who's here</a>
           <a href="<%= reunions_path %>">Reunions</a>
+          <a href="<%= calendar_path %>">Calendar</a>
           <% board_new = current_family.board_posts.where("created_at > ? and user_id <> ?", current_membership.board_seen_at || Time.at(0), current_user.id).count %>
           <a href="<%= board_path %>">Board<% if board_new > 0 %> <span class="tag dis"><%= board_new %> new</span><% end %></a>
           <% if organizer? %><a href="<%= members_path %>">Members</a><% end %>
         </nav>
       <% end %>
-      <% if current_user.memberships.size > 1 %><a class="who" href="<%= root_path %>">Switch family</a><% end %>
-      <% if current_user.platform_admin? %><a class="who" href="<%= platform_families_path %>">Platform</a><% end %>
-      <a class="who" href="<%= edit_account_path %>" title="Change your display name"><%= current_user.label %></a>
-      <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "link" %>
+      <% if current_user.memberships.size > 1 %><a class="who" href="<%= root_path(family: nil) %>">Switch family</a><% end %>
+      <% if current_user.platform_admin? %><a class="who" href="<%= platform_families_path(family: nil) %>">Platform</a><% end %>
+      <a class="who" href="<%= edit_account_path(family: nil) %>" title="Change your display name"><%= current_user.label %></a>
+      <%= button_to "Sign out", destroy_user_session_path(family: nil), method: :delete, class: "link" %>
     <% end %>
   </header>
   <% if notice %><p class="flash ok"><%= notice %></p><% end %>

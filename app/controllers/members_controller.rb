@@ -22,7 +22,7 @@ class MembersController < TenantController
         [ email, nil, "Already a member." ]
       else
         inv, raw = Invitation.issue!(family: current_family, email: email, role: role, person: person, invited_by: current_user)
-        [ email, invitation_url(raw), nil ]
+        [ email, invitation_url(raw, family: nil), nil ]
       end
     rescue ActiveRecord::RecordInvalid => e
       [ email, nil, e.record.errors.full_messages.to_sentence ]

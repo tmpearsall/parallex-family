@@ -9,6 +9,7 @@ class Family < ApplicationRecord
   has_many :people, dependent: :destroy
   has_many :relationships, dependent: :destroy
   has_many :reunions, dependent: :destroy
+  has_many :events, dependent: :destroy
   has_many :board_posts, dependent: :destroy
 
   validates :name, presence: true, length: { maximum: 80 }

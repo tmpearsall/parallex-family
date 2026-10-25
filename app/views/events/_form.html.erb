@@ -1,0 +1,9 @@
+<%= form_with model: event, class: "stack" do |f| %>
+  <% if event.errors.any? %><p class="flash bad"><%= event.errors.full_messages.to_sentence %>.</p><% end %>
+  <label>What <%= f.text_field :title, required: true, maxlength: 120, placeholder: "Planning call, cookout, church day" %></label>
+  <div class="row"><label>Date <%= f.date_field :starts_on, required: true %></label><label>Through (optional) <%= f.date_field :ends_on %></label><label>Time (optional) <%= f.text_field :time_note, maxlength: 120, placeholder: "2 pm" %></label></div>
+  <div class="row"><label>Where <%= f.text_field :location, maxlength: 120 %></label>
+    <label>Part of a reunion? <%= f.collection_select :reunion_id, current_family.reunions.order(:title), :id, :title, { include_blank: "(no)" } %></label></div>
+  <label>Notes <%= f.text_area :notes, rows: 3, maxlength: 2000 %></label>
+  <%= f.submit(event.new_record? ? "Add to calendar" : "Save") %>
+<% end %>

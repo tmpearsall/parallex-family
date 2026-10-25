@@ -1,0 +1,4 @@
+<% content_for :title, "Edit event · #{current_family.name}" %>
+<h1>Edit event</h1>
+<%= render "form", event: @event %>
+<p class="fine"><a href="<%= event_path(@event) %>">&larr; Back</a></p>

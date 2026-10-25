@@ -15,6 +15,16 @@ class RelationshipsController < TenantController
     end
   end
 
+  # "Together since": the date that drives the anniversary on the calendar.
+  def update
+    rel = current_family.relationships.find(params[:id])
+    if rel.update(started_on: params.dig(:relationship, :started_on).presence)
+      redirect_to rel.from_person, notice: "Saved."
+    else
+      redirect_to rel.from_person, alert: rel.errors.full_messages.to_sentence
+    end
+  end
+
   def destroy
     rel = current_family.relationships.find(params[:id])
     back = rel.from_person

@@ -11,6 +11,7 @@ class Relationship < ApplicationRecord
   validates :kind, inclusion: { in: KINDS }
   validate :both_people_are_in_the_family
   validates :notes, length: { maximum: 200 }
+  validate  :started_on_only_for_partners
   validate :not_self
   validate :not_duplicate
   validate :parent_is_not_a_descendant, if: -> { kind == "parent" }
@@ -19,6 +20,8 @@ class Relationship < ApplicationRecord
   scope :partners, -> { where(kind: "partner") }
 
   private
+
+  def started_on_only_for_partners = (errors.add(:started_on, "only applies to partners") if started_on && kind != "partner")
 
   def both_people_are_in_the_family
     return if from_person.blank? || to_person.blank?

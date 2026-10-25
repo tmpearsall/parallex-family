@@ -1,0 +1,43 @@
+<% content_for :title, "Calendar · #{current_family.name}" %>
+<h1>Calendar</h1>
+<div class="row" style="justify-content:space-between;align-items:center">
+  <div><a href="<%= calendar_path(month: (@first - 1.month).strftime('%Y-%m')) %>">&larr; <%= (@first - 1.month).strftime("%b") %></a>
+    &nbsp; <strong style="font-size:1.2rem"><%= @first.strftime("%B %Y") %></strong> &nbsp;
+    <a href="<%= calendar_path(month: (@first + 1.month).strftime('%Y-%m')) %>"><%= (@first + 1.month).strftime("%b") %> &rarr;</a>
+    <% unless @first == Date.current.beginning_of_month %> &nbsp;·&nbsp; <a href="<%= calendar_path %>">Today</a><% end %></div>
+  <a class="btn" href="<%= new_event_path %>" style="padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--acc-fg);text-decoration:none;font:600 14px system-ui,sans-serif">Add an event</a>
+</div>
+<p class="fine">Reunions, dates people are voting on (marked proposed), RSVP deadlines, family events, birthdays and anniversaries. Birthdays of people whose details are private are never shown.</p>
+
+<div class="cal-grid scroll">
+  <table class="t cal">
+    <tr><% %w[Sun Mon Tue Wed Thu Fri Sat].each do |d| %><th><%= d %></th><% end %></tr>
+    <% @weeks.each do |week| %>
+      <tr><% week.each do |day| %>
+        <% todays = @items.select { |i| i.covers?(day) } %>
+        <td class="<%= 'out' if day.month != @first.month %> <%= 'today' if day == Date.current %>">
+          <div class="dn"><%= day.day %></div>
+          <% todays.first(4).each do |i| %><div class="ci <%= i.kind %>"><%= render "calendar/item_link", item: i %></div><% end %>
+          <% if todays.size > 4 %><div class="mut2">+<%= todays.size - 4 %> more</div><% end %>
+        </td>
+      <% end %></tr>
+    <% end %>
+  </table>
+</div>
+
+<h2>This month</h2>
+<% if @agenda.empty? %><p class="mut2">Nothing on the calendar for <%= @first.strftime("%B") %>.</p><% else %>
+  <ul class="list agenda">
+    <% @agenda.each do |i| %>
+      <li><span class="mut2"><%= i.on.strftime("%a %b %-d") %><%= " – #{i.last_day.strftime('%a %b %-d')}" if i.until && i.until != i.on %></span>
+        <span class="ci <%= i.kind %> kindtag"><%= i.kind == "proposed" ? "proposed" : i.kind %></span>
+        <%= render "calendar/item_link", item: i %>
+        <% if i.place.present? || i.note.present? %><span class="mut2"> · <%= [ i.place, i.note ].compact.join(" · ") %></span><% end %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<h2>Put it on your phone</h2>
+<p class="fine">Subscribe in Apple Calendar, Google Calendar or Outlook with this private address, and the family's dates appear alongside your own and stay current. It is only for you: anyone who has it can read this family's calendar, so don't post it. If it gets out, make a new one and the old one stops working.</p>
+<p class="card" style="word-break:break-all"><strong><%= @feed_url %></strong></p>
+<%= button_to "Make a new address (the old one stops working)", calendar_reset_link_path, method: :post, class: "link", data: { turbo_confirm: "The old subscription address will stop working. Continue?" } %>

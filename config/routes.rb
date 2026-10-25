@@ -29,11 +29,15 @@ Rails.application.routes.draw do
       resources :relationships, only: :create
       post :claim, on: :member
     end
-    resources :relationships, only: :destroy
+    resources :relationships, only: [ :update, :destroy ]
     resources :households, except: :destroy do
       post :add_people, on: :member
     end
     get "directory" => "directory#show", as: :directory
+
+    get "calendar" => "calendar#index", as: :calendar
+    post "calendar/reset_link" => "calendar#reset_link", as: :calendar_reset_link
+    resources :events
 
     resources :reunions, except: :destroy do
       resources :date_options, only: [ :create, :destroy ] do
@@ -58,6 +62,9 @@ Rails.application.routes.draw do
     delete "board/:id"         => "board#destroy", as: :board_post
     patch  "board/:id/pin"     => "board#pin",     as: :board_pin
   end
+
+  # Subscription feed for calendar apps (they cannot sign in): the secret token is the credential.
+  get "calendar/:token" => "calendar_feeds#show", as: :calendar_feed, constraints: { token: /[\w-]+/ }, defaults: { format: "ics" }
 
   get "up" => "rails/health#show", as: :rails_health_check
 end

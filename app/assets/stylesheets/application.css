@@ -34,3 +34,12 @@ form.inline { display:inline; margin-left:8px; } form.inline button { background
 .other { margin:0 0 14px; padding:10px 12px; background:var(--bg); border:1px solid var(--rule); border-radius:8px; } .other .who2 { display:flex; flex-wrap:wrap; gap:4px 10px; align-items:baseline; margin-bottom:4px; }
 .boardbody p, .other p { margin:0 0 .8em; }
 table.t { width:100%; border-collapse:collapse; font:14px system-ui,sans-serif; } table.t th, table.t td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--rule); vertical-align:top; } .scroll { overflow-x:auto; }
+
+/* Calendar */
+table.cal { table-layout:fixed; } table.cal td { height:96px; padding:4px 6px; border:1px solid var(--rule); font:12px system-ui,sans-serif; }
+table.cal th { text-align:center; } table.cal td.out { background:var(--chip); opacity:.6; } table.cal td.today { outline:2px solid var(--acc); outline-offset:-2px; }
+.dn { font-weight:700; color:var(--mut); } .ci { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-radius:4px; padding:0 4px; margin-top:2px; background:var(--chip); }
+.ci a { color:inherit; text-decoration:none; } .ci.reunion { background:var(--acc); color:var(--acc-fg); } .ci.proposed { border:1px dashed var(--acc); background:transparent; }
+.ci.deadline { background:var(--draft-bg); color:var(--draft); } .ci.event { background:var(--live-bg); color:var(--live); }
+.kindtag { font-size:11px; text-transform:uppercase; letter-spacing:.04em; display:inline-block; margin:0 4px; }
+@media (max-width: 700px) { .cal-grid { display:none; } }
