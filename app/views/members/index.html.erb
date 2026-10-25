@@ -15,6 +15,14 @@
   <%= f.submit "Create links" %>
 <% end %>
 
+<h2>Email</h2>
+<% if ApplicationMailer.configured? %>
+  <p class="mut2">Email is on. Messages are sent as <strong><%= ApplicationMailer.from_address %></strong> <%= ApplicationMailer.settings_summary %>.</p>
+  <%= button_to "Send myself a test email", test_email_path, method: :post, class: "link" %>
+<% else %>
+  <p class="mut2">Email sending is not connected yet, so invitations are links you copy and send, and no reminder emails go out.</p>
+<% end %>
+
 <h2>Family name</h2>
 <%= form_with url: settings_path, method: :patch, class: "row" do |f| %>
   <label>Shown at the top of every page <%= f.text_field :name, value: current_family.name, maxlength: 80, required: true %></label><%= f.submit "Rename" %>

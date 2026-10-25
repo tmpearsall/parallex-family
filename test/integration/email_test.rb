@@ -119,3 +119,41 @@ class UnsubscribeTest < ActionDispatch::IntegrationTest
     assert u.memberships.first.reload.email_reminders
   end
 end
+
+class TestEmailTest < ActionDispatch::IntegrationTest
+  include ActionMailer::TestHelper
+
+  test "an organizer sends themselves a test email; a member cannot" do
+    boss = member(role: "organizer", email: "boss@example.test")
+    sign_in boss
+    assert_emails 1 do
+      post test_email_path(family: family.slug)
+    end
+    assert_equal [ "boss@example.test" ], ActionMailer::Base.deliveries.last.to
+    sign_in member
+    assert_no_emails do
+      post test_email_path(family: family.slug)
+    end
+    assert_response :forbidden
+  end
+
+  test "a failing mail server is reported, not hidden" do
+    sign_in member(role: "organizer")
+    override(TestMailer, :with, ->(**) { raise Net::SMTPAuthenticationError, "bad login" }) do
+      post test_email_path(family: family.slug)
+    end
+    follow_redirect!
+    assert_match(/test email failed/, response.body)
+  end
+
+  test "the members page says where mail is going" do
+    sign_in member(role: "organizer")
+    get members_path(family: family.slug)
+    assert_match(/Email is on/, response.body)
+    assert_match(/Send myself a test email/, response.body)
+    override(ApplicationMailer, :configured?, -> { false }) do
+      get members_path(family: family.slug)
+      assert_match(/not connected yet/, response.body)
+    end
+  end
+end

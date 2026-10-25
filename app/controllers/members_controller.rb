@@ -44,6 +44,16 @@ class MembersController < TenantController
     render :links
   end
 
+  # An organizer sends themselves a test message, to see that mail really leaves and where it lands.
+  def test_email
+    return redirect_to(members_path, alert: "Email sending is not set up yet.") unless ApplicationMailer.configured?
+    TestMailer.with(user: current_user, family: current_family).hello.deliver_now
+    redirect_to members_path, notice: "A test email was sent to #{current_user.email}. Check the inbox and the spam folder."
+  rescue StandardError => e
+    Rails.logger.error("test email failed: #{e.class}: #{e.message}")
+    redirect_to members_path, alert: "The test email failed: #{e.message.to_s.truncate(200)}"
+  end
+
   def update
     m = current_family.memberships.find(params[:id])
     role = params[:role]

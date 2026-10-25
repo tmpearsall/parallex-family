@@ -56,6 +56,7 @@ Rails.application.routes.draw do
 
     patch "settings" => "settings#update", as: :settings
 
+    post "members/test_email" => "members#test_email", as: :test_email
     resources :members, only: [ :index, :create, :update, :destroy ] do
       delete :revoke, on: :member
       post :resend, on: :member
