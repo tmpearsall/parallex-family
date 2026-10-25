@@ -18,9 +18,9 @@
           <a class="btn" href="mailto:troy@parallexllc.com?subject=<%= ERB::Util.url_encode("#{plan[:name]} plan") %>">Get in touch</a>
         <% end %>
       <% else %>
-        <a class="btn" href="mailto:troy@parallexllc.com?subject=<%= ERB::Util.url_encode("Free group") %>">Ask for a group</a>
+        <a class="btn" href="mailto:troy@parallexllc.com?subject=<%= ERB::Util.url_encode("Free organization") %>">Ask for an organization</a>
       <% end %>
     </li>
   <% end %>
 </ul>
-<p class="fine">Prices are introductory. Groups are set up for you; you'll get a one-time link to sign in. Already have one? <a href="<%= new_user_session_path %>">Sign in</a>.</p>
+<p class="fine">Prices are introductory. Organizations are set up for you; you'll get a one-time link to sign in. Already have one? <a href="<%= new_user_session_path %>">Sign in</a>.</p>
