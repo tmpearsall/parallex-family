@@ -58,7 +58,15 @@ class ReminderRunner
 
   private
 
-  def url(m, helper, *args, **opts) = Rails.application.routes.url_helpers.public_send(helper, *args, family: m.family.slug, **opts, **url_opts)
+  # Builds an absolute address from the _path helper (the _url helpers keep the /f/<family> prefix even when it is
+  # the default). A dedicated instance has no /f/<family> in its addresses, so the family is only passed in
+  # multi-tenant mode.
+  def url(m, helper, *args, **opts)
+    family_opt = Instance.dedicated? ? {} : { family: m.family.slug }
+    path = Rails.application.routes.url_helpers.public_send(helper.to_s.sub(/_url\z/, "_path"), *args, **family_opt, **opts)
+    "#{url_opts[:protocol] || 'http'}://#{url_opts[:host]}#{path}".sub("://:", "://")
+  end
+
   def url_opts = Rails.application.config.action_mailer.default_url_options.to_h.slice(:host, :protocol)
 
   def rsvp_items(m, r, household)

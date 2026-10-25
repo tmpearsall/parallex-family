@@ -4,7 +4,8 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Code is not reloaded between requests.
-  config.hosts = [ ENV["FAMILY_HOST"] ].compact.presence
+  # FAMILY_HOST may list several hosts, comma separated (e.g. the custom domain and the onrender.com address).
+  config.hosts = ENV["FAMILY_HOST"].to_s.split(",").map(&:strip).reject(&:empty?).presence
   config.host_authorization = { exclude: ->(r) { r.path == "/up" } }
 
   config.enable_reloading = false
@@ -79,7 +80,10 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address: ENV["SMTP_ADDRESS"], port: ENV.fetch("SMTP_PORT", 587).to_i,
     user_name: ENV["SMTP_USERNAME"], password: ENV["SMTP_PASSWORD"],
-    authentication: :plain, enable_starttls_auto: true
+    authentication: :plain,
+    # Port 465 providers (Cloudflare Email Service; Resend also offers it) use implicit TLS: set SMTP_TLS=true.
+    tls: ENV["SMTP_TLS"] == "true", enable_starttls_auto: ENV["SMTP_TLS"] != "true"
   }
-  config.action_mailer.default_url_options = { host: ENV.fetch("FAMILY_HOST", "parallex-family.onrender.com"), protocol: "https" }
+  # Links in emails use MAIL_HOST, else the first FAMILY_HOST, else the Render address.
+  config.action_mailer.default_url_options = { host: ENV["MAIL_HOST"].presence || ENV["FAMILY_HOST"].to_s.split(",").first&.strip.presence || "parallex-family.onrender.com", protocol: "https" }
 end

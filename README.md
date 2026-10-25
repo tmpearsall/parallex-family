@@ -21,10 +21,19 @@ bin/setup   # or: bin/rails db:create db:migrate
 bin/rails test
 ```
 
+## Two ways to run it
+
+One codebase, two deployments. **Multi-tenant** (default, the commercial product): many families under `/f/<family>`,
+a platform administrator, a family picker. **Dedicated** (`INSTANCE_MODE=dedicated`,
+`DEDICATED_FAMILY_SLUG=<slug>`): one family's own site at the root (`/tree`, `/people`, ...), no `/f/` in any
+address, no picker, no platform pages. Routes are built at boot, so the dedicated tests run separately:
+`INSTANCE_MODE=dedicated DEDICATED_FAMILY_SLUG=rowe bin/rails test test/dedicated`.
+`FAMILY_HOST` (comma-separated) locks the site to those hostnames; `MAIL_HOST` sets the host used in email links.
+
 ## Email (invitations and reminders)
 
 Mail goes out over any SMTP provider using the same variables as Parallex Advisory: `SMTP_ADDRESS`, `SMTP_PORT`
-(587), `SMTP_USERNAME`, `SMTP_PASSWORD`, plus `MAIL_FROM`. With Resend: `smtp.resend.com`, username `resend`,
+(587; or 465 with `SMTP_TLS=true`), `SMTP_USERNAME`, `SMTP_PASSWORD`, plus `MAIL_FROM`. Cloudflare Email Service: `smtp.mx.cloudflare.net`, port 465, `SMTP_TLS=true`, username `api_token`, password a Cloudflare API token with Email Sending: Edit. With Resend: `smtp.resend.com`, username `resend`,
 password = an API key, and a verified sending domain. With no `SMTP_ADDRESS` nothing is sent: the Members page shows
 copyable links, and the reminder scheduler stays off.
 

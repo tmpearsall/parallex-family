@@ -6,7 +6,6 @@ Rails.application.routes.draw do
     patch "set_password/:token" => "set_passwords#update"
   end
 
-  root "families#index"
   resource :account, only: [ :edit, :update ]
 
   # An invitation link (public, one-time).
@@ -14,14 +13,19 @@ Rails.application.routes.draw do
   post "invite/:token/accept"   => "invitations#accept",   as: :accept_invitation
   post "invite/:token/register" => "invitations#register", as: :register_invitation
 
-  # Support: create families, password links. Sees no family's data.
-  namespace :platform do
-    resources :families, only: [ :index, :create ]
-    post "password_link" => "users#link", as: :password_link
+  # Support: create families, password links. Sees no family's data. Multi-tenant mode only.
+  unless Instance.dedicated?
+    namespace :platform do
+      resources :families, only: [ :index, :create ]
+      post "password_link" => "users#link", as: :password_link
+    end
   end
 
-  # Everything inside one family. The family is looked up through the signed-in user's memberships.
-  scope "/f/:family" do
+  # Everything inside one family. The family is looked up through the signed-in user's memberships. In a dedicated
+  # instance the prefix is optional and defaults to that one family, so addresses are just "/people", "/tree", ...
+  # (a URL whose family equals the default is generated without the prefix).
+  family_scope = Instance.dedicated? ? { path: "(/f/:family)", defaults: { family: Instance.family_slug } } : { path: "/f/:family" }
+  scope family_scope[:path], **family_scope.slice(:defaults) do
     get "/" => "home#show", as: :family_home
     get "tree" => "trees#show", as: :tree
 
@@ -71,6 +75,8 @@ Rails.application.routes.draw do
 
   # Subscription feed for calendar apps (they cannot sign in): the secret token is the credential.
   get "calendar/:token" => "calendar_feeds#show", as: :calendar_feed, constraints: { token: /[\w-]+/ }, defaults: { format: "ics" }
+
+  root "families#index"
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
