@@ -57,3 +57,4 @@ html[data-brand="parallex"] .brand { color: var(--acc); }
 .plan.pick { border-color:var(--acc); box-shadow:0 0 0 1px var(--acc); }
 .plan h2 { margin:0; font-size:19px; } .plan .price { font:700 30px/1.1 system-ui,sans-serif; margin:0; } .plan .price small { font:500 14px system-ui,sans-serif; color:var(--mut); }
 .plan ul { margin:0; padding-left:18px; font-size:15px; flex:1; } .plan a.btn { background:var(--acc); color:var(--acc-fg); text-decoration:none; padding:9px 16px; border-radius:8px; font:600 14px system-ui,sans-serif; text-align:center; }
+html[data-brand="parallex"] input, html[data-brand="parallex"] select, html[data-brand="parallex"] textarea { font-family: inherit; }

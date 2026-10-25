@@ -11,7 +11,7 @@
 </head>
 <body>
   <header class="top">
-    <a class="brand" href="<%= current_family ? family_home_path(family: current_family.slug) : root_path(family: nil) %>"><%= current_family ? current_family.name : "Family" %></a>
+    <a class="brand" href="<%= current_family ? family_home_path(family: current_family.slug) : root_path(family: nil) %>"><%= current_family ? current_family.name : Instance.app_name %></a>
     <% if user_signed_in? %>
       <% if current_family %>
         <nav class="nav">
