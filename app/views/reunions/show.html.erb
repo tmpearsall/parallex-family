@@ -69,6 +69,6 @@
   <label>Add something we need <%= f.text_field :title, required: true, placeholder: "Someone to bring a grill" %></label><label>Details <%= f.text_field :details %></label><%= f.submit "Add" %>
 <% end %>
 
-<h2>Board</h2>
+<h2>Forum</h2>
 <% if @topics.empty? %><p class="mut2">No topics about this <%= terms.event %> yet.</p><% else %><ul class="list"><% @topics.each do |t| %><li><a href="<%= board_topic_path(t) %>"><%= t.title %></a></li><% end %></ul><% end %>
-<p class="fine"><a href="<%= board_path(reunion_id: @reunion.id) %>">Start a board topic about this <%= terms.event %></a></p>
+<p class="fine"><a href="<%= board_path(reunion_id: @reunion.id) %>">Start a forum topic about this <%= terms.event %></a></p>

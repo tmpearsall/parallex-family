@@ -1,5 +1,5 @@
-<% content_for :title, "Board · #{current_family&.name || Instance.app_name}" %>
-<h1>Board</h1>
+<% content_for :title, "Forum · #{current_family&.name || Instance.app_name}" %>
+<h1>Forum</h1>
 <p class="mut2">For planning questions, ideas, and anything <%= terms.the_people %> should see. Everyone here sees the display name you chose, never your email.</p>
 <%= form_with model: @topic, url: board_path, class: "stack" do |f| %>
   <% if @topic.errors.any? %><p class="flash bad"><%= @topic.errors.full_messages.to_sentence %>.</p><% end %>

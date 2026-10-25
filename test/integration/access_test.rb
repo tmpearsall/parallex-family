@@ -2,7 +2,7 @@ require "test_helper"
 
 class AccessTest < ActionDispatch::IntegrationTest
   test "everything requires sign-in" do
-    [ "/", "/f/rowe", "/f/rowe/tree", "/f/rowe/people", "/f/rowe/board", "/platform/families" ].each do |path|
+    [ "/", "/f/rowe", "/f/rowe/tree", "/f/rowe/people", "/f/rowe/forum", "/platform/families" ].each do |path|
       get path
       assert_redirected_to new_user_session_path, path
     end
@@ -13,7 +13,7 @@ class AccessTest < ActionDispatch::IntegrationTest
     sign_in make_user
     get root_path   # a first successful request establishes the session cookie
     assert_response :success
-    [ "/f/rowe", "/f/rowe/tree", "/f/rowe/people", "/f/rowe/households", "/f/rowe/reunions", "/f/rowe/board", "/f/rowe/members" ].each do |path|
+    [ "/f/rowe", "/f/rowe/tree", "/f/rowe/people", "/f/rowe/households", "/f/rowe/reunions", "/f/rowe/forum", "/f/rowe/members" ].each do |path|
       get path
       assert_response :not_found, path
     end

@@ -2,6 +2,7 @@
 # for this family. Members who switched reminders off are skipped too.
 module SurveyAudience
   CHOICES = [
+    [ "Only the organizers", "organizers" ],
     [ "Everyone with an account", "members" ],
     [ "Everyone on the list who has an email", "listed" ],
     [ "Everyone: accounts and the list", "everyone" ],
@@ -12,6 +13,7 @@ module SurveyAudience
     family = survey.family
     out = {}
     case audience
+    when "organizers" then members(family, out, organizers_only: true)
     when "members" then members(family, out)
     when "listed" then listed(family, out)
     when "everyone" then members(family, out); listed(family, out)
@@ -24,8 +26,10 @@ module SurveyAudience
     out.values.reject { |h| blocked.include?(h[:email]) }.sort_by { |h| h[:name].to_s.downcase }
   end
 
-  def self.members(family, out)
-    family.memberships.where(email_reminders: true).includes(:user, :person).each do |m|
+  def self.members(family, out, organizers_only: false)
+    scope = family.memberships.where(email_reminders: true)
+    scope = scope.where(role: "organizer") if organizers_only
+    scope.includes(:user, :person).each do |m|
       email = m.user.email.to_s.downcase
       out[email] ||= { email: email, name: m.user.label, person: m.person, membership: m }
     end

@@ -1,5 +1,5 @@
-<% content_for :title, "#{@topic.title} · Board" %>
-<p class="fine"><a href="<%= board_path %>">&larr; Board</a></p>
+<% content_for :title, "#{@topic.title} · Forum" %>
+<p class="fine"><a href="<%= board_path %>">&larr; Forum</a></p>
 <h1><%= @topic.title %> <% if @topic.pinned? %><span class="tag pub">Pinned</span><% end %></h1>
 <div class="mut2"><%= @topic.user.label %> &middot; <%= @topic.created_at.strftime("%b %-d, %Y") %>
   <% if @topic.reunion %>&middot; about <a href="<%= reunion_path(@topic.reunion) %>"><%= @topic.reunion.title %></a><% end %>

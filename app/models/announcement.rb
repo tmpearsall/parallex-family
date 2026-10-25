@@ -2,7 +2,7 @@
 # Only people who have not switched reminders off receive it. A daily cap per family keeps a mistake from becoming
 # a flood, and every send is recorded.
 class Announcement < ApplicationRecord
-  AUDIENCES = %w[everyone rsvp_pending tasks_open].freeze
+  AUDIENCES = %w[everyone organizers rsvp_pending tasks_open].freeze
   DAILY_LIMIT = 60
 
   belongs_to :family
@@ -17,6 +17,8 @@ class Announcement < ApplicationRecord
   def self.recipients(family, audience, reunion = nil)
     base = family.memberships.where(email_reminders: true).includes(:user, :person)
     case audience
+    when "organizers"
+      base.where(role: "organizer").to_a
     when "tasks_open"
       ids = Task.joins(:reunion).where(reunions: { family_id: family.id }, done: false).where.not(claimed_by_id: nil).select(:claimed_by_id)
       base.where(user_id: ids).to_a

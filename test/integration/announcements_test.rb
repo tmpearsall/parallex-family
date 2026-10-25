@@ -71,6 +71,11 @@ class AnnouncementsTest < ActionDispatch::IntegrationTest
     assert_equal [ "org@example.test" ], got
   end
 
+  test "the organizers-only audience reaches only organizers" do
+    got = Announcement.recipients(@family, "organizers").map { |m| m.user.email }
+    assert_equal [ "org@example.test" ], got
+  end
+
   test "an empty message is refused" do
     sign_in(@org)
     post "/f/ann-test/announcements", params: send_params(body: "")

@@ -158,6 +158,12 @@ class SurveysTest < ActionDispatch::IntegrationTest
     assert_not_includes ActionMailer::Base.deliveries.flat_map(&:to), SurveyOptOut.last.email
   end
 
+  test "the organizers-only audience mails only organizers" do
+    s = create_survey
+    send_it(s, "organizers")
+    assert_equal [ "org@example.test" ], ActionMailer::Base.deliveries.flat_map(&:to)
+  end
+
   test "an invalid or other-family link is just not found" do
     get "/s/not-a-real-token-at-all-12345"
     assert_response :not_found

@@ -1,5 +1,5 @@
 # Support area for the platform administrator: create a family and its first organizer's invitation, and see
-# counts. It shows no family's people, reunions or board.
+# counts. It shows no family's people, reunions or forum.
 class Platform::FamiliesController < ApplicationController
   before_action :platform_admin_only!
 

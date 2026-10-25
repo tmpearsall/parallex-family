@@ -13,7 +13,7 @@
 <% seated_ids = current_family.memberships.where.not(person_id: nil).pluck(:person_id) %>
 <% committee, invitees = @people.partition { |p| seated_ids.include?(p.id) } %>
 <h2>Committee</h2>
-<p class="fine">The people who plan: they have a seat, can vote on dates and use the board.</p>
+<p class="fine">The people who plan: they have a seat, can vote on dates and use the forum.</p>
 <ul class="list">
   <% committee.each do |p| %>
     <li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <% if p.nickname %><span class="mut2">(<%= p.nickname %>)</span><% end %>

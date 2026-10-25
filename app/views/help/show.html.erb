@@ -25,18 +25,19 @@
   <% if terms.tree? %><li><strong>The tree:</strong> the Tree page draws everyone you have connected.</li><% end %>
 </ul>
 
-<h2>Reunions, dates, tasks and the board</h2>
+<h2>Reunions, dates, tasks and the forum</h2>
 <ul>
   <li><strong><%= terms.Events %>:</strong> open one to see the plan. When the dates are still being decided, <em>Vote</em> for every date that works for you.</li>
   <li><strong>RSVP:</strong> answer once for your <%= terms.party %>: how many adults and children, and any notes about food or a place to stay.</li>
   <li><strong>Tasks:</strong> claim something you can do. It shows who is handling what.</li>
   <li><strong>Calendar:</strong> every date in one place, with a link that adds it to your phone's calendar.</li>
-  <li><strong>Board:</strong> a place to talk. Start a topic or reply.</li>
+  <li><strong>Forum:</strong> a place to talk. Start a topic or reply.</li>
   <li><strong>Reminders:</strong> you get at most one email a day, only when something needs you. Turn them off on <a href="<%= directory_path %>">Members</a>.</li>
 </ul>
 
 <% if organizer? %>
 <h2>For organizers</h2>
+<p class="mut2">Everything below is gathered on the <a href="<%= admin_path %>">Admin</a> page, which only organizers see.</p>
 <ul>
   <li><strong>Invite someone to log in:</strong> <a href="<%= members_path %>">Access</a>. Enter their email. If they are already in People, choose their name. If not, use <em>Not in the list? Add them here</em>.</li>
   <li><strong>Send a reminder to everyone:</strong> <a href="<%= new_announcement_path %>">Send a reminder</a>. You see who gets it before anything is sent.</li>

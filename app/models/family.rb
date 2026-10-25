@@ -1,4 +1,4 @@
-# A workspace: one family's tree, households, reunions and board. Nothing crosses between families.
+# A workspace: one family's tree, households, reunions and forum. Nothing crosses between families.
 class Family < ApplicationRecord
   RESERVED = %w[f new admin platform invite account users up assets].freeze
 

@@ -46,12 +46,32 @@ class HelpAndGettingStartedTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, "Getting started"
   end
 
-  test "organizers see Surveys in the navigation and members do not" do
+  test "organizers see Admin in the navigation and members do not" do
     get "/f/help-test"
-    assert_not_includes response.body, "/f/help-test/surveys"
+    assert_not_includes response.body, "/f/help-test/admin"
+    get "/f/help-test/admin"
+    assert_response :forbidden
     @m.update!(role: "organizer")
     get "/f/help-test"
-    assert_includes response.body, "/f/help-test/surveys"
+    assert_includes response.body, "/f/help-test/admin"
+  end
+
+  test "the admin page links every organizer tool" do
+    @m.update!(role: "organizer")
+    get "/f/help-test/admin"
+    assert_response :success
+    %w[members surveys announcements/new people/import].each { |p| assert_includes response.body, "/f/help-test/#{p}", p }
+  end
+
+  test "the forum lives at /forum, the old /board link redirects, and the page says Forum" do
+    get "/f/help-test/forum"
+    assert_response :success
+    assert_includes response.body, "<h1>Forum</h1>"
+    get "/f/help-test/board"
+    assert_redirected_to "/f/help-test/forum"
+    get "/f/help-test"
+    assert_includes response.body, "Forum"
+    assert_not_includes response.body, ">Board<"
   end
 
   test "the help link is in the navigation" do

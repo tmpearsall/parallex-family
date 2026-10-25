@@ -1,0 +1,17 @@
+<% content_for :title, "Admin · #{current_family.name}" %>
+<h1>Admin</h1>
+<p class="mut2">For the people who organize <%= current_family.name %>. Organizers now: <strong><%= @organizers.to_sentence %></strong>. Members don't see this section.</p>
+<div class="grid">
+  <div class="card"><h2 style="margin-top:0"><a href="<%= members_path %>">Access</a></h2>
+    <p>Invite <%= terms.invitees %>, see who has an account, make someone an organizer, and fix email settings. <%= "#{@pending_invitations} waiting to accept." if @pending_invitations.positive? %></p></div>
+  <div class="card"><h2 style="margin-top:0"><a href="<%= surveys_path %>">Surveys</a></h2>
+    <p>Ask a few questions, such as which dates work, and email everyone a personal link. <%= "#{@open_surveys} open now." if @open_surveys.positive? %></p></div>
+  <div class="card"><h2 style="margin-top:0"><a href="<%= new_announcement_path %>">Send a reminder</a></h2>
+    <p>Write a message to everyone, only the organizers, or those who haven't answered. <a href="<%= announcements_path %>">Messages already sent</a></p></div>
+  <div class="card"><h2 style="margin-top:0"><a href="<%= import_people_path %>">People spreadsheet</a></h2>
+    <p>Add many people at once from a CSV, or <a href="<%= export_people_path(format: :csv) %>">download everyone</a>.</p></div>
+  <div class="card"><h2 style="margin-top:0"><a href="<%= new_reunion_path %>">Plan <%= terms.an_event %></a></h2>
+    <p>Start a new <%= terms.event %>, propose dates, set the RSVP deadline and the task list.</p></div>
+  <div class="card"><h2 style="margin-top:0"><a href="<%= help_path %>">How the site works</a></h2>
+    <p>The guide members see, with an organizer section at the end.</p></div>
+</div>

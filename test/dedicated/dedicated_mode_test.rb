@@ -18,7 +18,7 @@ class DedicatedModeTest < ActionDispatch::IntegrationTest
     assert_match(/Thea|Rowe/, response.body)
     assert_no_match(%r{/f/rowe}, response.body)
     assert_match(%r{href="/tree"}, response.body)
-    %w[/tree /people /households /reunions /calendar /board /directory].each do |path|
+    %w[/tree /people /households /reunions /calendar /forum /directory].each do |path|
       get path
       assert_response :success, path
       assert_no_match(%r{/f/rowe}, response.body, path)

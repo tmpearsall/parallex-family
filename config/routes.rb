@@ -43,6 +43,7 @@ Rails.application.routes.draw do
     resources :households, except: :destroy do
       post :add_people, on: :member
     end
+    get "admin" => "admin#show", as: :admin
     get "help" => "help#show", as: :help
     get "directory" => "directory#show", as: :directory
     patch "my_reminders" => "directory#reminders", as: :my_reminders
@@ -77,12 +78,15 @@ Rails.application.routes.draw do
       post :resend, on: :member
     end
 
-    get    "board"             => "board#index",   as: :board
-    post   "board"             => "board#create"
-    get    "board/:id"         => "board#show",    as: :board_topic
-    post   "board/:id/replies" => "board#reply",   as: :board_replies
-    delete "board/:id"         => "board#destroy", as: :board_post
-    patch  "board/:id/pin"     => "board#pin",     as: :board_pin
+    get    "forum"             => "board#index",   as: :board
+    post   "forum"             => "board#create"
+    get    "forum/:id"         => "board#show",    as: :board_topic
+    post   "forum/:id/replies" => "board#reply",   as: :board_replies
+    delete "forum/:id"         => "board#destroy", as: :board_post
+    patch  "forum/:id/pin"     => "board#pin",     as: :board_pin
+    # The forum used to be called the board; keep old links working.
+    get "board",     to: redirect { |params, _| Instance.dedicated? ? "/forum" : "/f/#{params[:family]}/forum" }
+    get "board/:id", to: redirect { |params, _| Instance.dedicated? ? "/forum/#{params[:id]}" : "/f/#{params[:family]}/forum/#{params[:id]}" }
   end
 
   # A survey's personal link and its opt-out (public, token only).

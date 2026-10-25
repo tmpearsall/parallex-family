@@ -1,6 +1,6 @@
 <% content_for :title, "Platform · Organizations" %>
 <h1>Platform</h1>
-<p class="mut2">Create an organization and its first organizer's invitation. This page shows counts only, never anyone's people, events or board.</p>
+<p class="mut2">Create an organization and its first organizer's invitation. This page shows counts only, never anyone's people, events or forum.</p>
 <%= form_with scope: :family, url: platform_families_path, class: "stack" do |f| %>
   <div class="row"><label>Name <%= f.text_field :name, required: true, placeholder: "Maple Street HOA" %></label><label>Short address <%= f.text_field :slug, placeholder: "maple-street (optional)" %></label></div>
   <label>First organizer's email <%= f.email_field :organizer_email, required: true %></label>

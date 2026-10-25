@@ -6,7 +6,7 @@ class PricingController < ApplicationController
 
   PLANS = [
     { key: "free", name: "Free", price: "$0", per: "", pick: false,
-      points: [ "1 organization", "Up to 25 invitees", "1 event at a time", "Date voting, RSVPs, task list, message board" ] },
+      points: [ "1 organization", "Up to 25 invitees", "1 event at a time", "Date voting, RSVPs, task list, forum" ] },
     { key: "committee", name: "Committee", price: "$19", per: "/month", alt: "or $149 a year", pick: true,
       points: [ "Unlimited events", "Up to 250 invitees", "Email invitations and reminders", "Calendar feeds for every member" ],
       links: { "month" => "STRIPE_LINK_COMMITTEE_MONTH", "year" => "STRIPE_LINK_COMMITTEE_YEAR" } },

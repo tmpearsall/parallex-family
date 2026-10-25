@@ -5,7 +5,7 @@
 <%= form_with model: @announcement, url: announcements_path, class: "stack" do |f| %>
   <% if @announcement.errors.any? %><p class="flash bad"><%= @announcement.errors.full_messages.to_sentence %>.</p><% end %>
   <label>Who gets it
-    <%= f.select :audience, [["Everyone", "everyone"], ["People whose #{terms.party} has not answered the RSVP", "rsvp_pending"], ["People with an unfinished task", "tasks_open"]] %>
+    <%= f.select :audience, [["Everyone", "everyone"], ["Only the organizers", "organizers"], ["People whose #{terms.party} has not answered the RSVP", "rsvp_pending"], ["People with an unfinished task", "tasks_open"]] %>
   </label>
   <label>For the RSVP choice, which <%= terms.event %>
     <%= f.collection_select :reunion_id, current_family.reunions.order(created_at: :desc), :id, :title, { include_blank: "(not needed for the others)" } %>
