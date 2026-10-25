@@ -1,0 +1,26 @@
+<% content_for :title, "Pricing · #{Instance.app_name}" %>
+<h1>Plan the next event with your committee</h1>
+<p>Board meetings, company picnics, church suppers, neighborhood days: wherever a planning committee decides together, it needs one place for dates, invitees, answers and who is doing what.</p>
+<ul class="plans">
+  <% PricingController::PLANS.each do |plan| %>
+    <li class="plan<%= " pick" if plan[:pick] %>">
+      <h2><%= plan[:name] %></h2>
+      <p class="price"><%= plan[:price] %><small><%= plan[:per] %></small></p>
+      <% if plan[:alt] %><p class="fine"><%= plan[:alt] %></p><% end %>
+      <ul><% plan[:points].each do |pt| %><li><%= pt %></li><% end %></ul>
+      <% if plan[:links] %>
+        <% plan[:links].each_key do |term| %>
+          <% if (url = link_for(plan, term)) %>
+            <a class="btn" href="<%= url %>" rel="noopener"><%= term == "year" ? "Pay yearly" : term == "once" ? "Buy the pass" : "Subscribe" %></a>
+          <% end %>
+        <% end %>
+        <% if plan[:links].keys.none? { |t| link_for(plan, t) } %>
+          <a class="btn" href="mailto:troy@parallexllc.com?subject=<%= ERB::Util.url_encode("#{plan[:name]} plan") %>">Get in touch</a>
+        <% end %>
+      <% else %>
+        <a class="btn" href="mailto:troy@parallexllc.com?subject=<%= ERB::Util.url_encode("Free group") %>">Ask for a group</a>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
+<p class="fine">Prices are introductory. Groups are set up for you; you'll get a one-time link to sign in. Already have one? <a href="<%= new_user_session_path %>">Sign in</a>.</p>

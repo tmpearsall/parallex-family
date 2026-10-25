@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"<%= raw %( data-brand="#{ERB::Util.h(Instance.brand)}") if Instance.brand.present? %>>
 <head>
   <title><%= content_for(:title).presence || Instance.app_name %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="robots" content="<%= indexable? ? "index,follow" : "noindex,nofollow,noarchive" %>">
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
   <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>

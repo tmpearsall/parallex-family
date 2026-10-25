@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   # Support: create families, password links. Sees no family's data. Multi-tenant mode only.
   unless Instance.dedicated?
+    get "pricing" => "pricing#show", as: :pricing
     namespace :platform do
       resources :families, only: [ :index, :create ]
       post "password_link" => "users#link", as: :password_link

@@ -43,3 +43,17 @@ table.cal th { text-align:center; } table.cal td.out { background:var(--chip); o
 .ci.deadline { background:var(--draft-bg); color:var(--draft); } .ci.event { background:var(--live-bg); color:var(--live); }
 .kindtag { font-size:11px; text-transform:uppercase; letter-spacing:.04em; display:inline-block; margin:0 4px; }
 @media (max-width: 700px) { .cal-grid { display:none; } }
+
+/* Parallex LLC brand (BRAND=parallex): navy and blue from parallexllc.com, sans-serif throughout. */
+html[data-brand="parallex"] { --bg:#f5f8fd; --fg:#1e293b; --mut:#64748b; --rule:#e4e9f2; --card:#ffffff; --acc:#2563eb; --acc-fg:#ffffff; --chip:#e4ecfb; --navy:#0a1733; }
+@media (prefers-color-scheme: dark) { html[data-brand="parallex"]:not([data-theme="light"]) { --bg:#0a1733; --fg:#e6ecf8; --mut:#9fb0cf; --rule:#1d3266; --card:#10224a; --acc:#60a5fa; --acc-fg:#0a1733; --chip:#15306e; --navy:#e6ecf8; } }
+html[data-brand="parallex"] body { font-family: Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+html[data-brand="parallex"] h1, html[data-brand="parallex"] h2, html[data-brand="parallex"] .brand { color: var(--navy); }
+html[data-brand="parallex"] .brand { color: var(--acc); }
+
+/* Pricing */
+.plans { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin:24px 0; padding:0; list-style:none; }
+.plan { background:var(--card); border:1px solid var(--rule); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:10px; min-width:0; }
+.plan.pick { border-color:var(--acc); box-shadow:0 0 0 1px var(--acc); }
+.plan h2 { margin:0; font-size:19px; } .plan .price { font:700 30px/1.1 system-ui,sans-serif; margin:0; } .plan .price small { font:500 14px system-ui,sans-serif; color:var(--mut); }
+.plan ul { margin:0; padding-left:18px; font-size:15px; flex:1; } .plan a.btn { background:var(--acc); color:var(--acc-fg); text-decoration:none; padding:9px 16px; border-radius:8px; font:600 14px system-ui,sans-serif; text-align:center; }

@@ -13,5 +13,8 @@ module Instance
   # The product's name in email copy.
   def self.product_name = ENV.fetch("PRODUCT_NAME", "Parallex Family")
 
+  # Colour scheme: "parallex" is the Parallex LLC blue; anything else is the family reddish purple.
+  def self.brand = ENV["BRAND"].to_s
+
   def self.app_name = ENV.fetch("APP_NAME", "Family")
 end
