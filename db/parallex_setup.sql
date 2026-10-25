@@ -9,7 +9,7 @@ do $$ begin
 end $$;
 grant family_app to postgres;
 alter schema family_app owner to family_app;
-alter role family_app set search_path = family_app, public;
+alter role family_app set search_path = family_app;
 revoke all on schema public from family_app;
 revoke create on schema public from family_app;
 grant usage on schema family_app to family_app;

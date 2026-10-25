@@ -47,5 +47,5 @@ test:
 production:
   <<: *default
   url: <%= ENV["DATABASE_URL"].presence || (ENV["RAILS_ENV"] == "production" && !ENV["SECRET_KEY_BASE_DUMMY"] ? raise("DATABASE_URL is not set: use the family_app role's pooled Supabase URL for the Parallex project") : nil) %>
-  schema_search_path: "family_app,public"
+  schema_search_path: "family_app"   # NOT public: Parallex Advisory keeps its own schema_migrations there
   prepared_statements: false
