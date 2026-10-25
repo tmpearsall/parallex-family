@@ -58,6 +58,16 @@ class HelpAndGettingStartedTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "/f/help-test/admin"
   end
 
+  test "Where to start is the first and pinned entry on the admin page" do
+    @m.update!(role: "organizer")
+    get "/f/help-test/admin"
+    first_card = response.body[/<div class="card[^"]*">.*?<\/h2>/m]
+    assert_includes first_card, "Where to start"
+    assert_includes first_card, "pinned"
+    assert_includes response.body, "/f/help-test/help#start"
+    assert_includes response.body, "No one is on the list yet."
+  end
+
   test "the admin page links every organizer tool" do
     @m.update!(role: "organizer")
     get "/f/help-test/admin"

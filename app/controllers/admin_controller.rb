@@ -4,6 +4,7 @@ class AdminController < TenantController
   before_action :organizer_only!
 
   def show
+    @people_count = current_family.people.count
     @open_surveys = current_family.surveys.where(status: "open").count
     @pending_invitations = current_family.invitations.pending.count
     @organizers = current_family.memberships.where(role: "organizer").includes(:user).map { |m| m.user.label }

@@ -63,3 +63,5 @@ html[data-brand="parallex"] input, html[data-brand="parallex"] select, html[data
 ol.map { list-style:none; margin:14px 0 24px; padding:0; display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); }
 ol.map li { display:flex; gap:12px; align-items:flex-start; background:var(--card); border:1px solid var(--rule); border-radius:12px; padding:12px 14px; font:14px/1.45 system-ui,sans-serif; min-width:0; }
 ol.map .n { flex:0 0 auto; width:28px; height:28px; border-radius:50%; background:var(--acc); color:var(--acc-fg); font:700 14px/28px system-ui,sans-serif; text-align:center; }
+
+.card.pinned { border-color:var(--acc); box-shadow:0 0 0 1px var(--acc); }

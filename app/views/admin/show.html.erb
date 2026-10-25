@@ -2,6 +2,9 @@
 <h1>Admin</h1>
 <p class="mut2">For the people who organize <%= current_family.name %>. Organizers now: <strong><%= @organizers.to_sentence %></strong>. Members don't see this section.</p>
 <div class="grid">
+  <div class="card pinned"><h2 style="margin-top:0"><a href="<%= help_path(anchor: 'start') %>">Where to start</a> <span class="tag pub">pinned</span></h2>
+    <p><strong>Add the people first.</strong> Everything else hangs off the list: RSVPs, who is connected to whom, reminders and who can log in. <%= @people_count == 0 ? "No one is on the list yet." : "#{@people_count} #{'person'.pluralize(@people_count)} on the list so far." %></p>
+    <p><a href="<%= new_person_path %>">Add a person</a> · <a href="<%= import_people_path %>">Import a spreadsheet</a> · <a href="<%= help_path(anchor: 'start') %>">See the map</a></p></div>
   <div class="card"><h2 style="margin-top:0"><a href="<%= members_path %>">Access</a></h2>
     <p>Invite <%= terms.invitees %>, see who has an account, make someone an organizer, and fix email settings. <%= "#{@pending_invitations} waiting to accept." if @pending_invitations.positive? %></p></div>
   <div class="card"><h2 style="margin-top:0"><a href="<%= surveys_path %>">Surveys</a></h2>
