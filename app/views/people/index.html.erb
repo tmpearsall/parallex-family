@@ -1,10 +1,33 @@
-<% content_for :title, "People · #{current_family&.name || Instance.app_name}" %>
-<h1>People</h1>
-<form method="get" class="row"><label>Find <input type="text" name="q" value="<%= params[:q] %>" placeholder="Name"></label><input type="submit" value="Search"> <a class="btn" href="<%= new_person_path %>" style="padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--acc-fg);text-decoration:none;font:600 14px system-ui,sans-serif">Add a person</a></form>
+<% content_for :title, "#{terms.people_title} · #{current_family&.name || Instance.app_name}" %>
+<h1><%= terms.people_title %></h1>
+<form method="get" class="row"><label>Find <input type="text" name="q" value="<%= params[:q] %>" placeholder="Name"></label><input type="submit" value="Search"> <a class="btn" href="<%= new_person_path %>" style="padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--acc-fg);text-decoration:none;font:600 14px system-ui,sans-serif"><%= terms.tree? ? "Add a person" : "Add an invitee" %></a></form>
+<% if terms.tree? %>
 <ul class="list">
   <% @people.each do |p| %>
     <li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <% if p.nickname %><span class="mut2">(<%= p.nickname %>)</span><% end %>
       <span class="mut2"><%= p.years if p.details_visible_to?(current_membership) %> <%= "· #{p.household.name}" if p.household %></span></li>
   <% end %>
 </ul>
-<% if @people.empty? %><p>No one yet.</p><% end %>
+<% else %>
+<% seated_ids = current_family.memberships.where.not(person_id: nil).pluck(:person_id) %>
+<% committee, invitees = @people.partition { |p| seated_ids.include?(p.id) } %>
+<h2>Committee</h2>
+<p class="fine">The people who plan: they have a seat, can vote on dates and use the board.</p>
+<ul class="list">
+  <% committee.each do |p| %>
+    <li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <% if p.nickname %><span class="mut2">(<%= p.nickname %>)</span><% end %>
+      <span class="mut2"><%= p.years if p.details_visible_to?(current_membership) %> <%= "· #{p.household.name}" if p.household %></span></li>
+  <% end %>
+</ul>
+<% if committee.empty? %><p>No one linked to a seat yet.</p><% end %>
+<h2>Invitees</h2>
+<p class="fine">Everyone else on the list: who is invited, whether or not they have an account.</p>
+<ul class="list">
+  <% invitees.each do |p| %>
+    <li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <% if p.nickname %><span class="mut2">(<%= p.nickname %>)</span><% end %>
+      <span class="mut2"><%= p.years if p.details_visible_to?(current_membership) %> <%= "· #{p.household.name}" if p.household %></span></li>
+  <% end %>
+</ul>
+<% if invitees.empty? %><p>No invitees yet.</p><% end %>
+<% end %>
+<% if terms.tree? && @people.empty? %><p>No one yet.</p><% end %>

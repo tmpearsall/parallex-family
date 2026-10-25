@@ -17,7 +17,7 @@ class Terms
       kids_note: "Keep date of birth, notes, email and phone private (for a child). Only an organizer and this person can see them.",
       person_link_label: "Who in the tree is this?", person_col: "In the tree as", no_tree_link: "not linked to the tree yet",
       listed_no_account: "In the tree, no account yet", everyone_listed: "Everyone in the tree has an account.",
-      tree: true
+      people_title: "People", people_nav: "People", tree: true
     },
     "group" => {
       group: "group", Group: "Group", a_group: "a group",
@@ -33,7 +33,7 @@ class Terms
       kids_note: "Keep date of birth, notes, email and phone private. Only an organizer and this person can see them.",
       person_link_label: "Who is this in the people list?", person_col: "Listed as", no_tree_link: "not linked to a person yet",
       listed_no_account: "On the people list, no account yet", everyone_listed: "Everyone on the people list has an account.",
-      tree: false
+      people_title: "Committee and invitees", people_nav: "Committee & invitees", tree: false
     }
   }.freeze
 

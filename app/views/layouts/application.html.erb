@@ -16,7 +16,7 @@
       <% if current_family %>
         <nav class="nav">
           <% if terms.tree? %><a href="<%= tree_path %>">Tree</a><% end %>
-          <a href="<%= people_path %>">People</a>
+          <a href="<%= people_path %>"><%= terms.people_nav %></a>
           <a href="<%= households_path %>"><%= terms.Parties %></a>
           <a href="<%= directory_path %>">Who's here</a>
           <a href="<%= reunions_path %>"><%= terms.Events %></a>
