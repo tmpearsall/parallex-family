@@ -23,7 +23,7 @@ h1 { font-size:1.8rem; line-height:1.25; margin:.2em 0 .4em; text-wrap:balance; 
 form.stack, .auth { display:flex; flex-direction:column; gap:10px; max-width:560px; margin:14px 0 22px; font:14px system-ui,sans-serif; }
 .row { display:flex; flex-wrap:wrap; gap:10px 14px; align-items:flex-end; margin:10px 0; font:14px system-ui,sans-serif; }
 label { display:flex; flex-direction:column; gap:4px; color:var(--mut); } label.chk { flex-direction:row; align-items:center; gap:8px; }
-input[type=text], input[type=email], input[type=password], input[type=date], input[type=number], textarea, select { font:16px/1.4 Georgia,serif; padding:8px 10px; border:1px solid var(--rule); border-radius:8px; background:var(--card); color:var(--fg); width:100%; }
+input[type=text], input[type=email], input[type=password], input[type=date], input[type=number], input[type=tel], textarea, select { font:16px/1.4 Georgia,serif; padding:8px 10px; border:1px solid var(--rule); border-radius:8px; background:var(--card); color:var(--fg); width:100%; }
 input[type=submit], button.btn { background:var(--acc); color:var(--acc-fg); border:0; cursor:pointer; padding:8px 16px; border-radius:8px; font:600 14px system-ui,sans-serif; align-self:flex-start; }
 form.inline { display:inline; margin-left:8px; } form.inline button { background:none; border:0; color:var(--acc); cursor:pointer; font:13px system-ui,sans-serif; padding:0; }
 .treewrap { overflow:auto; border:1px solid var(--rule); border-radius:10px; background:var(--card); padding:12px; }

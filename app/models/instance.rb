@@ -19,5 +19,11 @@ module Instance
 
   def self.brand = ENV["BRAND"].to_s
 
-  def self.app_name = ENV.fetch("APP_NAME", "Family")
+  # On a dedicated site the name shown before anyone signs in is the family's own name, not a generic word.
+  def self.app_name
+    return ENV["APP_NAME"] if ENV["APP_NAME"].present?
+    (dedicated? && Family.find_by(slug: family_slug)&.name) || "Family"
+  rescue ActiveRecord::ActiveRecordError
+    "Family"
+  end
 end

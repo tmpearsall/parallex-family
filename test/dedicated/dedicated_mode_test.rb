@@ -107,4 +107,12 @@ class DedicatedModeTest < ActionDispatch::IntegrationTest
     text = mail.text_part&.body.to_s + mail.body.to_s
     assert_no_match(/parallex family/i, text)
   end
+
+  test "the sign-in page and its title carry the family's own name, not a generic word" do
+    f = family
+    get "/users/sign_in"
+    assert_response :success
+    assert_includes response.body, "<title>Sign in · #{f.name}</title>"
+    assert_includes response.body, ">#{f.name}</a>"
+  end
 end
