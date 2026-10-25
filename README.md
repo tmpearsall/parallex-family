@@ -57,3 +57,15 @@ copyable links, and the reminder scheduler stays off.
 - Organizers can export the list as a CSV and import one (`/people/import`): ten columns (First name, Last name, Phone,
   Email, Phone 2, Street 1, Street 2, City, State, Zip), only First name required. Import previews first, only adds
   (a matching email or name is skipped), makes no accounts and sends no email. Files over 1 MB or 500 rows are refused.
+
+## Surveys (2026-10-26)
+
+Organizers (Access page, or `/surveys`) write a survey of up to eight questions (pick one, pick any, short answer, long
+answer, suggest dates), preview exactly who gets it, and email it. Audiences: everyone with an account, everyone on the
+list who has an email, both, or only people who have not answered yet (a reminder). Everyone gets a personal link
+(`/s/<token>`, no login); only the SHA-256 digest of the token is stored, a reminder issues a fresh link and the old one
+stops working. Answers can be changed until the survey closes (a closing date, or Close now). Results show counts and
+written answers; "hide names" hides names in the results (the site still knows who answered, so reminders go only to those
+who have not). Suggested dates can be turned into proposed dates on a reunion. Anyone can stop surveys from the link in the
+email (`/s/<token>/stop`; stored per family and email, applies to people with or without accounts). Surveys and reminder
+messages share a cap of 60 emails a day per family. Questions cannot change after a survey is sent.

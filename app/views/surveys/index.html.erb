@@ -1,0 +1,8 @@
+<% content_for :title, "Surveys · #{current_family.name}" %>
+<h1>Surveys</h1>
+<p class="mut2">Ask a few questions and email a personal link to members and to people on the list who have no account. <a href="<%= new_survey_path %>">New survey</a></p>
+<% if @surveys.empty? %><p class="mut2">No surveys yet.</p><% else %>
+  <ul class="list"><% @surveys.each do |s| %>
+    <li><a href="<%= survey_path(s) %>"><%= s.title %></a> <span class="mut2">· <%= s.closed? ? "closed" : s.status %> · <%= s.response_count %> answered of <%= s.recipients.count %> asked</span></li>
+  <% end %></ul>
+<% end %>

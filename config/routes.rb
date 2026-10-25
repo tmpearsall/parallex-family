@@ -65,6 +65,12 @@ Rails.application.routes.draw do
 
     resources :announcements, only: [ :index, :new, :create ]
 
+    resources :surveys do
+      member { post :close; post :reopen }
+      resource :send, only: [ :new, :create ], controller: "survey_sends"
+      post "questions/:question_id/date_options" => "survey_date_options#create", as: :question_date_options
+    end
+
     post "members/test_email" => "members#test_email", as: :test_email
     resources :members, only: [ :index, :create, :update, :destroy ] do
       delete :revoke, on: :member
@@ -78,6 +84,12 @@ Rails.application.routes.draw do
     delete "board/:id"         => "board#destroy", as: :board_post
     patch  "board/:id/pin"     => "board#pin",     as: :board_pin
   end
+
+  # A survey's personal link and its opt-out (public, token only).
+  get   "s/:token"      => "survey_responses#show",   as: :survey_answer,  constraints: { token: /[\w-]+/ }
+  patch "s/:token"      => "survey_responses#update", constraints: { token: /[\w-]+/ }
+  get   "s/:token/stop" => "survey_stops#show",       as: :survey_stop,    constraints: { token: /[\w-]+/ }
+  post  "s/:token/stop" => "survey_stops#create",     constraints: { token: /[\w-]+/ }
 
   # Stop reminder emails (public, token only).
   get  "unsubscribe/:token" => "unsubscribes#show",   as: :unsubscribe, constraints: { token: /[\w-]+/ }

@@ -1,0 +1,42 @@
+<% content_for :title, "#{@survey.title} · #{current_family.name}" %>
+<p class="fine"><a href="<%= surveys_path %>">&larr; Surveys</a></p>
+<h1><%= @survey.title %></h1>
+<p class="mut2"><%= @survey.closed? ? "Closed" : @survey.status.capitalize %><%= " · answer by #{@survey.closes_on.strftime('%b %-d')}" if @survey.closes_on %> · <%= @summary.answered %> answered of <%= @summary.total %> asked<%= " · names hidden" if @survey.hide_names %></p>
+<%= simple_format(h(@survey.intro)) if @survey.intro.present? %>
+<p>
+  <% if @survey.draft? || !@survey.closed? %><a href="<%= new_survey_send_path(@survey) %>"><%= @survey.sent_count.positive? ? "Send or remind" : "Preview who gets it and send" %></a> · <% end %>
+  <a href="<%= edit_survey_path(@survey) %>">Edit</a>
+  <% if @survey.closed? %> · <%= button_to "Open again", reopen_survey_path(@survey), method: :post, class: "link", form: { class: "inline" } %>
+  <% elsif !@survey.draft? %> · <%= button_to "Close now", close_survey_path(@survey), method: :post, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Close this survey? Links will stop taking answers." } %><% end %>
+  · <%= button_to "Delete", survey_path(@survey), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Delete this survey and all its answers?" } %>
+</p>
+
+<% @summary.rows.each do |row| %>
+  <h2><%= row.question.prompt %> <span class="mut2">(<%= row.question.label %>)</span></h2>
+  <% if row.question.choice? %>
+    <ul class="list"><% row.counts.each do |opt, n| %><li><%= opt %> <span class="mut2">· <%= n %></span></li><% end %></ul>
+    <% unless @survey.hide_names %><p class="fine"><%= row.answers.map { |r, a| "#{@summary.name_for(r)}: #{a.choices.join(', ')}" }.to_sentence if row.answers.any? %></p><% end %>
+  <% elsif row.question.kind == "dates" %>
+    <% if row.counts.empty? %><p class="mut2">No dates suggested yet.</p><% else %>
+      <ul class="list"><% row.counts.each do |d, n| %><li><%= Date.iso8601(d).strftime("%A, %B %-d, %Y") %> <span class="mut2">· <%= n %> <%= 'person'.pluralize(n) %></span></li><% end %></ul>
+      <% notes = row.answers.map { |r, a| [ @summary.name_for(r), a.body ] }.select { |_, b| b.present? } %>
+      <% notes.each do |who, b| %><p class="fine"><%= who ? "#{who}: " : "" %><%= b %></p><% end %>
+      <% if current_family.reunions.any? %>
+        <%= form_with url: survey_question_date_options_path(@survey, row.question), class: "row" do |f| %>
+          <label>Make these proposed dates for <%= f.collection_select :reunion_id, current_family.reunions.order(created_at: :desc), :id, :title %></label>
+          <%= f.submit "Add as proposed dates" %>
+        <% end %>
+        <p class="fine">Adds up to the 10 most suggested dates; members can then vote on them.</p>
+      <% end %>
+    <% end %>
+  <% else %>
+    <% if row.answers.empty? %><p class="mut2">No answers yet.</p><% else %>
+      <ul class="list"><% row.answers.each do |r, a| %><li><%= a.body %><% if (n = @summary.name_for(r)) %> <span class="mut2">· <%= n %></span><% end %></li><% end %></ul>
+    <% end %>
+  <% end %>
+<% end %>
+
+<% unless @survey.hide_names %>
+  <% pending = @summary.pending_recipients %>
+  <% if pending.any? %><h2>Not answered yet</h2><p class="mut2"><%= pending.map { |r| r.name.presence || r.email }.to_sentence %></p><% end %>
+<% end %>

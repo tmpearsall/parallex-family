@@ -1,0 +1,9 @@
+<div style="font-family: Georgia, serif; font-size: 16px; line-height: 1.6; color: #2a1f27; max-width: 560px">
+  <p>Hi<%= " #{@recipient.name.to_s.split.first}" if @recipient.name.present? %>,</p>
+  <p><strong><%= @sender %></strong> would like your help with a few questions for <strong><%= @family.name %></strong>: <%= @survey.title %>.</p>
+  <%= simple_format(h(@survey.intro)) if @survey.intro.present? %>
+  <p><a href="<%= @url %>" style="display:inline-block; background:#8e2a6b; color:#ffffff; padding:10px 18px; border-radius:8px; text-decoration:none; font-family:Arial, sans-serif; font-weight:bold">Answer the questions</a></p>
+  <p style="font-size:14px; color:#756370">It is your own link, so there is no password. Or paste this into your browser:<br><span style="word-break:break-all"><%= @url %></span></p>
+  <% if @survey.closes_on %><p style="font-size:14px">Please answer by <%= @survey.closes_on.strftime("%A, %B %-d") %>.</p><% end %>
+  <p style="font-size:14px; color:#756370">You can change your answers later with the same link until the survey closes. Reply to this email to reach <%= @sender %>. <a href="<%= @stop_url %>" style="color:#756370">Stop getting surveys from <%= @family.name %></a>.</p>
+</div>

@@ -1,0 +1,29 @@
+<% content_for :title, "#{@survey.title} · #{@family.name}" %>
+<h1><%= @survey.title %></h1>
+<p class="mut2"><%= @family.name %><%= " · answer by #{@survey.closes_on.strftime('%A, %B %-d')}" if @survey.closes_on %></p>
+<%= simple_format(h(@survey.intro)) if @survey.intro.present? %>
+<% if flash[:alert].present? %><p class="flash bad"><%= flash[:alert] %></p><% end %>
+<%= form_with url: survey_answer_path(token: params[:token]), method: :patch, class: "stack" do |f| %>
+  <% @survey.questions.each do |q| %>
+    <% a = @existing[q.id] %>
+    <fieldset class="stack"><legend><%= q.prompt %></legend>
+      <% case q.kind %>
+      <% when "single" %>
+        <% q.options.each do |o| %><label class="chk"><%= radio_button_tag "answers[#{q.id}]", o, a&.choices&.include?(o) %> <%= o %></label><% end %>
+      <% when "multi" %>
+        <% q.options.each do |o| %><label class="chk"><%= check_box_tag "answers[#{q.id}][]", o, a&.choices&.include?(o), id: "a#{q.id}_#{o.hash.abs}" %> <%= o %></label><% end %>
+      <% when "short" %>
+        <%= text_field_tag "answers[#{q.id}]", a&.body, maxlength: 300 %>
+      <% when "long" %>
+        <%= text_area_tag "answers[#{q.id}]", a&.body, rows: 4, maxlength: 2000 %>
+      <% when "dates" %>
+        <p class="fine">Pick up to five dates that work for you.</p>
+        <div class="row"><% 5.times do |i| %><%= date_field_tag "answers[#{q.id}][dates][]", a&.choices&.[](i) %><% end %></div>
+        <label>Anything to add (optional) <%= text_field_tag "answers[#{q.id}][note]", a&.body, maxlength: 300 %></label>
+      <% end %>
+    </fieldset>
+  <% end %>
+  <%= f.submit(@recipient.responded? ? "Save my changes" : "Send my answers") %>
+<% end %>
+<p class="fine">This is your own link. You can come back and change your answers until the survey closes.</p>
+<p class="fine"><a href="<%= survey_stop_path(token: params[:token]) %>">Stop getting surveys from <%= @family.name %></a></p>

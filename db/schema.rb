@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_26_110000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_26_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -250,6 +250,80 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_110000) do
     t.check_constraint "status::text = ANY (ARRAY['attending'::character varying::text, 'maybe'::character varying::text, 'not_attending'::character varying::text])", name: "rsvps_status"
   end
 
+  create_table "survey_answers", force: :cascade do |t|
+    t.bigint "survey_response_id", null: false
+    t.bigint "survey_question_id", null: false
+    t.text "body"
+    t.jsonb "choices", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_question_id"], name: "index_survey_answers_on_survey_question_id"
+    t.index ["survey_response_id", "survey_question_id"], name: "index_survey_answers_one_per_question", unique: true
+    t.index ["survey_response_id"], name: "index_survey_answers_on_survey_response_id"
+  end
+
+  create_table "survey_opt_outs", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.string "email", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "email"], name: "index_survey_opt_outs_on_family_id_and_email", unique: true
+    t.index ["family_id"], name: "index_survey_opt_outs_on_family_id"
+  end
+
+  create_table "survey_questions", force: :cascade do |t|
+    t.bigint "survey_id", null: false
+    t.integer "position", default: 0, null: false
+    t.string "kind", null: false
+    t.string "prompt", null: false
+    t.jsonb "options", default: [], null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_id"], name: "index_survey_questions_on_survey_id"
+  end
+
+  create_table "survey_recipients", force: :cascade do |t|
+    t.bigint "survey_id", null: false
+    t.bigint "person_id"
+    t.bigint "membership_id"
+    t.string "name"
+    t.string "email", null: false
+    t.string "token_digest", null: false
+    t.datetime "sent_at"
+    t.datetime "reminded_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["membership_id"], name: "index_survey_recipients_on_membership_id"
+    t.index ["person_id"], name: "index_survey_recipients_on_person_id"
+    t.index ["survey_id", "email"], name: "index_survey_recipients_on_survey_id_and_email", unique: true
+    t.index ["survey_id"], name: "index_survey_recipients_on_survey_id"
+    t.index ["token_digest"], name: "index_survey_recipients_on_token_digest", unique: true
+  end
+
+  create_table "survey_responses", force: :cascade do |t|
+    t.bigint "survey_id", null: false
+    t.bigint "survey_recipient_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["survey_id"], name: "index_survey_responses_on_survey_id"
+    t.index ["survey_recipient_id"], name: "index_survey_responses_on_survey_recipient_id", unique: true
+  end
+
+  create_table "surveys", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.bigint "created_by_id", null: false
+    t.bigint "reunion_id"
+    t.string "title", null: false
+    t.text "intro"
+    t.date "closes_on"
+    t.string "status", default: "draft", null: false
+    t.boolean "hide_names", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_surveys_on_created_by_id"
+    t.index ["family_id"], name: "index_surveys_on_family_id"
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.bigint "reunion_id", null: false
     t.string "title", null: false
@@ -313,6 +387,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_110000) do
   add_foreign_key "reunions", "families"
   add_foreign_key "rsvps", "households"
   add_foreign_key "rsvps", "reunions"
+  add_foreign_key "survey_answers", "survey_questions"
+  add_foreign_key "survey_answers", "survey_responses"
+  add_foreign_key "survey_opt_outs", "families"
+  add_foreign_key "survey_questions", "surveys"
+  add_foreign_key "survey_recipients", "memberships"
+  add_foreign_key "survey_recipients", "people"
+  add_foreign_key "survey_recipients", "surveys"
+  add_foreign_key "survey_responses", "survey_recipients"
+  add_foreign_key "survey_responses", "surveys"
+  add_foreign_key "surveys", "families"
+  add_foreign_key "surveys", "users", column: "created_by_id"
   add_foreign_key "tasks", "reunions"
   add_foreign_key "tasks", "users", column: "claimed_by_id"
 end

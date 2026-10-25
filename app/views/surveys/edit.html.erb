@@ -1,0 +1,4 @@
+<% content_for :title, "Edit survey · #{current_family.name}" %>
+<p class="fine"><a href="<%= survey_path(@survey) %>">&larr; <%= @survey.title %></a></p>
+<h1>Edit survey</h1>
+<%= render "form", survey: @survey, slots: @slots %>

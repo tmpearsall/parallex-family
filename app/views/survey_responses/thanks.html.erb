@@ -1,0 +1,4 @@
+<% content_for :title, "Thank you · #{@family.name}" %>
+<h1>Thank you</h1>
+<p>Your answers are saved. You can change them with the same link until the survey closes.</p>
+<p><a href="<%= survey_answer_path(token: params[:token]) %>">Look at my answers</a></p>

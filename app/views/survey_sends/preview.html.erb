@@ -1,0 +1,10 @@
+<% content_for :title, "Check before sending · #{current_family.name}" %>
+<h1>Check before sending</h1>
+<p>This goes to <strong><%= @recipients.size %></strong> <%= 'person'.pluralize(@recipients.size) %>:</p>
+<p class="mut2"><%= @recipients.map { |h| h[:name].presence || h[:email] }.to_sentence %></p>
+<%= form_with url: survey_send_path(@survey), class: "stack" do |f| %>
+  <%= hidden_field_tag :audience, @audience %>
+  <%= hidden_field_tag :confirm, "1" %>
+  <%= f.submit "Send it now" %>
+<% end %>
+<p class="fine"><a href="<%= new_survey_send_path(@survey) %>">Go back</a></p>

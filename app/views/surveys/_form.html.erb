@@ -1,0 +1,26 @@
+<%= form_with model: survey, url: (survey.persisted? ? survey_path(survey) : surveys_path), class: "stack" do |f| %>
+  <% if survey.errors.any? %><p class="flash bad"><%= survey.errors.full_messages.to_sentence %>.</p><% end %>
+  <label>Title <%= f.text_field :title, maxlength: 120, required: true, placeholder: "Which dates work for the reunion?" %></label>
+  <label>A line or two to open the email (optional) <%= f.text_area :intro, rows: 3, maxlength: 2000 %></label>
+  <div class="row">
+    <label>Answer by (optional) <%= f.date_field :closes_on %></label>
+    <label>Related <%= terms.event %> (optional) <%= f.collection_select :reunion_id, current_family.reunions.order(created_at: :desc), :id, :title, { include_blank: "(none)" } %></label>
+  </div>
+  <label class="chk"><%= f.check_box :hide_names %> Hide names in the results. The site still knows who has answered, so reminders go only to people who have not.</label>
+  <% if survey.draft? || survey.new_record? %>
+    <h2>Questions</h2>
+    <p class="fine">Fill in as many as you need (up to <%= Survey::MAX_QUESTIONS %>); blank ones are ignored. For "Pick one" and "Pick any", type one choice per line.</p>
+    <% slots.each_with_index do |q, i| %>
+      <fieldset class="stack"><legend>Question <%= i + 1 %></legend>
+        <div class="row">
+          <label>Question <%= text_field_tag "survey[questions][#{i}][prompt]", q[:prompt], maxlength: 200 %></label>
+          <label>Type <%= select_tag "survey[questions][#{i}][kind]", options_for_select(SurveyQuestion::KINDS.map { |k| [ SurveyQuestion.new(kind: k).label, k ] }, q[:kind]) %></label>
+        </div>
+        <label>Choices (for Pick one or Pick any) <%= text_area_tag "survey[questions][#{i}][options_text]", q[:options_text], rows: 3 %></label>
+      </fieldset>
+    <% end %>
+  <% else %>
+    <p class="fine">This survey has been sent, so its questions cannot change. You can still change the title, the closing date and the options above.</p>
+  <% end %>
+  <%= f.submit(survey.persisted? ? "Save" : "Save the survey") %>
+<% end %>

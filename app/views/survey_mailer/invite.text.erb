@@ -1,0 +1,15 @@
+Hi<%= " #{@recipient.name.to_s.split.first}" if @recipient.name.present? %>,
+
+<%= @sender %> would like your help with a few questions for <%= @family.name %>: <%= @survey.title %>.
+<% if @survey.intro.present? %>
+<%= @survey.intro %>
+<% end %>
+Answer here (it is your own link, no password needed):
+
+<%= @url %>
+<% if @survey.closes_on %>
+Please answer by <%= @survey.closes_on.strftime("%A, %B %-d") %>.
+<% end %>
+You can change your answers later using the same link until the survey closes. Reply to this email to reach <%= @sender %>.
+
+If you do not want to get surveys from <%= @family.name %>, use this link and no more will be sent: <%= @stop_url %>

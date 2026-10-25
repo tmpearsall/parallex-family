@@ -1,0 +1,4 @@
+<% content_for :title, "Stop surveys · #{@family.name}" %>
+<h1>Stop getting surveys?</h1>
+<p>No more surveys will be sent to <%= @recipient.email %> by <%= @family.name %>. You will still get any invitation or message you have already asked for.</p>
+<%= button_to "Yes, stop the surveys", survey_stop_path(token: params[:token]), method: :post %>

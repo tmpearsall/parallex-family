@@ -1,0 +1,9 @@
+<% content_for :title, "Send survey · #{current_family.name}" %>
+<p class="fine"><a href="<%= survey_path(@survey) %>">&larr; <%= @survey.title %></a></p>
+<h1>Send the survey</h1>
+<p class="mut2">Everyone gets their own link, with no password. You will see who gets it before anything is sent. People who opted out of surveys, and members who turned reminders off, are skipped. Reminders and surveys share a limit of <%= EmailBudget::DAILY_LIMIT %> emails a day (<%= EmailBudget.left(current_family) %> left).</p>
+<%= form_with url: survey_send_path(@survey), class: "stack" do |f| %>
+  <label>Who gets it <%= select_tag :audience, options_for_select(SurveyAudience::CHOICES.reject { |_, v| v == "unanswered" && @survey.sent_count.zero? }, @audience) %></label>
+  <%= f.submit "Preview who gets it" %>
+<% end %>
+<% if @survey.sent_count.positive? %><p class="fine">"Only people who have not answered yet" sends a reminder and gives each of them a fresh link; their old link stops working.</p><% end %>
