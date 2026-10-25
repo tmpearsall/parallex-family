@@ -38,7 +38,7 @@ class Terms
   }.freeze
 
   def self.for(kind) = new(kind)
-  def self.default = new("family")
+  def self.default = new(Instance.default_kind)
 
   def initialize(kind)
     @d = DATA.fetch(kind.to_s, DATA["family"])

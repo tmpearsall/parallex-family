@@ -1,7 +1,7 @@
-<% content_for :title, "Your families and groups" %>
-<h1>Your families and groups</h1>
+<% content_for :title, "Your #{Terms.default.group.pluralize}" %>
+<h1>Your <%= Terms.default.group.pluralize %></h1>
 <% if @memberships.empty? %>
-  <p>You are not in a group yet. Ask an organizer to invite you; they will give you a link.</p>
+  <p>You are not in <%= Terms.default.a_group %> yet. Ask an organizer to invite you; they will give you a link.</p>
 <% else %>
   <ul class="list"><% @memberships.each do |m| %>
     <li><a href="<%= family_home_path(family: m.family.slug) %>"><%= m.family.name %></a> <span class="mut2"><%= m.role %></span></li>

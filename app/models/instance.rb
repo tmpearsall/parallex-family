@@ -14,6 +14,9 @@ module Instance
   def self.product_name = ENV.fetch("PRODUCT_NAME", "Parallex Family")
 
   # Colour scheme: "parallex" is the Parallex LLC blue; anything else is the family reddish purple.
+  # What a workspace is when none is open: the commercial instance sells to organizations, a dedicated one is a family.
+  def self.default_kind = dedicated? ? "family" : "group"
+
   def self.brand = ENV["BRAND"].to_s
 
   def self.app_name = ENV.fetch("APP_NAME", "Family")
