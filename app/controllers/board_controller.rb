@@ -12,6 +12,7 @@ class BoardController < TenantController
   def create
     @topic = current_family.board_posts.new(params.require(:board_post).permit(:title, :body, :reunion_id).to_h.merge(user: current_user))
     if @topic.save
+      SlackNotifier.post(current_family, "forum", "New in the forum from #{SlackNotifier.esc(current_user.label)}: <#{SlackNotifier.link(board_topic_path(@topic))}|#{SlackNotifier.esc(@topic.title)}>")
       redirect_to board_topic_path(@topic), notice: "Posted."
     else
       @seen = current_membership.board_seen_at

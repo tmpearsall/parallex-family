@@ -126,4 +126,14 @@ class DedicatedModeTest < ActionDispatch::IntegrationTest
   ensure
     ENV.delete("MAIL_HOST")
   end
+
+  test "Slack is a commercial-site feature: not offered and not reachable on a dedicated site" do
+    u = member(role: "organizer", name: "Owner")
+    sign_in u
+    get "/slack"
+    assert_response :not_found
+    get "/admin"
+    assert_response :success
+    assert_no_match(%r{/slack}, response.body)
+  end
 end

@@ -85,3 +85,11 @@ and only organizers get the day-before reminder; anyone else gets a 404 for it. 
 weeks, every month) until a date; with no date it stops at the attached reunion if that has one, and otherwise after two
 years. A single date can be cancelled and brought back. Only organizers can make an event organizers-only or repeating.
 Reminder keys include the date, so a weekly meeting reminds every week.
+
+## Slack (2026-10-26, commercial site only)
+
+The owner pastes a Slack incoming-webhook address at Admin, Slack. It is stored encrypted (keyed from the app's secret),
+never shown again, and only `https://hooks.slack.com/services/...` is accepted. The site then posts, per switch:
+tomorrow's organizers' meetings, new forum topics, RSVP deadlines (3 and 1 days out), surveys closing tomorrow, and (off by
+default) that an organizer sent a reminder. Messages carry titles, times, counts and display names only. Daily items post
+once (`slack_posts`); a Slack failure never breaks a page or the daily run. Not available on a dedicated site.

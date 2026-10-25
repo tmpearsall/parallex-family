@@ -44,6 +44,9 @@ Rails.application.routes.draw do
       post :add_people, on: :member
     end
     get "admin" => "admin#show", as: :admin
+    resource :slack, only: [ :show, :update, :destroy ], controller: "slack_integrations" do
+      post :test
+    end
     get "help" => "help#show", as: :help
     get "directory" => "directory#show", as: :directory
     patch "my_reminders" => "directory#reminders", as: :my_reminders

@@ -15,6 +15,10 @@
     <p>Add many people at once from a CSV, or <a href="<%= export_people_path(format: :csv) %>">download everyone</a>.</p></div>
   <div class="card"><h2 style="margin-top:0"><a href="<%= new_event_path(meeting: 1, repeat: 'weekly', title: "Planning meeting") %>">Organizers' meetings</a></h2>
     <p>Schedule a meeting only organizers see, such as a standing weekly meeting to prepare for <%= terms.an_event %>. You can cancel a single date.</p></div>
+  <% unless Instance.dedicated? %>
+  <div class="card"><h2 style="margin-top:0"><a href="<%= slack_path %>">Slack</a></h2>
+    <p>Post meetings, forum topics and deadlines to a Slack channel. <%= current_family.slack_integration ? "Connected." : "Not connected." %></p></div>
+  <% end %>
   <div class="card"><h2 style="margin-top:0"><a href="<%= new_reunion_path %>">Plan <%= terms.an_event %></a></h2>
     <p>Start a new <%= terms.event %>, propose dates, set the RSVP deadline and the task list.</p></div>
   <div class="card"><h2 style="margin-top:0"><a href="<%= help_path %>">How the site works</a></h2>

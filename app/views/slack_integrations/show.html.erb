@@ -1,0 +1,36 @@
+<% content_for :title, "Slack · #{current_family.name}" %>
+<p class="fine"><a href="<%= admin_path %>">&larr; Admin</a></p>
+<h1>Slack</h1>
+<p class="mut2">Post short messages to one Slack channel: tomorrow's organizers' meetings, new forum topics, RSVP deadlines and surveys that are about to close. Messages carry titles, times, counts and display names only, never phone numbers, addresses, emails or what people wrote.</p>
+<% if @integration %>
+  <p><span class="tag pub">Connected</span> <%= @integration.last_status == "failed" ? "The last message to Slack failed. Send a test message, or make a new webhook." : (@integration.last_posted_at ? "Last message #{time_ago_in_words(@integration.last_posted_at)} ago." : "No messages yet.") %></p>
+<% else %>
+  <p><span class="tag dis">Not connected</span></p>
+<% end %>
+
+<% if owner? %>
+  <%= form_with scope: :slack, url: slack_path, method: :patch, class: "stack" do |f| %>
+    <label><%= @integration ? "New webhook address (leave blank to keep the saved one)" : "Slack webhook address" %>
+      <%= f.password_field :webhook_url, autocomplete: "off", placeholder: "https://hooks.slack.com/services/..." %></label>
+    <p class="fine">The address is stored encrypted and is never shown again. Anyone who has it can post to your channel, so treat it like a password.</p>
+    <% { notify_meetings: "Tomorrow's organizers' meetings", notify_forum: "New forum topics", notify_deadlines: "RSVP deadlines coming up", notify_surveys: "Surveys closing tomorrow", notify_messages: "Reminder messages organizers send (who sent it and how many, not the text)" }.each do |col, label| %>
+      <label class="chk"><%= check_box_tag "slack[#{col}]", "1", @integration ? @integration[col] : SlackIntegration.new[col] %> <%= label %></label>
+    <% end %>
+    <%= f.submit "Save" %>
+  <% end %>
+  <% if @integration %>
+    <div class="row">
+      <%= button_to "Send a test message", test_slack_path, method: :post, class: "link", form: { class: "inline" } %>
+      <%= button_to "Disconnect Slack", slack_path, method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Disconnect Slack and delete the saved address?" } %>
+    </div>
+  <% end %>
+  <h2>How to get the address from Slack</h2>
+  <ol>
+    <li>In Slack, open <strong>api.slack.com/apps</strong> and choose <em>Create New App</em>, then <em>From scratch</em>. Name it and pick your workspace.</li>
+    <li>Choose <em>Incoming Webhooks</em> and turn it on.</li>
+    <li>Choose <em>Add New Webhook to Workspace</em>, pick the channel, and allow it.</li>
+    <li>Copy the address that starts with <code>https://hooks.slack.com/services/</code> and paste it above.</li>
+  </ol>
+<% else %>
+  <p class="fine">Only the owner can connect, change or disconnect Slack.</p>
+<% end %>

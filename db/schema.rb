@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_26_140000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_26_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -268,6 +268,30 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_140000) do
     t.check_constraint "status::text = ANY (ARRAY['attending'::character varying::text, 'maybe'::character varying::text, 'not_attending'::character varying::text])", name: "rsvps_status"
   end
 
+  create_table "slack_integrations", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.text "webhook_ciphertext", null: false
+    t.boolean "notify_meetings", default: true, null: false
+    t.boolean "notify_forum", default: true, null: false
+    t.boolean "notify_surveys", default: true, null: false
+    t.boolean "notify_deadlines", default: true, null: false
+    t.boolean "notify_messages", default: false, null: false
+    t.string "last_status"
+    t.datetime "last_posted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id"], name: "index_slack_integrations_on_family_id", unique: true
+  end
+
+  create_table "slack_posts", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.string "item_key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "item_key"], name: "index_slack_posts_on_family_id_and_item_key", unique: true
+    t.index ["family_id"], name: "index_slack_posts_on_family_id"
+  end
+
   create_table "survey_answers", force: :cascade do |t|
     t.bigint "survey_response_id", null: false
     t.bigint "survey_question_id", null: false
@@ -407,6 +431,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_140000) do
   add_foreign_key "reunions", "families"
   add_foreign_key "rsvps", "households"
   add_foreign_key "rsvps", "reunions"
+  add_foreign_key "slack_integrations", "families"
+  add_foreign_key "slack_posts", "families"
   add_foreign_key "survey_answers", "survey_questions"
   add_foreign_key "survey_answers", "survey_responses"
   add_foreign_key "survey_opt_outs", "families"

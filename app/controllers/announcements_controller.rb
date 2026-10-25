@@ -33,6 +33,7 @@ class AnnouncementsController < TenantController
     @announcement.recipient_count = @recipients.size - failed
     @announcement.failed_count = failed
     @announcement.save!
+    SlackNotifier.post(current_family, "messages", "#{SlackNotifier.esc(current_user.label)} sent a reminder to #{@announcement.recipient_count} #{'person'.pluralize(@announcement.recipient_count)}#{": #{SlackNotifier.esc(@announcement.subject)}" if @announcement.subject}.")
     notice = "Sent to #{@announcement.recipient_count} #{'person'.pluralize(@announcement.recipient_count)}."
     notice += " #{failed} failed; check the Email section on the Access page." if failed.positive?
     redirect_to announcements_path, notice: notice

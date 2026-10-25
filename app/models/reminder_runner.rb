@@ -38,6 +38,7 @@ class ReminderRunner
         totals[:failed] += 1
       end
     end
+    SlackDigest.new(today: @today).run unless Instance.dedicated?
     totals
   end
 
