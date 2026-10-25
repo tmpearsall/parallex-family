@@ -43,6 +43,7 @@ Rails.application.routes.draw do
     resources :households, except: :destroy do
       post :add_people, on: :member
     end
+    get "help" => "help#show", as: :help
     get "directory" => "directory#show", as: :directory
     patch "my_reminders" => "directory#reminders", as: :my_reminders
 

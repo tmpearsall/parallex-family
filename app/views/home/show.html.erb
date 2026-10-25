@@ -1,4 +1,15 @@
 <% content_for :title, current_family&.name || Instance.app_name %>
+<% if @steps.present? && @steps.any? { |st| !st[:done] } %>
+  <div class="card">
+    <h2 style="margin-top:0">Getting started</h2>
+    <ul class="list">
+      <% @steps.each do |st| %>
+        <li><%= st[:done] ? "✓" : "○" %> <strong><%= st[:text] %></strong><% unless st[:done] %> <span class="mut2">· <%= st[:hint] %></span> <a href="<%= st[:path] %>"><%= st[:link] %></a><% end %></li>
+      <% end %>
+    </ul>
+    <p class="fine">Not sure what something does? <a href="<%= help_path %>">How this site works</a>.</p>
+  </div>
+<% end %>
 <% if @reunion %>
   <h1><%= @reunion.title %></h1>
   <p class="mut2">

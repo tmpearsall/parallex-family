@@ -1,0 +1,49 @@
+<% content_for :title, "How this site works · #{current_family.name}" %>
+<h1>How this site works</h1>
+<p class="mut2">A short guide. Everything here can be changed later, and nothing you add is public: only people who were invited can see this site.</p>
+
+<h2>Your first five minutes</h2>
+<ol>
+  <li><strong>Find yourself.</strong> Open <a href="<%= people_path %>">People</a>, click your name, and press <em>This is me</em>. That connects your login to your entry so the site knows which <%= terms.party %> is yours.</li>
+  <li><strong>Add your phone and mailing address.</strong> On your own page choose <em>Edit</em>. Fill in the phone numbers and the <em>Mailing address</em> section. The mailing address is where you get mail: a campus box or a different address from your <%= terms.party %> is fine. It belongs to you, not to your <%= terms.party %>.</li>
+  <li><strong>Add the people close to you.</strong> See <em>Adding people</em> below.</li>
+  <li><strong>Answer the RSVP and vote on dates</strong> when a <%= terms.event %> is planned. The Home page shows what is waiting for you.</li>
+</ol>
+
+<h2>Updating your information</h2>
+<ul>
+  <li><strong>Your contact details and address:</strong> People &rarr; your name &rarr; <em>Edit</em>.</li>
+  <li><strong>The name other people see next to your messages:</strong> click your name at the top right of any page.</li>
+  <li><strong>Keep something private:</strong> on <em>Edit</em>, tick the box at the bottom. Then only an organizer and that person can see their date of birth, notes, email, phone numbers and address.</li>
+</ul>
+
+<h2>Adding people</h2>
+<ul>
+  <li><strong>Someone new:</strong> People &rarr; <em>Add a person</em>. You only need a first name.<% if terms.tree? %> To connect them to your family tree, open a person you already added and use <em>Add a parent</em>, <em>Add a partner</em> or <em>Add a child</em>.<% end %></li>
+  <li><strong>They do not need an account to be on the list.</strong> A child, a grandparent or anyone who will not log in can still be added, connected and counted.</li>
+  <li><strong><%= terms.Parties %>:</strong> a <%= terms.party %> answers the RSVP together. Add people to a <%= terms.party %> from the <%= terms.Parties %> page.</li>
+  <% if terms.tree? %><li><strong>The tree:</strong> the Tree page draws everyone you have connected.</li><% end %>
+</ul>
+
+<h2>Reunions, dates, tasks and the board</h2>
+<ul>
+  <li><strong><%= terms.Events %>:</strong> open one to see the plan. When the dates are still being decided, <em>Vote</em> for every date that works for you.</li>
+  <li><strong>RSVP:</strong> answer once for your <%= terms.party %>: how many adults and children, and any notes about food or a place to stay.</li>
+  <li><strong>Tasks:</strong> claim something you can do. It shows who is handling what.</li>
+  <li><strong>Calendar:</strong> every date in one place, with a link that adds it to your phone's calendar.</li>
+  <li><strong>Board:</strong> a place to talk. Start a topic or reply.</li>
+  <li><strong>Reminders:</strong> you get at most one email a day, only when something needs you. Turn them off on <a href="<%= directory_path %>">Members</a>.</li>
+</ul>
+
+<% if organizer? %>
+<h2>For organizers</h2>
+<ul>
+  <li><strong>Invite someone to log in:</strong> <a href="<%= members_path %>">Access</a>. Enter their email. If they are already in People, choose their name. If not, use <em>Not in the list? Add them here</em>.</li>
+  <li><strong>Send a reminder to everyone:</strong> <a href="<%= new_announcement_path %>">Send a reminder</a>. You see who gets it before anything is sent.</li>
+  <li><strong>Add many people at once:</strong> <a href="<%= import_people_path %>">Import from a spreadsheet</a>. Columns: First name, Last name, Phone, Email, Phone 2, Street 1, Street 2, City, State, Zip. You see a preview first, and anyone already on the list is skipped.</li>
+  <li><strong>Download everyone:</strong> <a href="<%= export_people_path(format: :csv) %>">Download as a CSV</a>.</li>
+</ul>
+<% end %>
+
+<h2>Stuck?</h2>
+<p>Ask an organizer. They can see this same guide and can add or fix anything for you.</p>
