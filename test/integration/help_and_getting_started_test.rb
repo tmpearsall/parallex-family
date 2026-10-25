@@ -46,6 +46,14 @@ class HelpAndGettingStartedTest < ActionDispatch::IntegrationTest
     assert_not_includes response.body, "Getting started"
   end
 
+  test "organizers see Surveys in the navigation and members do not" do
+    get "/f/help-test"
+    assert_not_includes response.body, "/f/help-test/surveys"
+    @m.update!(role: "organizer")
+    get "/f/help-test"
+    assert_includes response.body, "/f/help-test/surveys"
+  end
+
   test "the help link is in the navigation" do
     get "/f/help-test"
     assert_includes response.body, "/f/help-test/help"
