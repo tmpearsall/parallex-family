@@ -1,6 +1,6 @@
-<% content_for :title, "Board · Family" %>
+<% content_for :title, "Board · #{current_family&.name || Instance.app_name}" %>
 <h1>Board</h1>
-<p class="mut2">For planning questions, ideas, and anything the family should see. Everyone here sees the display name you chose, never your email.</p>
+<p class="mut2">For planning questions, ideas, and anything <%= terms.the_people %> should see. Everyone here sees the display name you chose, never your email.</p>
 <%= form_with model: @topic, url: board_path, class: "stack" do |f| %>
   <% if @topic.errors.any? %><p class="flash bad"><%= @topic.errors.full_messages.to_sentence %>.</p><% end %>
   <label>Topic <%= f.text_field :title, maxlength: 120, required: true, placeholder: "Who has a house big enough for the cookout?" %></label>

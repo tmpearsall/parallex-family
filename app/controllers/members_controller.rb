@@ -65,10 +65,10 @@ class MembersController < TenantController
   def destroy
     m = current_family.memberships.find(params[:id])
     if m.organizer? && !current_family.memberships.where(role: "organizer").where.not(id: m.id).exists?
-      return redirect_to(members_path, alert: "A family needs at least one organizer.")
+      return redirect_to(members_path, alert: "A #{terms.group} needs at least one organizer.")
     end
     m.destroy
-    redirect_to members_path, notice: "Removed from the family."
+    redirect_to members_path, notice: "Removed from the #{terms.group}."
   end
 
   def revoke

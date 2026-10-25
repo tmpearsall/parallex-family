@@ -1,4 +1,4 @@
-<% content_for :title, "Family" %>
+<% content_for :title, current_family&.name || Instance.app_name %>
 <% if @reunion %>
   <h1><%= @reunion.title %></h1>
   <p class="mut2">
@@ -6,11 +6,11 @@
     <% if @reunion.location_name.present? %>&middot; <%= @reunion.location_name %><% end %>
   </p>
   <div class="grid">
-    <div class="card"><div class="stat"><%= @headcount[:adults] + @headcount[:children] %></div><div class="statl">people coming (<%= @headcount[:adults] %> adults, <%= @headcount[:children] %> children) from <%= pluralize(@headcount[:households], "household") %></div></div>
-    <div class="card"><div class="stat"><%= @headcount[:maybe_households] %></div><div class="statl">households maybe &middot; <%= @headcount[:declined] %> can't come</div></div>
+    <div class="card"><div class="stat"><%= @headcount[:adults] + @headcount[:children] %></div><div class="statl">people coming (<%= @headcount[:adults] %> adults, <%= @headcount[:children] %> children) from <%= pluralize(@headcount[:households], terms.party) %></div></div>
+    <div class="card"><div class="stat"><%= @headcount[:maybe_households] %></div><div class="statl"><%= terms.parties %> maybe &middot; <%= @headcount[:declined] %> can't come</div></div>
   </div>
   <% if @my_household && @my_rsvp.nil? %>
-    <p class="card"><strong>Your household (<%= @my_household.name %>) has not answered yet.</strong> <a href="<%= reunion_path(@reunion) %>#rsvp">RSVP</a></p>
+    <p class="card"><strong>Your <%= terms.party %> (<%= @my_household.name %>) has not answered yet.</strong> <a href="<%= reunion_path(@reunion) %>#rsvp">RSVP</a></p>
   <% end %>
   <% if @unvoted.any? %>
     <p class="card">You have not voted on <%= pluralize(@unvoted.size, "proposed date") %>. <a href="<%= reunion_path(@reunion) %>#dates">Vote</a></p>
@@ -21,8 +21,8 @@
     <p class="fine"><a href="<%= reunion_path(@reunion) %>#tasks">All tasks</a></p>
   <% end %>
 <% else %>
-  <h1>Family</h1>
-  <p>No reunion is planned yet.<% if organizer? %> <a href="<%= new_reunion_path %>">Start one</a>.<% end %></p>
+  <h1><%= current_family.name %></h1>
+  <p>No <%= terms.event %> is planned yet.<% if organizer? %> <a href="<%= new_reunion_path %>">Start one</a>.<% end %></p>
 <% end %>
 
 <h2>From the board</h2>

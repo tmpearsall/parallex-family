@@ -1,4 +1,4 @@
-<% content_for :title, "Edit #{@person.display_name} · Family" %>
+<% content_for :title, "Edit #{@person.display_name} · #{current_family&.name || Instance.app_name}" %>
 <h1>Edit <%= @person.display_name %></h1>
 <%= render "form", person: @person %>
 <p class="fine"><a href="<%= person_path(@person) %>">&larr; Back</a></p>

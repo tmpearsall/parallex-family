@@ -19,7 +19,7 @@ class ReunionsController < TenantController
 
   def create
     @reunion = current_family.reunions.new(reunion_params.merge(created_by_id: current_user.id))
-    @reunion.save ? redirect_to(@reunion, notice: "Reunion created.") : render(:new, status: :unprocessable_entity)
+    @reunion.save ? redirect_to(@reunion, notice: "#{terms.Event} created.") : render(:new, status: :unprocessable_entity)
   end
 
   def edit; end

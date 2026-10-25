@@ -8,7 +8,7 @@ class Platform::FamiliesController < ApplicationController
   end
 
   def create
-    family = Family.new(params.require(:family).permit(:name, :slug))
+    family = Family.new(params.require(:family).permit(:name, :slug, :kind))
     email = params.dig(:family, :organizer_email).to_s.strip.downcase
     unless email.match?(/\A[^@\s]+@[^@\s]+\z/)
       return redirect_to(platform_families_path, alert: "Enter the organizer's email.")

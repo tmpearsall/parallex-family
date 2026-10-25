@@ -14,7 +14,7 @@ class PeopleController < TenantController
   def new
     @person = current_family.people.new(household_id: params[:household_id])
     @relate_to = current_family.people.find_by(id: params[:relate_to])
-    @as = params[:as] if %w[parent child partner].include?(params[:as])
+    @as = params[:as] if terms.tree? && %w[parent child partner].include?(params[:as])
     @person.last_name = @relate_to.last_name if @relate_to && @as == "child"
     @person.household_id ||= @relate_to&.household_id if @as == "partner" || @as == "child"
   end
@@ -22,7 +22,7 @@ class PeopleController < TenantController
   def create
     @person = current_family.people.new(person_params.merge(created_by_id: current_user.id, updated_by_id: current_user.id))
     @relate_to = current_family.people.find_by(id: params[:relate_to])
-    @as = params[:as] if %w[parent child partner].include?(params[:as])
+    @as = params[:as] if terms.tree? && %w[parent child partner].include?(params[:as])
     Person.transaction do
       @person.save!
       if @relate_to && @as

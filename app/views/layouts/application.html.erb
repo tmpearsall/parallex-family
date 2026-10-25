@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title><%= content_for(:title).presence || "Family" %></title>
+  <title><%= content_for(:title).presence || Instance.app_name %></title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
   <%= csrf_meta_tags %>
@@ -15,11 +15,11 @@
     <% if user_signed_in? %>
       <% if current_family %>
         <nav class="nav">
-          <a href="<%= tree_path %>">Tree</a>
+          <% if terms.tree? %><a href="<%= tree_path %>">Tree</a><% end %>
           <a href="<%= people_path %>">People</a>
-          <a href="<%= households_path %>">Households</a>
+          <a href="<%= households_path %>"><%= terms.Parties %></a>
           <a href="<%= directory_path %>">Who's here</a>
-          <a href="<%= reunions_path %>">Reunions</a>
+          <a href="<%= reunions_path %>"><%= terms.Events %></a>
           <a href="<%= calendar_path %>">Calendar</a>
           <% board_new = current_family.board_posts.where("created_at > ? and user_id <> ?", current_membership.board_seen_at || Time.at(0), current_user.id).count %>
           <a href="<%= board_path %>">Board<% if board_new > 0 %> <span class="tag dis"><%= board_new %> new</span><% end %></a>

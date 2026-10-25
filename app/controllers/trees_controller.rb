@@ -1,4 +1,5 @@
 class TreesController < TenantController
+  before_action :require_tree!
   def show
     tree = FamilyTree.new(current_family)
     @layout = tree.layout(params[:root])

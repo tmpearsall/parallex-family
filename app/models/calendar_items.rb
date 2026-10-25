@@ -22,8 +22,10 @@ class CalendarItems
     items.concat(reunions(from, to))
     items.concat(date_options(from, to))
     items.concat(deadlines(from, to))
-    items.concat(birthdays(from, to))
-    items.concat(anniversaries(from, to))
+    if @family.terms.birthdays?
+      items.concat(birthdays(from, to))
+      items.concat(anniversaries(from, to))
+    end
     items.sort_by { |i| [ i.on, KIND_ORDER[i.kind] || 9, i.title ] }
   end
 
@@ -31,6 +33,7 @@ class CalendarItems
 
   # Birthdays and anniversaries that repeat yearly, once each (for the subscription feed).
   def yearly_items
+    return [] unless @family.terms.birthdays?
     birthday_people.map { |p| Item.new(kind: "birthday", title: "#{p.first_name}'s birthday", on: p.birth_date, yearly: true, record: p) } +
       anniversary_pairs.map { |r| Item.new(kind: "anniversary", title: "#{r.from_person.first_name} & #{r.to_person.first_name}'s anniversary", on: r.started_on, yearly: true, record: r) }
   end

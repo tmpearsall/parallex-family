@@ -1,6 +1,6 @@
 Hi,
 
-<%= @inviter&.label || "A family organizer" %> invited you to <%= @family.name %> on Parallex Family, a private place for the family to plan a reunion together: the family tree, voting on dates, RSVPs, a list of what we need, a calendar and a message board.
+<%= @inviter&.label || "An organizer" %> invited you to <%= @family.name %> on <%= Instance.product_name %>, <%= @family.terms.intro %>.
 
 Use this one-time link to choose your name and password:
 
@@ -8,6 +8,6 @@ Use this one-time link to choose your name and password:
 
 The link works once and expires in 7 days. If it stops working, ask <%= @inviter&.label || "the organizer" %> for a new one.
 
-The site is invite-only and hidden from search engines. The family sees only the display name you choose; your email is shown only to the organizers.
+The site is invite-only and hidden from search engines. Other members see only the display name you choose; your email is shown only to the organizers.
 
 If you were not expecting this, you can ignore this message and nothing will happen.

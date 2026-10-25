@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_25_500000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_25_600000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -92,7 +92,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_500000) do
     t.bigint "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "kind", default: "family", null: false
     t.index ["slug"], name: "index_families_on_slug", unique: true
+    t.check_constraint "kind::text = ANY (ARRAY['family'::character varying, 'group'::character varying]::text[])", name: "families_kind"
   end
 
   create_table "households", force: :cascade do |t|

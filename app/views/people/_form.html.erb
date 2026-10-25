@@ -17,11 +17,11 @@
     <label>Work <%= f.text_field :occupation %></label>
   </div>
   <div class="row">
-    <label>Household <%= f.collection_select :household_id, Household.order(:name), :id, :name, { include_blank: "(none)" } %></label>
+    <label><%= terms.Party %> <%= f.collection_select :household_id, current_family.households.order(:name), :id, :name, { include_blank: "(none)" } %></label>
     <label>Email <%= f.email_field :email %></label>
     <label>Phone <%= f.telephone_field :phone, maxlength: 30, placeholder: "(555) 555-0123" %></label>
   </div>
   <label>Notes <%= f.text_area :notes, rows: 4, maxlength: 4000 %></label>
-  <label class="chk"><%= f.check_box :hide_details %> Keep date of birth, notes and email private (for a child). Only an administrator and this person can see them.</label>
+  <label class="chk"><%= f.check_box :hide_details %> <%= terms.kids_note %></label>
   <%= f.submit(person.new_record? ? "Add person" : "Save") %>
 <% end %>

@@ -1,14 +1,14 @@
 <% content_for :title, "Members · #{current_family.name}" %>
 <h1>Members</h1>
 <% if ApplicationMailer.configured? %>
-<p class="mut2">You are an organizer. Invite relatives here: each gets a one-time link (good for 7 days), emailed to them if you leave the box ticked, and shown here so you can copy it too. Paste several addresses to invite several people at once.</p>
+<p class="mut2">You are an organizer. Invite <%= terms.invitees %> here: each gets a one-time link (good for 7 days), emailed to them if you leave the box ticked, and shown here so you can copy it too. Paste several addresses to invite several people at once.</p>
 <% else %>
-<p class="mut2">You are an organizer. Invite relatives here: each gets a one-time link (good for 7 days) that you copy and send. Email sending is not connected yet (see Email below). Paste several addresses to make several links at once.</p>
+<p class="mut2">You are an organizer. Invite <%= terms.invitees %> here: each gets a one-time link (good for 7 days) that you copy and send. Email sending is not connected yet (see Email below). Paste several addresses to make several links at once.</p>
 <% end %>
 <%= form_with scope: :invite, url: members_path, class: "stack" do |f| %>
   <label>Email addresses (one or more) <%= f.text_area :emails, rows: 3, required: true, value: @prefill&.email, placeholder: "cousin@example.com, aunt@example.com" %></label>
   <div class="row">
-    <label>Who in the tree is this? (one email only) <%= f.collection_select :person_id, @people, :id, :display_name, { include_blank: "(not linked)", selected: @prefill&.id } %></label>
+    <label><%= terms.person_link_label %> (one email only) <%= f.collection_select :person_id, @people, :id, :display_name, { include_blank: "(not linked)", selected: @prefill&.id } %></label>
     <label>Role <%= f.select :role, [["Member", "member"], ["Organizer", "organizer"]] %></label>
   </div>
   <% if ApplicationMailer.configured? %>
@@ -31,18 +31,18 @@
   <p class="fine">Add the missing ones to this service in Render (directly, or through the shared environment group, which must be linked to this service). The site restarts when they change.</p>
 <% end %>
 
-<h2>Family name</h2>
+<h2><%= terms.Group %> name</h2>
 <%= form_with url: settings_path, method: :patch, class: "row" do |f| %>
   <label>Shown at the top of every page <%= f.text_field :name, value: current_family.name, maxlength: 80, required: true %></label><%= f.submit "Rename" %>
 <% end %>
 
-<h2>In this family</h2>
-<div class="scroll"><table class="t"><tr><th>Name</th><th>Email</th><th>In the tree as</th><th>Role</th><th></th></tr>
+<h2>In this <%= terms.group %></h2>
+<div class="scroll"><table class="t"><tr><th>Name</th><th>Email</th><th><%= terms.person_col %></th><th>Role</th><th></th></tr>
 <% @memberships.each do |m| %>
   <tr><td><%= m.user.label %></td><td><%= m.user.email %></td><td><%= m.person&.display_name %></td><td><%= m.role %></td>
     <td><% if m.user_id != current_user.id %>
       <%= button_to (m.organizer? ? "Make member" : "Make organizer"), member_path(m, role: (m.organizer? ? "member" : "organizer")), method: :patch, class: "link", form: { class: "inline" } %>
-      <%= button_to "Remove", member_path(m), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove #{m.user.label} from this family?" } %>
+      <%= button_to "Remove", member_path(m), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove #{m.user.label} from this #{terms.group}?" } %>
     <% end %></td></tr>
 <% end %></table></div>
 

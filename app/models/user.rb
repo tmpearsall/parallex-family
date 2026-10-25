@@ -20,7 +20,7 @@ class User < ApplicationRecord
     errors.add(:base, "Password needs #{PASSWORD_RULE}.") unless ok
   end
 
-  def label = name.presence || "A family member"
+  def label = name.presence || "A member"
   def organizer_of?(family) = memberships.exists?(family_id: family.id, role: "organizer")
 
   # A one-time link the person opens to set their own password. No email is sent; the administrator hands the

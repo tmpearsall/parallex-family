@@ -8,4 +8,10 @@
 module Instance
   def self.dedicated? = ENV["INSTANCE_MODE"] == "dedicated"
   def self.family_slug = ENV["DEDICATED_FAMILY_SLUG"].to_s
+
+  # Shown in browser tabs when no family is open (sign-in, set-password).
+  # The product's name in email copy.
+  def self.product_name = ENV.fetch("PRODUCT_NAME", "Parallex Family")
+
+  def self.app_name = ENV.fetch("APP_NAME", "Family")
 end

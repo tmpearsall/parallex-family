@@ -1,5 +1,5 @@
-<% content_for :title, "#{@reunion.title} · Family" %>
-<p class="fine"><a href="<%= reunions_path %>">&larr; Reunions</a><% if organizer? %> &middot; <a href="<%= edit_reunion_path(@reunion) %>">Edit</a><% end %></p>
+<% content_for :title, "#{@reunion.title} · #{current_family&.name || Instance.app_name}" %>
+<p class="fine"><a href="<%= reunions_path %>">&larr; <%= terms.Events %></a><% if organizer? %> &middot; <a href="<%= edit_reunion_path(@reunion) %>">Edit</a><% end %></p>
 <h1><%= @reunion.title %></h1>
 <p class="mut2">
   <%= @reunion.dated? ? [@reunion.starts_on.strftime("%A, %B %-d, %Y"), (@reunion.ends_on ? "to #{@reunion.ends_on.strftime('%B %-d')}" : nil)].compact.join(" ") : "Date not set yet" %>
@@ -27,11 +27,11 @@
 
 <h2 id="rsvp">Who is coming</h2>
 <div class="grid">
-  <div class="card"><div class="stat"><%= @headcount[:adults] + @headcount[:children] %></div><div class="statl"><%= @headcount[:adults] %> adults, <%= @headcount[:children] %> children, <%= pluralize(@headcount[:households], "household") %></div></div>
-  <div class="card"><div class="stat"><%= @waiting.size %></div><div class="statl">households have not answered<%= " · #{@headcount[:maybe_households]} maybe" if @headcount[:maybe_households] > 0 %></div></div>
+  <div class="card"><div class="stat"><%= @headcount[:adults] + @headcount[:children] %></div><div class="statl"><%= @headcount[:adults] %> adults, <%= @headcount[:children] %> children, <%= pluralize(@headcount[:households], terms.party) %></div></div>
+  <div class="card"><div class="stat"><%= @waiting.size %></div><div class="statl"><%= @waiting.size == 1 ? terms.party : terms.parties %> <%= @waiting.size == 1 ? "has" : "have" %> not answered<%= " · #{@headcount[:maybe_households]} maybe" if @headcount[:maybe_households] > 0 %></div></div>
 </div>
-<% if @households.empty? %><p class="mut2">Add households first; RSVPs are taken by household. <a href="<%= new_household_path %>">Add one</a>.</p><% else %>
-  <div class="scroll"><table class="t"><tr><th>Household</th><th>Answer</th><th>People</th><th>Needs</th><th>Answered by</th><th></th></tr>
+<% if @households.empty? %><p class="mut2">Add <%= terms.parties %> first; RSVPs are taken by <%= terms.party %>. <a href="<%= new_household_path %>">Add one</a>.</p><% else %>
+  <div class="scroll"><table class="t"><tr><th><%= terms.Party %></th><th>Answer</th><th>People</th><th>Needs</th><th>Answered by</th><th></th></tr>
   <% @households.each do |h| r = @rsvps[h.id] %>
     <tr><td><a href="<%= household_path(h) %>"><%= h.name %></a></td>
       <td><% if r %><span class="pill <%= r.status %>"><%= r.label %></span><% else %><span class="mut2">no answer</span><% end %></td>
@@ -40,9 +40,9 @@
       <td class="mut2"><%= r&.answered_by&.label %></td>
       <td><a href="#answer">answer</a></td></tr>
   <% end %></table></div>
-  <details id="answer" open><summary>Answer for a household</summary>
+  <details id="answer" open><summary>Answer for a <%= terms.party %></summary>
     <%= form_with url: reunion_rsvps_path(@reunion), scope: :rsvp, class: "stack" do |f| %>
-      <label>Household <%= f.collection_select :household_id, @households, :id, :name, { selected: @my_household&.id } %></label>
+      <label><%= terms.Party %> <%= f.collection_select :household_id, @households, :id, :name, { selected: @my_household&.id } %></label>
       <label>Answer <%= f.select :status, Rsvp::STATUSES.map { |s| [Rsvp::LABELS[s], s] } %></label>
       <div class="row"><label>Adults <%= f.number_field :adults, min: 0, max: 50, value: 0 %></label><label>Children <%= f.number_field :children, min: 0, max: 50, value: 0 %></label></div>
       <div class="row"><label>Arriving <%= f.date_field :arrival_on %></label><label>Leaving <%= f.date_field :departure_on %></label></div>
@@ -70,5 +70,5 @@
 <% end %>
 
 <h2>Board</h2>
-<% if @topics.empty? %><p class="mut2">No topics about this reunion yet.</p><% else %><ul class="list"><% @topics.each do |t| %><li><a href="<%= board_topic_path(t) %>"><%= t.title %></a></li><% end %></ul><% end %>
-<p class="fine"><a href="<%= board_path(reunion_id: @reunion.id) %>">Start a board topic about this reunion</a></p>
+<% if @topics.empty? %><p class="mut2">No topics about this <%= terms.event %> yet.</p><% else %><ul class="list"><% @topics.each do |t| %><li><a href="<%= board_topic_path(t) %>"><%= t.title %></a></li><% end %></ul><% end %>
+<p class="fine"><a href="<%= board_path(reunion_id: @reunion.id) %>">Start a board topic about this <%= terms.event %></a></p>

@@ -1,7 +1,7 @@
 <%= form_with model: household, class: "stack" do |f| %>
   <% if household.errors.any? %><p class="flash bad"><%= household.errors.full_messages.to_sentence %>.</p><% end %>
-  <div class="row"><label>Household name <%= f.text_field :name, required: true, placeholder: "The Rowes" %></label>
+  <div class="row"><label><%= terms.Party %> name <%= f.text_field :name, required: true, placeholder: terms.party_example %></label>
   <label>City <%= f.text_field :city %></label><label>State / region <%= f.text_field :region %></label></div>
   <label>Notes <%= f.text_area :notes, rows: 3 %></label>
-  <%= f.submit(household.new_record? ? "Add household" : "Save") %>
+  <%= f.submit(household.new_record? ? "Add #{terms.party}" : "Save") %>
 <% end %>

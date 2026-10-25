@@ -5,6 +5,11 @@ class TenantController < ApplicationController
 
   private
 
+  # The family tree, relationships, birthdays and anniversaries exist only in family workspaces.
+  def require_tree!
+    head :not_found unless current_family.terms.tree?
+  end
+
   def set_membership
     Current.membership = current_user.memberships.joins(:family).includes(:family).find_by!(families: { slug: params[:family] })
   end

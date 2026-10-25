@@ -1,17 +1,17 @@
-<% content_for :title, "#{@household.name} · Family" %>
-<p class="fine"><a href="<%= households_path %>">&larr; Households</a></p>
+<% content_for :title, "#{@household.name} · #{current_family&.name || Instance.app_name}" %>
+<p class="fine"><a href="<%= households_path %>">&larr; <%= terms.Parties %></a></p>
 <h1><%= @household.name %></h1>
 <p class="mut2"><%= @household.place %></p>
 <%= simple_format(h(@household.notes)) if @household.notes.present? %>
 <h2>People</h2>
 <ul class="list"><% @members.each do |p| %><li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <span class="mut2"><%= p.years if p.details_visible_to?(current_membership) %></span></li><% end %></ul>
-<% if @members.empty? %><p class="mut2">No one is in this household yet. Set a person's household when you add or edit them.</p><% end %>
+<% if @members.empty? %><p class="mut2">No one is in this <%= terms.party %> yet. Set a person's <%= terms.party %> when you add or edit them.</p><% end %>
 <p><a href="<%= new_person_path(household_id: @household.id) %>">Add one person with details</a> &middot; <a href="<%= edit_household_path(@household) %>">Edit</a></p>
 <h2>Add several people at once</h2>
 <%= form_with url: add_people_household_path(@household), class: "stack" do |f| %>
   <label>One name per line <%= f.text_area :names, rows: 5, placeholder: "Maya Thompson\nJordan Thompson\nSam" %></label>
   <div class="row"><label>Last name for lines with just a first name <%= f.text_field :default_last, placeholder: "Thompson" %></label>
-  <label class="chk"><%= f.check_box :children, value: "1" %> These are children (keep their dates, notes, email and phone private)</label></div>
+  <label class="chk"><%= f.check_box :children, value: "1" %> <%= terms.tree? ? "These are children (keep their dates, notes, email and phone private)" : "Keep their dates, notes, email and phone private" %></label></div>
   <%= f.submit "Add them" %>
 <% end %>
 <p class="fine">Added by <%= @household.creator&.label || "someone" %><% if @household.editor && @household.updated_at > @household.created_at + 1.minute %> · last changed by <%= @household.editor.label %> on <%= @household.updated_at.strftime("%b %-d, %Y") %><% end %></p>

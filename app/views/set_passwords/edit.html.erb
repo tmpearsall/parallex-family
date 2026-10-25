@@ -1,10 +1,10 @@
-<% content_for :title, "Set your password · Family" %>
+<% content_for :title, "Set your password · #{current_family&.name || Instance.app_name}" %>
 <h1>Set your password</h1>
 <form class="auth" method="post" action="<%= set_password_path(params[:token]) %>">
   <input type="hidden" name="_method" value="patch">
   <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
   <label>Email</label><input type="email" value="<%= @user.email %>" disabled>
-  <label for="name">Display name <span class="fine">(what the family sees; you can change it later)</span></label><input id="name" type="text" name="name" value="<%= @user.name %>" maxlength="60" required autocomplete="nickname">
+  <label for="name">Display name <span class="fine">(what other members see; you can change it later)</span></label><input id="name" type="text" name="name" value="<%= @user.name %>" maxlength="60" required autocomplete="nickname">
   <label for="password">New password</label><input id="password" type="password" name="password" autocomplete="new-password" required minlength="8">
   <label for="pc">Confirm</label><input id="pc" type="password" name="password_confirmation" autocomplete="new-password" required minlength="8">
   <label class="chk"><input type="checkbox" id="show"> Show what I type</label>

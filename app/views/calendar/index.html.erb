@@ -5,9 +5,9 @@
     &nbsp; <strong style="font-size:1.2rem"><%= @first.strftime("%B %Y") %></strong> &nbsp;
     <a href="<%= calendar_path(month: (@first + 1.month).strftime('%Y-%m')) %>"><%= (@first + 1.month).strftime("%b") %> &rarr;</a>
     <% unless @first == Date.current.beginning_of_month %> &nbsp;·&nbsp; <a href="<%= calendar_path %>">Today</a><% end %></div>
-  <a class="btn" href="<%= new_event_path %>" style="padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--acc-fg);text-decoration:none;font:600 14px system-ui,sans-serif">Add an event</a>
+  <a class="btn" href="<%= new_event_path %>" style="padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--acc-fg);text-decoration:none;font:600 14px system-ui,sans-serif">Add <%= terms.an_entry %></a>
 </div>
-<p class="fine">Reunions, dates people are voting on (marked proposed), RSVP deadlines, family events, birthdays and anniversaries. Birthdays of people whose details are private are never shown.</p>
+<p class="fine"><%= terms.Events %>, dates people are voting on (marked proposed), RSVP deadlines, <%= terms.group %> events<%= terms.birthdays? ? ", birthdays and anniversaries. Birthdays of people whose details are private are never shown" : "" %>.</p>
 
 <div class="cal-grid scroll">
   <table class="t cal">
@@ -38,6 +38,6 @@
 <% end %>
 
 <h2>Put it on your phone</h2>
-<p class="fine">Subscribe in Apple Calendar, Google Calendar or Outlook with this private address, and the family's dates appear alongside your own and stay current. It is only for you: anyone who has it can read this family's calendar, so don't post it. If it gets out, make a new one and the old one stops working.</p>
+<p class="fine">Subscribe in Apple Calendar, Google Calendar or Outlook with this private address, and the <%= terms.group %>'s dates appear alongside your own and stay current. It is only for you: anyone who has it can read this <%= terms.group %>'s calendar, so don't post it. If it gets out, make a new one and the old one stops working.</p>
 <p class="card" style="word-break:break-all"><strong><%= @feed_url %></strong></p>
 <%= button_to "Make a new address (the old one stops working)", calendar_reset_link_path, method: :post, class: "link", data: { turbo_confirm: "The old subscription address will stop working. Continue?" } %>

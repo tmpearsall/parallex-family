@@ -1,4 +1,4 @@
-<% content_for :title, "#{@person.display_name} · Family" %>
+<% content_for :title, "#{@person.display_name} · #{current_family&.name || Instance.app_name}" %>
 <p class="fine"><a href="<%= people_path %>">&larr; People</a></p>
 <h1><%= @person.display_name %> <% if @person.nickname %><span class="mut2">(<%= @person.nickname %>)</span><% end %></h1>
 <p class="mut2">
@@ -7,7 +7,7 @@
   <%= "· née #{@person.maiden_name}" if @person.maiden_name.present? %>
 </p>
 <% if @person.occupation.present? %><p><%= @person.occupation %></p><% end %>
-<% if @person.household %><p>Household: <a href="<%= household_path(@person.household) %>"><%= @person.household.name %></a><%= " · #{@person.household.place}" if @person.household.place %></p><% end %>
+<% if @person.household %><p><%= terms.Party %>: <a href="<%= household_path(@person.household) %>"><%= @person.household.name %></a><%= " · #{@person.household.place}" if @person.household.place %></p><% end %>
 <% if @visible && (@person.email.present? || @person.phone.present?) %><p class="mut2"><%= "Phone: #{@person.phone}" if @person.phone.present? %><%= " · " if @person.phone.present? && @person.email.present? %><%= "Email: #{@person.email}" if @person.email.present? %></p><% end %>
 <% has_account = @person.memberships.exists? %>
 <p class="mut2">
@@ -18,6 +18,7 @@
 </p>
 <% if @visible && @person.notes.present? %><div class="card"><%= simple_format(h(@person.notes)) %></div><% end %>
 
+<% if terms.tree? %>
 <% { "Parents" => @person.parent_links.includes(:from_person), "Partners" => (@person.partner_out.includes(:to_person) + @person.partner_in.includes(:from_person)), "Children" => @person.child_links.includes(:to_person) }.each do |label, rels| %>
   <h2><%= label %></h2>
   <% if rels.empty? %><p class="mut2">None recorded.</p><% else %>
@@ -40,6 +41,7 @@
   <%= f.submit "Link" %>
 <% end %>
 <p class="fine">Or add someone new: <a href="<%= new_person_path(relate_to: @person.id, as: 'parent') %>">a parent</a> &middot; <a href="<%= new_person_path(relate_to: @person.id, as: 'partner') %>">a partner</a> &middot; <a href="<%= new_person_path(relate_to: @person.id, as: 'child') %>">a child</a></p>
+<% end %>
 <% if organizer? %><p class="fine"><a href="<%= members_path(person_id: @person.id) %>">Invite <%= @person.first_name %> to this site</a></p><% end %>
 <p><a href="<%= edit_person_path(@person) %>">Edit</a>
   <% if @person.removable_by?(current_membership) %> · <%= button_to "Delete person", person_path(@person), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Delete #{@person.display_name} and all their links?" } %><% else %> <span class="mut2">· To remove this person, ask an organizer. (You can remove someone you added yourself for 48 hours.)</span><% end %></p>

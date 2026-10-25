@@ -1,4 +1,5 @@
 class RelationshipsController < TenantController
+  before_action :require_tree!
   def create
     me = current_family.people.find(params[:person_id])
     other = current_family.people.find_by(id: params.dig(:relationship, :other_id))

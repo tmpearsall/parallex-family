@@ -13,6 +13,8 @@ class Family < ApplicationRecord
   has_many :email_deliveries, dependent: :destroy
   has_many :board_posts, dependent: :destroy
 
+  KINDS = %w[family group].freeze
+  validates :kind, inclusion: { in: KINDS }
   validates :name, presence: true, length: { maximum: 80 }
   validates :slug, presence: true, length: { maximum: 40 }, format: { with: /\A[a-z0-9]+(-[a-z0-9]+)*\z/ },
                    uniqueness: true, exclusion: { in: RESERVED }
@@ -21,5 +23,6 @@ class Family < ApplicationRecord
     self.slug = slug.to_s.strip.downcase.presence || name.to_s.parameterize
   end
 
+  def terms = Terms.for(kind)
   def to_param = slug
 end

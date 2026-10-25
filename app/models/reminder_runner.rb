@@ -75,7 +75,7 @@ class ReminderRunner
     return [] unless RSVP_OFFSETS.include?(days)
     answered = household && r.rsvps.any? { |x| x.household_id == household.id }
     return [] if answered
-    who = household ? "#{household.name} hasn't answered yet" : "Please answer for your household"
+    who = household ? "#{household.name} hasn't answered yet" : "Please answer for your #{m.family.terms.party}"
     when_ = days.zero? ? "today is the last day" : "#{days} #{'day'.pluralize(days)} left"
     [ Item.new(kind: "rsvp", key: "rsvp:#{r.id}:#{days}", text: "#{r.title}: #{who} (#{when_}, by #{r.rsvp_by.strftime('%b %-d')}).",
                url: url(m, :reunion_url, r) + "#answer", link_label: "Answer now") ]
@@ -85,7 +85,7 @@ class ReminderRunner
     return [] unless r.starts_on.nil? && r.date_options.any? && r.created_at <= @today.to_time - 2.days
     voted = DateVote.where(user_id: m.user_id, date_option_id: r.date_options.map(&:id)).exists?
     return [] if voted
-    [ Item.new(kind: "vote", key: "vote:#{r.id}:#{@today.cwyear}-#{@today.cweek}", text: "#{r.title}: vote on the proposed dates so the family can pick one.",
+    [ Item.new(kind: "vote", key: "vote:#{r.id}:#{@today.cwyear}-#{@today.cweek}", text: "#{r.title}: vote on the proposed dates so #{m.family.terms.the_people} can pick one.",
                url: url(m, :reunion_url, r) + "#dates", link_label: "Vote") ]
   end
 

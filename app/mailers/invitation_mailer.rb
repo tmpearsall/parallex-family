@@ -5,7 +5,7 @@ class InvitationMailer < ApplicationMailer
     @family = @invitation.family
     @url = params[:url]
     @inviter = params[:inviter]
-    who = @inviter&.label || "A family organizer"
+    who = @inviter&.label || "An organizer"
     mail(to: @invitation.email, reply_to: @inviter&.email, subject: "#{who} invited you to #{@family.name}")
   end
 end

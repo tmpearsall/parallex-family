@@ -1,4 +1,4 @@
-<% content_for :title, "Sign in · Family" %>
+<% content_for :title, "Sign in · #{current_family&.name || Instance.app_name}" %>
 <h1>Sign in</h1>
 <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "auth" }) do |f| %>
   <%= f.label :email %><%= f.email_field :email, autofocus: true, autocomplete: "email" %>

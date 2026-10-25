@@ -6,5 +6,5 @@
 <%= simple_format(h(@event.notes)) if @event.notes.present? %>
 <p><a href="<%= edit_event_path(@event) %>">Edit</a>
   <% if @event.removable_by?(current_membership) %> · <%= button_to "Remove", event_path(@event), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove this event?" } %>
-  <% else %> <span class="mut2">· To remove it, ask an organizer. (You can remove an event you added for 48 hours.)</span><% end %></p>
+  <% else %> <span class="mut2">· To remove it, ask an organizer. (You can remove <%= terms.an_entry %> you added for 48 hours.)</span><% end %></p>
 <p class="fine">Added by <%= @event.creator&.label || "someone" %> on <%= @event.created_at.strftime("%b %-d, %Y") %><% if @event.editor && @event.updated_at > @event.created_at + 1.minute %> · last changed by <%= @event.editor.label %><% end %></p>

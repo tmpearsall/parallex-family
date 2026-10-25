@@ -1,10 +1,11 @@
 <% content_for :title, "Platform · Families" %>
 <h1>Platform</h1>
-<p class="mut2">Create a family and its first organizer's invitation. This page shows counts only, never a family's people, reunions or board.</p>
+<p class="mut2">Create a family or a group and its first organizer's invitation. This page shows counts only, never anyone's people, events or board.</p>
 <%= form_with scope: :family, url: platform_families_path, class: "stack" do |f| %>
-  <div class="row"><label>Family name <%= f.text_field :name, required: true, placeholder: "The Rowe Family" %></label><label>Short address <%= f.text_field :slug, placeholder: "rowe (optional)" %></label></div>
+  <div class="row"><label>Name <%= f.text_field :name, required: true, placeholder: "The Rowe Family" %></label><label>Short address <%= f.text_field :slug, placeholder: "rowe (optional)" %></label></div>
   <label>First organizer's email <%= f.email_field :organizer_email, required: true %></label>
-  <%= f.submit "Create family and invitation" %>
+  <label>Kind <%= f.select :kind, [["Group (board, company, church, HOA, committee)", "group"], ["Family (reunions, family tree)", "family"]] %></label>
+  <%= f.submit "Create it and its invitation" %>
 <% end %>
 <h2>Families</h2>
 <ul class="list"><% @families.each do |f| %><li><%= f.name %> <span class="mut2">/f/<%= f.slug %> · <%= pluralize(f.member_count, "member") %></span></li><% end %></ul>

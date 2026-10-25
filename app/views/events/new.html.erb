@@ -1,4 +1,4 @@
-<% content_for :title, "Add an event · #{current_family.name}" %>
-<h1>Add an event</h1>
+<% content_for :title, "Add #{terms.an_entry} · #{current_family.name}" %>
+<h1>Add <%= terms.an_entry %></h1>
 <%= render "form", event: @event %>
 <p class="fine"><a href="<%= calendar_path %>">&larr; Calendar</a></p>

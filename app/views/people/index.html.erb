@@ -1,4 +1,4 @@
-<% content_for :title, "People · Family" %>
+<% content_for :title, "People · #{current_family&.name || Instance.app_name}" %>
 <h1>People</h1>
 <form method="get" class="row"><label>Find <input type="text" name="q" value="<%= params[:q] %>" placeholder="Name"></label><input type="submit" value="Search"> <a class="btn" href="<%= new_person_path %>" style="padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--acc-fg);text-decoration:none;font:600 14px system-ui,sans-serif">Add a person</a></form>
 <ul class="list">

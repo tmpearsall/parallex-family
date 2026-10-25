@@ -1,4 +1,4 @@
-<% content_for :title, "Tree · Family" %>
+<% content_for :title, "Tree · #{current_family&.name || Instance.app_name}" %>
 <h1>Family tree</h1>
 <% if @layout.nodes.empty? %>
   <p>No one is in the tree yet. <a href="<%= new_person_path %>">Add the first person</a>, then add their children and partners from their page.</p>
