@@ -13,7 +13,7 @@ class ActiveSupport::TestCase
   # A user who belongs to a family (default: the test's family).
   def member(role: "member", fam: family, person: nil, **user_attrs)
     u = make_user(**user_attrs)
-    Membership.create!(family: fam, user: u, role: role, person: person)
+    Membership.create!(family: fam, user: u, role: role, person: person, owner: role == "organizer" && !fam.memberships.exists?(owner: true))   # the first organizer is the owner
     u
   end
 

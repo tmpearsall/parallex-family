@@ -8,6 +8,7 @@ class Family < ApplicationRecord
   has_many :households, dependent: :destroy
   has_many :people, dependent: :destroy
   has_many :announcements, dependent: :destroy
+  has_many :membership_events, dependent: :destroy
   has_many :surveys, dependent: :destroy
   has_many :survey_opt_outs, dependent: :destroy
   has_many :relationships, dependent: :destroy

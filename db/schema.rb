@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_26_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_26_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -147,6 +147,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_120000) do
     t.check_constraint "role::text = ANY (ARRAY['organizer'::character varying::text, 'member'::character varying::text])", name: "invitations_role"
   end
 
+  create_table "membership_events", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.bigint "actor_user_id"
+    t.string "kind", null: false
+    t.string "target_label", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["actor_user_id"], name: "index_membership_events_on_actor_user_id"
+    t.index ["family_id", "created_at"], name: "index_membership_events_on_family_id_and_created_at"
+    t.index ["family_id"], name: "index_membership_events_on_family_id"
+  end
+
   create_table "memberships", force: :cascade do |t|
     t.bigint "family_id", null: false
     t.bigint "user_id", null: false
@@ -158,9 +170,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_120000) do
     t.string "calendar_token"
     t.boolean "email_reminders", default: true, null: false
     t.string "unsubscribe_token"
+    t.boolean "owner", default: false, null: false
     t.index ["calendar_token"], name: "index_memberships_on_calendar_token", unique: true
     t.index ["family_id", "user_id"], name: "index_memberships_on_family_id_and_user_id", unique: true
     t.index ["family_id"], name: "index_memberships_on_family_id"
+    t.index ["family_id"], name: "index_memberships_one_owner_per_family", unique: true, where: "owner"
     t.index ["person_id"], name: "index_memberships_on_person_id"
     t.index ["unsubscribe_token"], name: "index_memberships_on_unsubscribe_token", unique: true
     t.index ["user_id"], name: "index_memberships_on_user_id"
@@ -376,6 +390,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_120000) do
   add_foreign_key "invitations", "families"
   add_foreign_key "invitations", "people"
   add_foreign_key "invitations", "users", column: "invited_by_id"
+  add_foreign_key "membership_events", "families"
+  add_foreign_key "membership_events", "users", column: "actor_user_id"
   add_foreign_key "memberships", "families"
   add_foreign_key "memberships", "people"
   add_foreign_key "memberships", "users"

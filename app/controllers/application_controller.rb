@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   # A private family site: never indexed.
   after_action { response.set_header("X-Robots-Tag", indexable? ? "index, follow" : "noindex, nofollow, noarchive") }
 
-  helper_method :indexable?, :current_membership, :current_family, :organizer?, :terms
+  helper_method :indexable?, :current_membership, :current_family, :organizer?, :owner?, :terms
 
   # Inside a family, every URL helper fills in /f/:family from the current family, so positional arguments are
   # the record ids (person_path(person)).
@@ -18,6 +18,7 @@ class ApplicationController < ActionController::Base
   def current_membership = Current.membership
   def current_family = Current.family
   def organizer? = current_membership&.organizer?
+  def owner? = current_membership&.owner?
   def terms = current_family&.terms || Terms.default
 
   def platform_admin_only!

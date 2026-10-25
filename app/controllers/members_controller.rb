@@ -8,6 +8,7 @@ class MembersController < TenantController
     @invitations = current_family.invitations.pending.includes(:person).order(created_at: :desc)
     @people = current_family.people.where.not(id: current_family.memberships.select(:person_id).where.not(person_id: nil)).by_name
     @prefill = current_family.people.find_by(id: params[:person_id])
+    @events = current_family.membership_events.includes(:actor_user).order(created_at: :desc).limit(15)
   end
 
   DAILY_INVITATION_LIMIT = 60
@@ -19,6 +20,7 @@ class MembersController < TenantController
     emails = params.dig(:invite, :emails).to_s.split(/[\s,;]+/).map(&:downcase).reject(&:blank?).uniq.first(40)
     person = current_family.people.find_by(id: params.dig(:invite, :person_id))
     role = Membership::ROLES.include?(params.dig(:invite, :role)) ? params.dig(:invite, :role) : "member"
+    return redirect_to(members_path, alert: "Only the owner can invite an organizer. You can invite members.") if role == "organizer" && !owner?
     return redirect_to(members_path, alert: "Enter at least one email address.") if emails.empty?
     if current_family.invitations.where("created_at > ?", 24.hours.ago).count + emails.size > DAILY_INVITATION_LIMIT
       return redirect_to(members_path, alert: "That is more than #{DAILY_INVITATION_LIMIT} invitations in a day. Try again tomorrow.")
@@ -30,6 +32,7 @@ class MembersController < TenantController
     end
     send_mail = params.dig(:invite, :send_email) == "1" && ApplicationMailer.configured?
     @results = emails.map { |email| invite_one(email, role, person, send_mail) }
+    @results.each { |email, url, problem, _| MembershipEvent.record!(family: current_family, actor: current_user, kind: "invited_organizer", target: email) if role == "organizer" && url && problem.nil? }
     @mail_on = send_mail
     render :links
   end
@@ -58,21 +61,51 @@ class MembersController < TenantController
     redirect_to members_path, alert: "The test email failed: #{e.message.to_s.truncate(200)}"
   end
 
+  # Only the owner changes who organizes. The owner's own role never changes here (transfer ownership first).
   def update
+    return redirect_to(members_path, alert: "Only the owner can change who organizes.") unless owner?
     m = current_family.memberships.find(params[:id])
     role = params[:role]
     return redirect_to(members_path, alert: "Unknown role.") unless Membership::ROLES.include?(role)
+    return redirect_to(members_path, alert: "The owner stays an organizer. Make someone else the owner first.") if m.owner?
     m.role = role
-    m.save ? redirect_to(members_path, notice: "Updated.") : redirect_to(members_path, alert: m.errors.full_messages.to_sentence)
+    if m.save
+      MembershipEvent.record!(family: current_family, actor: current_user, kind: role == "organizer" ? "made_organizer" : "made_member", target: m.user.label) if m.saved_change_to_role?
+      redirect_to members_path, notice: "Updated."
+    else
+      redirect_to members_path, alert: m.errors.full_messages.to_sentence
+    end
   end
 
+  # Any organizer can remove a member. Removing an organizer is the owner's call; the owner cannot be removed.
   def destroy
     m = current_family.memberships.find(params[:id])
+    return redirect_to(members_path, alert: "The owner cannot be removed. Make someone else the owner first.") if m.owner?
+    if m.organizer? && !owner? && m.id != current_membership.id
+      return redirect_to(members_path, alert: "Only the owner can remove an organizer.")
+    end
     if m.organizer? && !current_family.memberships.where(role: "organizer").where.not(id: m.id).exists?
       return redirect_to(members_path, alert: "A #{terms.group} needs at least one organizer.")
     end
+    was_organizer = m.organizer?
+    label = m.user.label
     m.destroy
+    MembershipEvent.record!(family: current_family, actor: current_user, kind: "removed_organizer", target: label) if was_organizer
     redirect_to members_path, notice: "Removed from the #{terms.group}."
+  end
+
+  # The owner hands ownership to another organizer; the previous owner stays an organizer.
+  def make_owner
+    return redirect_to(members_path, alert: "Only the owner can hand over ownership.") unless owner?
+    target = current_family.memberships.find(params[:id])
+    return redirect_to(members_path, alert: "Ownership goes to an organizer. Make them an organizer first.") unless target.organizer?
+    return redirect_to(members_path, alert: "They are already the owner.") if target.owner?
+    Membership.transaction do
+      current_membership.update!(owner: false)
+      target.update!(owner: true)
+    end
+    MembershipEvent.record!(family: current_family, actor: current_user, kind: "ownership_transferred", target: target.user.label)
+    redirect_to members_path, notice: "#{target.user.label} is now the owner."
   end
 
   def revoke

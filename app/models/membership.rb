@@ -8,8 +8,10 @@ class Membership < ApplicationRecord
   validates :user_id, uniqueness: { scope: :family_id }
   validate  :person_is_in_this_family
   validate  :family_keeps_an_organizer, on: :update
+  validate  :owner_stays_an_organizer
 
   def organizer? = role == "organizer"
+  def owner? = owner
 
   # A secret address for subscribing to this member's calendar from a phone or computer calendar app. Calendar apps
   # cannot sign in, so the token is the credential; it is shown only to this member and can be replaced.
@@ -29,6 +31,10 @@ class Membership < ApplicationRecord
 
   def person_is_in_this_family
     errors.add(:person, "belongs to a different family") if person && person.family_id != family_id
+  end
+
+  def owner_stays_an_organizer
+    errors.add(:base, "The owner has to be an organizer. Make someone else the owner first.") if owner && role != "organizer"
   end
 
   def family_keeps_an_organizer

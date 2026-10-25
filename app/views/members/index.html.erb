@@ -9,7 +9,7 @@
   <label>Email addresses (one or more) <%= f.text_area :emails, rows: 3, required: true, value: @prefill&.email, placeholder: "cousin@example.com, aunt@example.com" %></label>
   <div class="row">
     <label>Which person is this? (one email only) <%= f.collection_select :person_id, @people, :id, :display_name, { include_blank: "(not linked)", selected: @prefill&.id } %></label>
-    <label>Role <%= f.select :role, [["Member", "member"], ["Organizer", "organizer"]] %></label>
+    <label>Role <%= f.select :role, [["Member", "member"]] + (owner? ? [["Organizer", "organizer"]] : []) %></label>
   </div>
   <fieldset class="stack"><legend>Not in the list? Add them here</legend>
     <p class="fine">Type their name (one email only) and they are added as a person, so you don't have to leave this page.</p>
@@ -56,12 +56,21 @@
 <h2>In this <%= terms.group %></h2>
 <div class="scroll"><table class="t"><tr><th>Name</th><th>Email</th><th><%= terms.person_col %></th><th>Role</th><th></th></tr>
 <% @memberships.each do |m| %>
-  <tr><td><%= m.user.label %></td><td><%= m.user.email %></td><td><%= m.person&.display_name %></td><td><%= m.role %></td>
-    <td><% if m.user_id != current_user.id %>
-      <%= button_to (m.organizer? ? "Make member" : "Make organizer"), member_path(m, role: (m.organizer? ? "member" : "organizer")), method: :patch, class: "link", form: { class: "inline" } %>
-      <%= button_to "Remove", member_path(m), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove #{m.user.label} from this #{terms.group}?" } %>
+  <tr><td><%= m.user.label %><%= " (owner)" if m.owner? %></td><td><%= m.user.email %></td><td><%= m.person&.display_name %></td><td><%= m.owner? ? "owner" : m.role %></td>
+    <td><% if m.user_id != current_user.id && !m.owner? %>
+      <% if owner? %>
+        <%= button_to (m.organizer? ? "Make member" : "Make organizer"), member_path(m, role: (m.organizer? ? "member" : "organizer")), method: :patch, class: "link", form: { class: "inline" } %>
+        <% if m.organizer? %><%= button_to "Make owner", make_owner_member_path(m), method: :post, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Make #{m.user.label} the owner? You stay an organizer, but only the owner can add or remove organizers." } %><% end %>
+      <% end %>
+      <% if owner? || !m.organizer? %><%= button_to "Remove", member_path(m), method: :delete, class: "link", form: { class: "inline" }, data: { turbo_confirm: "Remove #{m.user.label} from this #{terms.group}?" } %><% end %>
     <% end %></td></tr>
 <% end %></table></div>
+
+<% if @events.any? %>
+<h2>Recent changes to who organizes</h2>
+<ul class="list"><% @events.each do |e| %><li><%= e.sentence %> <span class="mut2">· <%= e.created_at.strftime("%b %-d, %-l:%M %p") %></span></li><% end %></ul>
+<% end %>
+<% unless owner? %><p class="fine">Only the owner can add, promote or remove organizers. You can invite and remove members.</p><% end %>
 
 <h2>Waiting to accept</h2>
 <% if @invitations.empty? %><p class="mut2">No pending invitations.</p><% else %>

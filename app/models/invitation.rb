@@ -37,6 +37,7 @@ class Invitation < ApplicationRecord
       if m.new_record?
         m.role = role
         m.person = person
+        m.owner = true if role == "organizer" && !family.memberships.exists?(owner: true)   # the first organizer of a new workspace
         m.save!
       end
       update!(accepted_at: Time.current)

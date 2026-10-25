@@ -6,13 +6,16 @@ class MembershipTest < ActiveSupport::TestCase
     assert_not Membership.new(family: family, user: u).valid?
   end
 
-  test "the last organizer cannot be demoted" do
+  test "the last organizer cannot be demoted, and the owner cannot be demoted while owner" do
     boss = member(role: "organizer")
     m = boss.memberships.first
+    assert m.owner?
     m.role = "member"
     assert_not m.valid?
-    member(role: "organizer")
-    assert m.valid?
+    other = member(role: "organizer").memberships.first
+    assert_not m.valid?, "the owner still cannot be demoted"
+    other.role = "member"
+    assert other.valid?, "another organizer can be demoted while the owner remains"
   end
 
   test "a linked person must be in the same family" do

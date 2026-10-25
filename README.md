@@ -69,3 +69,11 @@ written answers; "hide names" hides names in the results (the site still knows w
 who have not). Suggested dates can be turned into proposed dates on a reunion. Anyone can stop surveys from the link in the
 email (`/s/<token>/stop`; stored per family and email, applies to people with or without accounts). Surveys and reminder
 messages share a cap of 60 emails a day per family. Questions cannot change after a survey is sent.
+
+## Who can organize (2026-10-26)
+
+Each workspace has one **owner** (`memberships.owner`, one per workspace by a database index): the first organizer of a new
+workspace, or whoever ownership is handed to. Only the owner can invite an organizer, promote a member, demote an organizer,
+remove an organizer, or hand ownership to another organizer (who must already be an organizer; the old owner stays one).
+The owner cannot be demoted or removed until ownership is transferred. Any organizer can invite and remove members. Every
+change is logged (`membership_events`), shown on the Access page, and emailed to every organizer.

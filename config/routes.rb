@@ -76,6 +76,7 @@ Rails.application.routes.draw do
     resources :members, only: [ :index, :create, :update, :destroy ] do
       delete :revoke, on: :member
       post :resend, on: :member
+      post :make_owner, on: :member
     end
 
     get    "forum"             => "board#index",   as: :board
