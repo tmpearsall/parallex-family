@@ -49,3 +49,7 @@ production:
   url: <%= ENV["DATABASE_URL"].presence || (ENV["RAILS_ENV"] == "production" && !ENV["SECRET_KEY_BASE_DUMMY"] ? raise("DATABASE_URL is not set: use the family_app role's pooled Supabase URL for the Parallex project") : nil) %>
   schema_search_path: "<%= ENV.fetch("DB_SCHEMA", "family_app") %>"   # NOT public: Parallex Advisory keeps its own schema_migrations there
   prepared_statements: false
+  # The Upton site and the commercial site share one database (separate schemas) and Rails' migration lock is keyed by the
+  # database, not the schema, so two deploys at once collided (ConcurrentMigrationError). Each service migrates only its
+  # own schema and runs one instance, and the transaction pooler cannot hold session locks reliably anyway.
+  advisory_locks: false
