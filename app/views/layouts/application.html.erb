@@ -18,12 +18,12 @@
           <% if terms.tree? %><a href="<%= tree_path %>">Tree</a><% end %>
           <a href="<%= people_path %>"><%= terms.people_nav %></a>
           <a href="<%= households_path %>"><%= terms.Parties %></a>
-          <a href="<%= directory_path %>">Who's here</a>
+          <a href="<%= directory_path %>">Members</a>
           <a href="<%= reunions_path %>"><%= terms.Events %></a>
           <a href="<%= calendar_path %>">Calendar</a>
           <% board_new = current_family.board_posts.where("created_at > ? and user_id <> ?", current_membership.board_seen_at || Time.at(0), current_user.id).count %>
           <a href="<%= board_path %>">Board<% if board_new > 0 %> <span class="tag dis"><%= board_new %> new</span><% end %></a>
-          <% if organizer? %><a href="<%= members_path %>">Members</a><% end %>
+          <% if organizer? %><a href="<%= members_path %>">Access</a><% end %>
         </nav>
       <% end %>
       <% unless Instance.dedicated? %>
