@@ -1,6 +1,18 @@
 require "test_helper"
 
 class InvitationsTest < ActionDispatch::IntegrationTest
+  test "a display name that is the password is refused, and nothing is created" do
+    inv, raw = Invitation.issue!(family: family, email: "typo@example.test")
+    assert_no_difference "User.count" do
+      post register_invitation_path(raw), params: { name: "Abcdef1!xyz", password: "Abcdef1!xyz", password_confirmation: "Abcdef1!xyz" }
+    end
+    assert_response :unprocessable_entity
+    assert_includes response.body, "That looks like your password"
+    assert_nil inv.reload.accepted_at
+    post register_invitation_path(raw), params: { name: "Typo", password: "Abcdef1!xyz", password_confirmation: "Abcdef1!xyz" }
+    assert_redirected_to family_home_path(family: "rowe")
+  end
+
   test "a new person opens a link, makes an account, joins, and the link works once" do
     inv, raw = Invitation.issue!(family: family, email: "cousin@example.test")
     get invitation_path(raw)

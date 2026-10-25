@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  before_action :use_canonical_host
   before_action :authenticate_user!
   allow_browser versions: :modern
 
@@ -12,6 +13,14 @@ class ApplicationController < ActionController::Base
   def default_url_options = Current.membership ? { family: Current.family.slug } : {}
 
   private
+
+  # A dedicated family site answers on one address. Anyone who arrives on another (the old onrender.com link in an
+  # early email) is sent to it, so there is one address to remember. Only when MAIL_HOST names that address.
+  def use_canonical_host
+    canonical = ENV["MAIL_HOST"].to_s.strip
+    return unless Instance.dedicated? && canonical.present? && request.get? && request.host != canonical && request.path != "/up"
+    redirect_to "https://#{canonical}#{request.fullpath}", status: :moved_permanently, allow_other_host: true
+  end
 
   def indexable? = false
 

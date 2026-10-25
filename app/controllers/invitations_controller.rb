@@ -23,6 +23,11 @@ class InvitationsController < ApplicationController
     end
     dn = params[:name].to_s.squish
     user = User.new(email: @invitation.email, name: dn, password: params[:password], password_confirmation: params[:password_confirmation])
+    if User.name_looks_like_password?(dn, params[:password])
+      flash.now[:alert] = "That looks like your password. The display name is shown to every member, so choose a name instead (a first name is fine)."
+      @existing = nil
+      return render :show, status: :unprocessable_entity
+    end
     if dn.blank? || dn.length > 60
       flash.now[:alert] = "Choose a display name (up to 60 characters)."
       @existing = nil

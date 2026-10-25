@@ -11,7 +11,7 @@
   <form class="auth" method="post" action="<%= register_invitation_path(params[:token]) %>">
     <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
     <label>Email</label><input type="email" value="<%= @invitation.email %>" disabled>
-    <label for="name">Display name <span class="fine">(what other members see)</span></label><input id="name" type="text" name="name" maxlength="60" required autocomplete="nickname">
+    <label for="name">Display name <span class="fine">(what other members see; a first name is fine, never your password)</span></label><input id="name" type="text" name="name" maxlength="60" required autocomplete="nickname">
     <p class="fine"><strong>Your password needs</strong> 8 or more characters with a lowercase letter, an uppercase letter, a number and a symbol.</p>
     <label for="password">Choose a password</label><input id="password" type="password" name="password" autocomplete="new-password" required minlength="8">
     <label for="pc">Confirm</label><input id="pc" type="password" name="password_confirmation" autocomplete="new-password" required minlength="8">

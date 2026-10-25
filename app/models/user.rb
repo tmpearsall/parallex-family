@@ -20,6 +20,14 @@ class User < ApplicationRecord
     errors.add(:base, "Password needs #{PASSWORD_RULE}.") unless ok
   end
 
+  # A display name is shown to every member. People sometimes type their password into that box, so refuse a name that
+  # is, or contains, the password they are choosing.
+  def self.name_looks_like_password?(name, password)
+    n = name.to_s.strip.downcase
+    pw = password.to_s.downcase
+    n.present? && pw.length >= 6 && (n == pw || n.include?(pw) || pw.include?(n) && n.length >= 8)
+  end
+
   def label = name.presence || "A member"
   def organizer_of?(family) = memberships.exists?(family_id: family.id, role: "organizer")
 

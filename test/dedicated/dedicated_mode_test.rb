@@ -115,4 +115,15 @@ class DedicatedModeTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "<title>Sign in · #{f.name}</title>"
     assert_includes response.body, ">#{f.name}</a>"
   end
+
+  test "a visit on another address is sent to the family's own address, but the health check is not" do
+    ENV["MAIL_HOST"] = "www.example.test"
+    get "/people"
+    assert_response :moved_permanently
+    assert_equal "https://www.example.test/people", response.headers["Location"]
+    get "/up"
+    assert_response :success
+  ensure
+    ENV.delete("MAIL_HOST")
+  end
 end

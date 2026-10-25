@@ -3,6 +3,6 @@
 <%= form_with url: account_path, method: :patch, local: true, html: { class: "auth" } do |f| %>
   <label for="name">Display name</label>
   <%= text_field_tag :name, current_user.name, id: "name", maxlength: 60, required: true, autocomplete: "nickname" %>
-  <p class="fine">This is the name other members see in the forum and on tasks. Your email is never shown to other members.</p>
+  <p class="fine">This is the name other members see in the forum and on tasks. Use a name, never a password. Your email is never shown to other members.</p>
   <%= submit_tag "Save" %>
 <% end %>
