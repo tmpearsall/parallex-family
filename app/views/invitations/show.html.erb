@@ -15,6 +15,21 @@
     <p class="fine"><strong>Your password needs</strong> 8 or more characters with a lowercase letter, an uppercase letter, a number and a symbol.</p>
     <label for="password">Choose a password</label><input id="password" type="password" name="password" autocomplete="new-password" required minlength="8">
     <label for="pc">Confirm</label><input id="pc" type="password" name="password_confirmation" autocomplete="new-password" required minlength="8">
+    <label class="chk"><input type="checkbox" id="show"> Show what I type</label>
+    <p class="fine" id="match" aria-live="polite"></p>
     <input type="submit" value="Create my account and join">
   </form>
+  <script>
+    (function () {
+      var pw = document.getElementById("password"), pc = document.getElementById("pc"),
+          show = document.getElementById("show"), match = document.getElementById("match");
+      function paint() { var t = show.checked ? "text" : "password"; pw.type = t; pc.type = t; }
+      function check() {
+        if (!pc.value) { match.textContent = ""; return; }
+        match.textContent = pw.value === pc.value ? "The two entries match." : "The two entries do not match yet.";
+      }
+      show.addEventListener("change", paint);
+      pw.addEventListener("input", check); pc.addEventListener("input", check);
+    })();
+  </script>
 <% end %>

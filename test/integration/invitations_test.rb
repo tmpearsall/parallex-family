@@ -1,6 +1,15 @@
 require "test_helper"
 
 class InvitationsTest < ActionDispatch::IntegrationTest
+  test "the sign-up form can show what is being typed and says whether the two passwords match" do
+    _, raw = Invitation.issue!(family: family, email: "show@example.test")
+    get invitation_path(raw)
+    assert_response :success
+    assert_includes response.body, "Show what I type"
+    assert_includes response.body, 'id="match"'
+    assert_includes response.body, 'type="password" name="password"'
+  end
+
   test "a display name that is the password is refused, and nothing is created" do
     inv, raw = Invitation.issue!(family: family, email: "typo@example.test")
     assert_no_difference "User.count" do
