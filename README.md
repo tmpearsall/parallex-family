@@ -43,3 +43,17 @@ copyable links, and the reminder scheduler stays off.
   runs it by hand). RSVP deadlines, dates to vote on, claimed tasks, the reunion at 30/7/1 days, events tomorrow.
   `email_deliveries` has a unique index so no one is reminded of the same thing twice. Every digest has an
   unsubscribe link and the one-click header; each member can also switch reminders off on Who's here.
+
+## Contacts, messages and spreadsheets (2026-10-26)
+
+- A person has a mailing address (street 1 and 2, city, state, zip) and a second phone number. The address belongs to
+  the person, not the household, so a student on campus has their own. A person marked private hides these from
+  everyone but an organizer and themselves, like the rest of their details.
+- Access page, invite form: "Not in the list? Add them here" creates the person and, in a family workspace, records
+  how they are related to someone already in the tree (child, parent or partner).
+- Organizers can send a reminder (`/announcements`): everyone, households that have not answered an RSVP, or people
+  with an unfinished task. A preview shows who gets it; nothing sends until confirmed; people who turned reminders off
+  are skipped; 60 emails a day per family; every send is recorded.
+- Organizers can export the list as a CSV and import one (`/people/import`): ten columns (First name, Last name, Phone,
+  Email, Phone 2, Street 1, Street 2, City, State, Zip), only First name required. Import previews first, only adds
+  (a matching email or name is skipped), makes no accounts and sends no email. Files over 1 MB or 500 rows are refused.

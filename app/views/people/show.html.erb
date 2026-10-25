@@ -8,7 +8,10 @@
 </p>
 <% if @person.occupation.present? %><p><%= @person.occupation %></p><% end %>
 <% if @person.household %><p><%= terms.Party %>: <a href="<%= household_path(@person.household) %>"><%= @person.household.name %></a><%= " · #{@person.household.place}" if @person.household.place %></p><% end %>
-<% if @visible && (@person.email.present? || @person.phone.present?) %><p class="mut2"><%= "Phone: #{@person.phone}" if @person.phone.present? %><%= " · " if @person.phone.present? && @person.email.present? %><%= "Email: #{@person.email}" if @person.email.present? %></p><% end %>
+<% if @visible && (@person.email.present? || @person.phone.present? || @person.phone2.present? || @person.mailing_address?) %>
+<p class="mut2"><%= safe_join([ ("Phone: #{@person.phone}" if @person.phone.present?), ("Phone 2: #{@person.phone2}" if @person.phone2.present?), ("Email: #{@person.email}" if @person.email.present?) ].compact, " · ") %></p>
+<% if @person.mailing_address? %><p class="mut2">Mailing address: <%= @person.mailing_address %></p><% end %>
+<% end %>
 <% has_account = @person.memberships.exists? %>
 <p class="mut2">
   <% if current_membership.person_id == @person.id %><span class="tag pub">This is you</span>

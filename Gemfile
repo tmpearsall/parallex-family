@@ -56,3 +56,4 @@ end
 
 gem "devise"
 gem "rack-attack"
+gem "csv"

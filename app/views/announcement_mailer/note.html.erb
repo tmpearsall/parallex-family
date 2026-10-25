@@ -1,0 +1,7 @@
+<div style="font-family: Georgia, serif; font-size: 16px; line-height: 1.6; color: #2a1f27; max-width: 560px">
+  <p>Hi <%= @membership.user.label %>,</p>
+  <%= simple_format(h(@announcement.body)) %>
+  <p style="color:#756370">From <%= @sender %>, <%= @family.name %></p>
+  <p><a href="<%= @home_url %>" style="color:#8e2a6b">Open <%= @family.name %></a></p>
+  <p style="font-size:13px; color:#756370">You get this because you are a member of <%= @family.name %>. <a href="<%= @unsubscribe_url %>" style="color:#756370">Stop reminder emails</a></p>
+</div>

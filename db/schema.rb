@@ -10,9 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_25_600000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_26_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "announcements", force: :cascade do |t|
+    t.bigint "family_id", null: false
+    t.bigint "user_id", null: false
+    t.string "audience", default: "everyone", null: false
+    t.bigint "reunion_id"
+    t.string "subject"
+    t.text "body", null: false
+    t.integer "recipient_count", default: 0, null: false
+    t.integer "failed_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "created_at"], name: "index_announcements_on_family_id_and_created_at"
+    t.index ["family_id"], name: "index_announcements_on_family_id"
+    t.index ["user_id"], name: "index_announcements_on_user_id"
+  end
 
   create_table "board_posts", force: :cascade do |t|
     t.bigint "user_id", null: false
@@ -94,7 +110,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_600000) do
     t.datetime "updated_at", null: false
     t.string "kind", default: "family", null: false
     t.index ["slug"], name: "index_families_on_slug", unique: true
-    t.check_constraint "kind::text = ANY (ARRAY['family'::character varying, 'group'::character varying]::text[])", name: "families_kind"
+    t.check_constraint "kind::text = ANY (ARRAY['family'::character varying::text, 'group'::character varying::text])", name: "families_kind"
   end
 
   create_table "households", force: :cascade do |t|
@@ -170,6 +186,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_600000) do
     t.datetime "updated_at", null: false
     t.bigint "family_id", null: false
     t.string "phone"
+    t.string "phone2"
+    t.string "street1"
+    t.string "street2"
+    t.string "city"
+    t.string "state"
+    t.string "zip"
     t.index ["family_id"], name: "index_people_on_family_id"
     t.index ["household_id"], name: "index_people_on_household_id"
     t.index ["last_name", "first_name"], name: "index_people_on_last_name_and_first_name"
@@ -263,6 +285,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_25_600000) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
+  add_foreign_key "announcements", "families"
+  add_foreign_key "announcements", "users"
   add_foreign_key "board_posts", "board_posts", column: "parent_id"
   add_foreign_key "board_posts", "families"
   add_foreign_key "board_posts", "reunions"

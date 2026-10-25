@@ -1,0 +1,17 @@
+<% content_for :title, "Check before sending · #{current_family.name}" %>
+<h1>Check before sending</h1>
+<p>This goes to <strong><%= @recipients.size %></strong> <%= 'person'.pluralize(@recipients.size) %>:</p>
+<p class="mut2"><%= @recipients.map { |m| m.user.label }.to_sentence %></p>
+<div class="card">
+  <% if @announcement.subject %><p><strong><%= @announcement.subject %></strong></p><% end %>
+  <%= simple_format(h(@announcement.body)) %>
+</div>
+<%= form_with url: announcements_path, class: "stack" do |f| %>
+  <%= hidden_field_tag "announcement[audience]", @announcement.audience %>
+  <%= hidden_field_tag "announcement[reunion_id]", @announcement.reunion_id %>
+  <%= hidden_field_tag "announcement[subject]", @announcement.subject %>
+  <%= hidden_field_tag "announcement[body]", @announcement.body %>
+  <%= hidden_field_tag "confirm", "1" %>
+  <%= f.submit "Send it now" %>
+<% end %>
+<p class="fine"><a href="<%= new_announcement_path %>">Go back and change it</a></p>

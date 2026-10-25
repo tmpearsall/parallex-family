@@ -8,9 +8,22 @@
 <%= form_with scope: :invite, url: members_path, class: "stack" do |f| %>
   <label>Email addresses (one or more) <%= f.text_area :emails, rows: 3, required: true, value: @prefill&.email, placeholder: "cousin@example.com, aunt@example.com" %></label>
   <div class="row">
-    <label><%= terms.person_link_label %> (one email only) <%= f.collection_select :person_id, @people, :id, :display_name, { include_blank: "(not linked)", selected: @prefill&.id } %></label>
+    <label>Which person is this? (one email only) <%= f.collection_select :person_id, @people, :id, :display_name, { include_blank: "(not linked)", selected: @prefill&.id } %></label>
     <label>Role <%= f.select :role, [["Member", "member"], ["Organizer", "organizer"]] %></label>
   </div>
+  <fieldset class="stack"><legend>Not in the list? Add them here</legend>
+    <p class="fine">Type their name (one email only) and they are added as a person, so you don't have to leave this page.</p>
+    <div class="row">
+      <label>First name <%= f.text_field :new_first_name, maxlength: 80 %></label>
+      <label>Last name <%= f.text_field :new_last_name, maxlength: 120 %></label>
+    </div>
+    <% if terms.tree? %>
+      <div class="row">
+        <label>This person is the <%= f.select :relation, [["(no relation recorded)", ""], ["child", "child"], ["parent", "parent"], ["partner", "partner"]] %></label>
+        <label>of <%= f.collection_select :related_to_id, current_family.people.by_name, :id, :display_name, { include_blank: "(choose)", selected: current_membership.person_id } %></label>
+      </div>
+    <% end %>
+  </fieldset>
   <% if ApplicationMailer.configured? %>
     <label class="chk"><%= f.check_box :send_email, { checked: true }, "1", "0" %> Email each person their link</label>
   <% else %>
@@ -18,6 +31,9 @@
   <% end %>
   <%= f.submit "Create links" %>
 <% end %>
+
+<h2>Send a reminder</h2>
+<p class="mut2">Write a message to <%= terms.the_people %> now, outside the daily digest. <a href="<%= new_announcement_path %>">Send a reminder</a> · <a href="<%= announcements_path %>">Messages already sent</a></p>
 
 <h2>Email</h2>
 <% if ApplicationMailer.configured? %>

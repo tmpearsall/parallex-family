@@ -13,15 +13,27 @@ class Person < ApplicationRecord
   validates :last_name, :maiden_name, :nickname, :birth_place, :occupation, length: { maximum: 120 }
   validates :notes, length: { maximum: 4000 }
   validates :email, format: { with: /\A[^@\s]+@[^@\s]+\z/ }, allow_blank: true
-  validates :phone, length: { maximum: 30 }, format: { with: /\A[0-9+().\-\sx]*\z/, message: "can only have digits, spaces and + ( ) - . x" }, allow_blank: true
+  validates :phone, :phone2, length: { maximum: 30 }, format: { with: /\A[0-9+().\-\sx]*\z/, message: "can only have digits, spaces and + ( ) - . x" }, allow_blank: true
+  validates :street1, :street2, :city, length: { maximum: 120 }
+  validates :state, length: { maximum: 40 }
+  validates :zip, length: { maximum: 12 }, format: { with: /\A[A-Za-z0-9 \-]*\z/, message: "can only have letters, digits, spaces and -" }, allow_blank: true
   validate  :dates_in_order
   validate  :household_is_in_this_family
 
   before_validation do
-    %i[first_name last_name maiden_name nickname birth_place occupation email phone].each { |a| self[a] = self[a].to_s.squish.presence }
+    %i[first_name last_name maiden_name nickname birth_place occupation email phone phone2 street1 street2 city state zip].each { |a| self[a] = self[a].to_s.squish.presence }
   end
 
   scope :by_name, -> { order(Arel.sql("lower(coalesce(last_name,'')), lower(first_name)")) }
+
+  def mailing_address? = [ street1, street2, city, state, zip ].any?(&:present?)
+
+  # "123 Main St, Apt 4, Springfield, IL 62704", skipping what is blank.
+  def mailing_address
+    line = [ street1, street2 ].compact.join(", ")
+    region = [ state, zip ].compact.join(" ")
+    [ line.presence, city, region.presence ].compact.join(", ")
+  end
 
   def living? = death_date.nil?
   def display_name = [ first_name, last_name ].compact.join(" ")

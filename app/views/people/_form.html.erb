@@ -20,7 +20,20 @@
     <label><%= terms.Party %> <%= f.collection_select :household_id, current_family.households.order(:name), :id, :name, { include_blank: "(none)" } %></label>
     <label>Email <%= f.email_field :email %></label>
     <label>Phone <%= f.telephone_field :phone, maxlength: 30, placeholder: "(555) 555-0123" %></label>
+    <label>Second phone <%= f.telephone_field :phone2, maxlength: 30 %></label>
   </div>
+  <fieldset class="stack"><legend>Mailing address</legend>
+    <p class="fine">Where this person gets mail: a campus box or a different address from their <%= terms.party %> is fine.</p>
+    <div class="row">
+      <label>Street <%= f.text_field :street1, maxlength: 120, autocomplete: "address-line1" %></label>
+      <label>Street, line 2 <%= f.text_field :street2, maxlength: 120, autocomplete: "address-line2" %></label>
+    </div>
+    <div class="row">
+      <label>City <%= f.text_field :city, maxlength: 120 %></label>
+      <label>State <%= f.text_field :state, maxlength: 40 %></label>
+      <label>Zip <%= f.text_field :zip, maxlength: 12, autocomplete: "postal-code" %></label>
+    </div>
+  </fieldset>
   <label>Notes <%= f.text_area :notes, rows: 4, maxlength: 4000 %></label>
   <label class="chk"><%= f.check_box :hide_details %> <%= terms.kids_note %></label>
   <%= f.submit(person.new_record? ? "Add person" : "Save") %>

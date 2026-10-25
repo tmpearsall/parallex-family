@@ -1,0 +1,21 @@
+<% content_for :title, "Check the import · #{current_family.name}" %>
+<h1>Check the import</h1>
+<p><strong><%= @new_rows.size %></strong> new, <strong><%= @result.of(:duplicate).size %></strong> already here (skipped), <strong><%= @result.of(:problem).size %></strong> with a problem (skipped).</p>
+<% if @new_rows.any? %>
+  <h2>Will be added</h2>
+  <div class="scroll"><table class="t"><tr><% PeopleCsv::COLUMNS.each do |_, label| %><th><%= label %></th><% end %></tr>
+  <% @new_rows.first(50).each do |r| %><tr><% PeopleCsv::ATTRS.each do |a| %><td><%= r.attrs[a] %></td><% end %></tr><% end %></table></div>
+  <% if @new_rows.size > 50 %><p class="fine">Showing the first 50 of <%= @new_rows.size %>.</p><% end %>
+  <%= form_with url: import_people_path, class: "stack" do |f| %>
+    <%= hidden_field_tag :token, @token %>
+    <%= f.submit "Add #{@new_rows.size} #{'person'.pluralize(@new_rows.size)}" %>
+  <% end %>
+<% else %>
+  <p>Nothing new to add.</p>
+<% end %>
+<% problems = @result.of(:problem) + @result.of(:duplicate) %>
+<% if problems.any? %>
+  <h2>Skipped</h2>
+  <ul class="list"><% problems.first(100).each do |r| %><li>Row <%= r.line %>: <%= [ r.attrs[:first_name], r.attrs[:last_name] ].compact.join(" ").presence || "(no name)" %> <span class="mut2">· <%= r.note %></span></li><% end %></ul>
+<% end %>
+<p class="fine"><a href="<%= import_people_path %>">Choose a different file</a></p>

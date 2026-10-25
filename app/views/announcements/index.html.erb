@@ -1,0 +1,10 @@
+<% content_for :title, "Messages sent · #{current_family.name}" %>
+<p class="fine"><a href="<%= members_path %>">&larr; Access</a></p>
+<h1>Messages sent</h1>
+<p><a href="<%= new_announcement_path %>">Send a reminder</a></p>
+<% if @announcements.empty? %><p class="mut2">Nothing sent yet.</p><% else %>
+  <ul class="list"><% @announcements.each do |a| %>
+    <li><strong><%= a.subject || "(no subject)" %></strong> <span class="mut2">· <%= a.created_at.strftime("%b %-d, %-l:%M %p") %> · from <%= a.user.label %> · <%= a.recipient_count %> sent<%= ", #{a.failed_count} failed" if a.failed_count.positive? %></span><br>
+      <span class="mut2"><%= truncate(a.body, length: 140) %></span></li>
+  <% end %></ul>
+<% end %>

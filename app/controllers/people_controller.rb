@@ -76,7 +76,7 @@ class PeopleController < TenantController
   def load_person = @person = current_family.people.find(params[:id])
 
   def person_params
-    p = params.require(:person).permit(:first_name, :last_name, :maiden_name, :nickname, :birth_date, :death_date, :birth_place, :occupation, :notes, :email, :phone, :household_id, :hide_details)
+    p = params.require(:person).permit(:first_name, :last_name, :maiden_name, :nickname, :birth_date, :death_date, :birth_place, :occupation, :notes, :email, :phone, :phone2, :street1, :street2, :city, :state, :zip, :household_id, :hide_details)
     p[:hide_details] = false unless organizer? || params.dig(:person, :hide_details) == "1"
     p
   end

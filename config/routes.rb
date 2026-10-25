@@ -30,6 +30,11 @@ Rails.application.routes.draw do
     get "/" => "home#show", as: :family_home
     get "tree" => "trees#show", as: :tree
 
+    get  "people/export"         => "people_csv#export",  as: :export_people
+    get  "people/import"         => "people_csv#new",     as: :import_people
+    post "people/import/preview" => "people_csv#preview", as: :preview_import_people
+    post "people/import"         => "people_csv#create"
+
     resources :people do
       resources :relationships, only: :create
       post :claim, on: :member
@@ -56,6 +61,8 @@ Rails.application.routes.draw do
     end
 
     patch "settings" => "settings#update", as: :settings
+
+    resources :announcements, only: [ :index, :new, :create ]
 
     post "members/test_email" => "members#test_email", as: :test_email
     resources :members, only: [ :index, :create, :update, :destroy ] do

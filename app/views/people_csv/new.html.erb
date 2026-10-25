@@ -1,0 +1,9 @@
+<% content_for :title, "Import people · #{current_family.name}" %>
+<p class="fine"><a href="<%= people_path %>">&larr; People</a></p>
+<h1>Import people from a spreadsheet</h1>
+<p class="mut2">Upload a CSV (a spreadsheet saved as CSV) with a first row of column names: <strong><%= PeopleCsv::COLUMNS.map(&:last).join(", ") %></strong>. Only First name is required; other columns are optional and can be in any order. You will see a preview first. Import only adds people: anyone already here (same email or same name) is skipped, and no accounts or emails are created.</p>
+<%= form_with url: preview_import_people_path, multipart: true, class: "stack" do |f| %>
+  <label>CSV file <%= f.file_field :file, accept: ".csv,text/csv", required: true %></label>
+  <%= f.submit "Preview" %>
+<% end %>
+<p class="fine"><a href="<%= export_people_path(format: :csv) %>">Download everyone as a CSV</a> (also a good template).</p>

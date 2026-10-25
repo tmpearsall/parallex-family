@@ -24,6 +24,10 @@ class MembersController < TenantController
       return redirect_to(members_path, alert: "That is more than #{DAILY_INVITATION_LIMIT} invitations in a day. Try again tomorrow.")
     end
     person = nil if emails.size > 1   # one person per link
+    if person.nil? && emails.size == 1 && params.dig(:invite, :new_first_name).present?
+      person, problem = add_person_for_invite(emails.first)
+      return redirect_to(members_path, alert: problem) if problem
+    end
     send_mail = params.dig(:invite, :send_email) == "1" && ApplicationMailer.configured?
     @results = emails.map { |email| invite_one(email, role, person, send_mail) }
     @mail_on = send_mail
@@ -77,6 +81,32 @@ class MembersController < TenantController
   end
 
   private
+
+  RELATIONS = %w[child parent partner].freeze
+
+  # "Not in the list? Add them": makes the person (so the link has someone to point at) and, when asked and the
+  # family tree is on, records how they are related to someone already in the tree. Returns [person, problem].
+  def add_person_for_invite(email)
+    first = params.dig(:invite, :new_first_name).to_s
+    last = params.dig(:invite, :new_last_name).to_s
+    relation = params.dig(:invite, :relation).to_s
+    related = current_family.people.find_by(id: params.dig(:invite, :related_to_id))
+    person = nil
+    Person.transaction do
+      person = current_family.people.create!(first_name: first, last_name: last, email: email, created_by_id: current_user.id, updated_by_id: current_user.id)
+      if terms.tree? && RELATIONS.include?(relation) && related
+        from, to = case relation
+        when "child"   then [ related, person ]
+        when "parent"  then [ person, related ]
+        else [ related, person ]
+        end
+        current_family.relationships.create!(from_person: from, to_person: to, kind: relation == "partner" ? "partner" : "parent")
+      end
+    end
+    [ person, nil ]
+  rescue ActiveRecord::RecordInvalid => e
+    [ nil, e.record.errors.full_messages.to_sentence ]
+  end
 
   # Returns [email, url_or_nil, problem_or_nil, status] where status is :emailed, :email_failed or :link_only.
   def invite_one(email, role, person, send_mail)

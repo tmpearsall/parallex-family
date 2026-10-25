@@ -1,6 +1,7 @@
 <% content_for :title, "#{terms.people_title} · #{current_family&.name || Instance.app_name}" %>
 <h1><%= terms.people_title %></h1>
 <form method="get" class="row"><label>Find <input type="text" name="q" value="<%= params[:q] %>" placeholder="Name"></label><input type="submit" value="Search"> <a class="btn" href="<%= new_person_path %>" style="padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--acc-fg);text-decoration:none;font:600 14px system-ui,sans-serif"><%= terms.tree? ? "Add a person" : "Add an invitee" %></a></form>
+<% if organizer? %><p class="fine"><a href="<%= import_people_path %>">Import from a spreadsheet</a> · <a href="<%= export_people_path(format: :csv) %>">Download as a CSV</a></p><% end %>
 <% if terms.tree? %>
 <ul class="list">
   <% @people.each do |p| %>

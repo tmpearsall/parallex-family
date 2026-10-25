@@ -1,0 +1,17 @@
+<% content_for :title, "Send a reminder · #{current_family.name}" %>
+<p class="fine"><a href="<%= members_path %>">&larr; Access</a></p>
+<h1>Send a reminder</h1>
+<p class="mut2">Write a short message to <%= terms.the_people %>. You will see exactly who gets it before anything is sent. People who turned reminders off are skipped.</p>
+<%= form_with model: @announcement, url: announcements_path, class: "stack" do |f| %>
+  <% if @announcement.errors.any? %><p class="flash bad"><%= @announcement.errors.full_messages.to_sentence %>.</p><% end %>
+  <label>Who gets it
+    <%= f.select :audience, [["Everyone", "everyone"], ["People whose #{terms.party} has not answered the RSVP", "rsvp_pending"], ["People with an unfinished task", "tasks_open"]] %>
+  </label>
+  <label>For the RSVP choice, which <%= terms.event %>
+    <%= f.collection_select :reunion_id, current_family.reunions.order(created_at: :desc), :id, :title, { include_blank: "(not needed for the others)" } %>
+  </label>
+  <label>Subject (optional) <%= f.text_field :subject, maxlength: 120 %></label>
+  <label>Message <%= f.text_area :body, rows: 6, maxlength: 2000, required: true %></label>
+  <%= f.submit "Preview who gets it" %>
+<% end %>
+<p class="fine"><a href="<%= announcements_path %>">Messages already sent</a></p>
