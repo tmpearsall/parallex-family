@@ -1,5 +1,5 @@
 {
-  "name": "ParallexFamily",
+  "name": "<%= j(Instance.dedicated? ? (Family.find_by(slug: Instance.family_slug)&.name || Instance.app_name) : Instance.app_name) %>",
   "icons": [
     {
       "src": "/icon.png",
@@ -16,7 +16,7 @@
   "start_url": "/",
   "display": "standalone",
   "scope": "/",
-  "description": "ParallexFamily.",
+  "description": "<%= j(Instance.dedicated? ? (Family.find_by(slug: Instance.family_slug)&.name || Instance.app_name) : Instance.app_name) %>.",
   "theme_color": "red",
   "background_color": "red"
 }

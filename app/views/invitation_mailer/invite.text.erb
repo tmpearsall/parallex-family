@@ -1,13 +1,21 @@
-Hi,
+Hi<%= " #{@invitation.person.first_name}" if @invitation.person %>,
 
-<%= @inviter&.label || "An organizer" %> invited you to <%= @family.name %> on <%= Instance.product_name %>, <%= @family.terms.intro %>.
+<%= @sender || "An organizer" %> invited you to <%= @family.name %>, <%= @family.terms.intro %>.
+<% if @organizers.any? %>
+Organized by: <%= @organizers.to_sentence %>.
+<% end %><% if @reunion %>
+What is planned: <%= @reunion.title %><%= ", #{@reunion.starts_on.strftime('%B %-d, %Y')}" if @reunion.dated? %><%= ", #{@reunion.location_name}" if @reunion.location_name.present? %>.
+<% end %>
+You are being invited as <%= @role == "organizer" ? "an organizer, which means you can help plan, invite people and send reminders" : "a member" %>.
 
 Use this one-time link to choose your name and password:
 
 <%= @url %>
 
-The link works once and expires in 7 days. If it stops working, ask <%= @inviter&.label || "the organizer" %> for a new one.
+The link works once and expires in 7 days. If it stops working, ask <%= @sender || "an organizer" %> for a new one.
 
 The site is invite-only and hidden from search engines. Other members see only the display name you choose; your email is shown only to the organizers.
-
+<% if @inviter&.email.present? %>
+Reply to this email to reach <%= @sender || "the person who invited you" %>.
+<% end %>
 If you were not expecting this, you can ignore this message and nothing will happen.

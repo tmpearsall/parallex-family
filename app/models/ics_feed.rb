@@ -6,7 +6,7 @@ class IcsFeed
   end
 
   def to_s
-    lines = [ "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Parallex Family//Reunion calendar//EN", "CALSCALE:GREGORIAN",
+    lines = [ "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Family//Calendar//EN", "CALSCALE:GREGORIAN",
               "X-WR-CALNAME:#{escape("#{@family.name} calendar")}", "REFRESH-INTERVAL;VALUE=DURATION:PT12H", "X-PUBLISHED-TTL:PT12H" ]
     (@items.dated_items + @items.yearly_items).each { |i| lines.concat(vevent(i)) }
     lines << "END:VCALENDAR"

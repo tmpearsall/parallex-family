@@ -9,6 +9,7 @@ class HomeController < TenantController
       voted = current_user.date_votes.pluck(:date_option_id)
       @unvoted = @reunion.date_options.reject { |o| voted.include?(o.id) }
     end
+    @organizers = current_family.memberships.where(role: "organizer").includes(:user).map { |m| m.user.label }.reject { |n| n == "A member" }.uniq
     @steps = getting_started_steps
     @topics = current_family.board_posts.topics.includes(:user).order(created_at: :desc).limit(5)
   end

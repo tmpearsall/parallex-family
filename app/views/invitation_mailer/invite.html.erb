@@ -1,8 +1,11 @@
 <div style="font-family: Georgia, serif; font-size: 16px; line-height: 1.6; color: #2a1f27; max-width: 560px">
-  <p>Hi,</p>
-  <p><strong><%= @inviter&.label || "An organizer" %></strong> invited you to <strong><%= @family.name %></strong> on <%= Instance.product_name %>, <%= @family.terms.intro %>.</p>
+  <p>Hi<%= " #{@invitation.person.first_name}" if @invitation.person %>,</p>
+  <p><strong><%= @sender || "An organizer" %></strong> invited you to <strong><%= @family.name %></strong>, <%= @family.terms.intro %>.</p>
+  <% if @organizers.any? %><p>Organized by: <strong><%= @organizers.to_sentence %></strong>.</p><% end %>
+  <% if @reunion %><p>What is planned: <strong><%= @reunion.title %></strong><%= ", #{@reunion.starts_on.strftime('%B %-d, %Y')}" if @reunion.dated? %><%= ", #{@reunion.location_name}" if @reunion.location_name.present? %>.</p><% end %>
+  <p>You are being invited as <%= @role == "organizer" ? "an organizer, which means you can help plan, invite people and send reminders" : "a member" %>.</p>
   <p><a href="<%= @url %>" style="display:inline-block; background:#8e2a6b; color:#ffffff; padding:10px 18px; border-radius:8px; text-decoration:none; font-family:Arial, sans-serif; font-weight:bold">Choose your name and password</a></p>
   <p style="font-size:14px; color:#756370">Or paste this into your browser:<br><span style="word-break:break-all"><%= @url %></span></p>
-  <p style="font-size:14px">The link works once and expires in 7 days. If it stops working, ask <%= @inviter&.label || "the organizer" %> for a new one.</p>
-  <p style="font-size:14px; color:#756370">The site is invite-only and hidden from search engines. Other members see only the display name you choose; your email is shown only to the organizers. If you were not expecting this, ignore this message and nothing will happen.</p>
+  <p style="font-size:14px">The link works once and expires in 7 days. If it stops working, ask <%= @sender || "an organizer" %> for a new one.</p>
+  <p style="font-size:14px; color:#756370">The site is invite-only and hidden from search engines. Other members see only the display name you choose; your email is shown only to the organizers.<% if @inviter&.email.present? %> Reply to this email to reach <%= @sender || "the person who invited you" %>.<% end %> If you were not expecting this, ignore this message and nothing will happen.</p>
 </div>

@@ -10,6 +10,6 @@ class AnnouncementMailer < ApplicationMailer
     @home_url = family_home_url(family: @family.slug)
     headers["List-Unsubscribe"] = "<#{@unsubscribe_url}>"
     headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
-    mail(to: @membership.user.email, subject: @announcement.subject || "A message from #{@sender} in #{@family.name}")
+    mail(from: from_for(@family), to: @membership.user.email, subject: @announcement.subject || "A message from #{@sender} in #{@family.name}")
   end
 end

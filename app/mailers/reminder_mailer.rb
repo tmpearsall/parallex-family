@@ -11,6 +11,6 @@ class ReminderMailer < ApplicationMailer
     headers["List-Unsubscribe"] = "<#{@unsubscribe_url}>"
     headers["List-Unsubscribe-Post"] = "List-Unsubscribe=One-Click"
     subject = @items.size == 1 ? @items.first.headline : "#{@items.size} reminders for #{@family.name}"
-    mail(to: @membership.user.email, subject: subject)
+    mail(from: from_for(@family), to: @membership.user.email, subject: subject)
   end
 end

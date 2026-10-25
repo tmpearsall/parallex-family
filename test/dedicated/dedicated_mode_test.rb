@@ -95,4 +95,16 @@ class DedicatedModeTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match(/BEGIN:VCALENDAR/, response.body)
   end
+
+  test "mail on a dedicated site comes from the family's own name and never says Parallex" do
+    f = family
+    u = User.create!(email: "thea-#{SecureRandom.hex(3)}@example.test", password: "Str0ng!Pass#1", name: "Thea")
+    f.memberships.create!(user: u, role: "organizer")
+    inv, = Invitation.issue!(family: f, email: "c@example.test", role: "member", invited_by: u)
+    mail = InvitationMailer.with(invitation: inv, url: "https://x/invite/y", inviter: u).invite
+    assert_includes mail.header["From"].to_s, f.name
+    assert_no_match(/parallex family/i, mail.header["From"].to_s)
+    text = mail.text_part&.body.to_s + mail.body.to_s
+    assert_no_match(/parallex family/i, text)
+  end
 end

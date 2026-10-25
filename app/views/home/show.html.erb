@@ -1,4 +1,5 @@
 <% content_for :title, current_family&.name || Instance.app_name %>
+<% if @organizers.present? %><p class="mut2">Organized by <strong><%= @organizers.to_sentence %></strong>. Questions about the plan? Ask them, or post on the <a href="<%= board_path %>">board</a>.</p><% end %>
 <% if @steps.present? && @steps.any? { |st| !st[:done] } %>
   <div class="card">
     <h2 style="margin-top:0">Getting started</h2>
