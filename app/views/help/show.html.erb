@@ -2,12 +2,25 @@
 <h1>How this site works</h1>
 <p class="mut2">A short guide. Everything here can be changed later, and nothing you add is public: only people who were invited can see this site.</p>
 
-<h2>Your first five minutes</h2>
+<h2>The map</h2>
+<ol class="map">
+  <li><span class="n">1</span><div><strong>Add the people</strong><br><span class="fine">Everyone you know, even those who will never log in.</span><br><a href="<%= people_path %>">People</a></div></li>
+  <li><span class="n">2</span><div><strong>Group them</strong><br><span class="fine">Into <%= terms.parties %> that answer together.</span><br><a href="<%= households_path %>"><%= terms.Parties %></a></div></li>
+  <li><span class="n">3</span><div><strong>Find yourself</strong><br><span class="fine">Press <em>This is me</em> on your own name.</span><br><a href="<%= people_path %>">People</a></div></li>
+  <li><span class="n">4</span><div><strong>Add your phone and mailing address</strong><br><span class="fine">On your own page, <em>Edit</em>.</span></div></li>
+  <% if organizer? %><li><span class="n">5</span><div><strong>Invite those who should log in</strong><br><span class="fine">Organizers only.</span><br><a href="<%= admin_path %>">Admin</a></div></li><% end %>
+  <li><span class="n"><%= organizer? ? 6 : 5 %></span><div><strong>Plan together</strong><br><span class="fine">Vote on dates, answer the RSVP, claim tasks, talk in the forum.</span><br><a href="<%= reunions_path %>"><%= terms.Events %></a></div></li>
+</ol>
+
+<h2>Where to start: add the people</h2>
+<p><strong>Start by adding people.</strong> Everything else on this site hangs off the list of people: who answers the RSVP together, who is connected to whom, who gets a reminder, and who is invited to log in. So the first job is to get the right names in.</p>
 <ol>
-  <li><strong>Find yourself.</strong> Open <a href="<%= people_path %>">People</a>, click your name, and press <em>This is me</em>. That connects your login to your entry so the site knows which <%= terms.party %> is yours.</li>
-  <li><strong>Add your phone and mailing address.</strong> On your own page choose <em>Edit</em>. Fill in the phone numbers and the <em>Mailing address</em> section. The mailing address is where you get mail: a campus box or a different address from your <%= terms.party %> is fine. It belongs to you, not to your <%= terms.party %>.</li>
-  <li><strong>Add the people close to you.</strong> See <em>Adding people</em> below.</li>
-  <li><strong>Answer the RSVP and vote on dates</strong> when a <%= terms.event %> is planned. The Home page shows what is waiting for you.</li>
+  <li><strong>Add the people you know.</strong> Open <a href="<%= people_path %>">People</a> and choose <em>Add a person</em>. You only need a first name; add a phone, email and mailing address if you have them. Add yourself and the people closest to you first.<% if terms.tree? %> To connect someone, open a person you already added and use <em>Add a parent</em>, <em>Add a partner</em> or <em>Add a child</em>. A child, a grandparent or anyone who will not log in can still be on the list.<% end %></li>
+  <li><strong>Group them into <%= terms.parties %>.</strong> A <%= terms.party %> answers the RSVP together. Add people to one from the <a href="<%= households_path %>"><%= terms.Parties %></a> page.</li>
+  <li><strong>Find yourself.</strong> Click your own name and press <em>This is me</em>. That connects your login to your entry so the site knows which <%= terms.party %> is yours.</li>
+  <li><strong>Add your phone numbers and mailing address</strong> on your own page with <em>Edit</em>. The mailing address is where you get mail: a campus box or a different address from your <%= terms.party %> is fine. It belongs to you, not to your <%= terms.party %>.</li>
+  <li><strong>Invite the people who should log in.</strong> Organizers do this from <a href="<%= admin_path %>">Admin</a> &rarr; Access; everyone else can ask an organizer.</li>
+  <li><strong>Then answer the RSVP and vote on dates</strong> when a <%= terms.event %> is planned. The Home page shows what is waiting for you.</li>
 </ol>
 
 <h2>Updating your information</h2>
@@ -17,11 +30,11 @@
   <li><strong>Keep something private:</strong> on <em>Edit</em>, tick the box at the bottom. Then only an organizer and that person can see their date of birth, notes, email, phone numbers and address.</li>
 </ul>
 
-<h2>Adding people</h2>
+<h2>Adding people later</h2>
 <ul>
-  <li><strong>Someone new:</strong> People &rarr; <em>Add a person</em>. You only need a first name.<% if terms.tree? %> To connect them to your family tree, open a person you already added and use <em>Add a parent</em>, <em>Add a partner</em> or <em>Add a child</em>.<% end %></li>
-  <li><strong>They do not need an account to be on the list.</strong> A child, a grandparent or anyone who will not log in can still be added, connected and counted.</li>
-  <li><strong><%= terms.Parties %>:</strong> a <%= terms.party %> answers the RSVP together. Add people to a <%= terms.party %> from the <%= terms.Parties %> page.</li>
+  <li><strong>One at a time:</strong> People &rarr; <em>Add a person</em>.</li>
+  <li><strong>Someone who will log in:</strong> an organizer uses Admin &rarr; Access, and can add a new person right there.</li>
+  <li><strong>Many at once:</strong> an organizer can import a spreadsheet from Admin.</li>
   <% if terms.tree? %><li><strong>The tree:</strong> the Tree page draws everyone you have connected.</li><% end %>
 </ul>
 

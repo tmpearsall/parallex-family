@@ -13,9 +13,10 @@ class HelpAndGettingStartedTest < ActionDispatch::IntegrationTest
   test "the help page explains the first steps in family words" do
     get "/f/help-test/help"
     assert_response :success
-    assert_includes response.body, "Your first five minutes"
+    assert_includes response.body, "The map"
+    assert_includes response.body, "Where to start: add the people"
     assert_includes response.body, "This is me"
-    assert_includes response.body, "Mailing address"
+    assert_includes response.body, "mailing address"
     assert_not_includes response.body, "For organizers"
   end
 
@@ -38,6 +39,7 @@ class HelpAndGettingStartedTest < ActionDispatch::IntegrationTest
   test "the home page shows getting started until each step is done, then not at all" do
     get "/f/help-test"
     assert_includes response.body, "Getting started"
+    assert_includes response.body, "Add the people you know"
     assert_includes response.body, "Find yourself in the list"
     me = @family.people.create!(first_name: "U", phone: "555-0100", street1: "1 St", city: "X", state: "Y", zip: "12345")
     @family.people.create!(first_name: "Kin")

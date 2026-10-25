@@ -8,7 +8,7 @@
         <li><%= st[:done] ? "✓" : "○" %> <strong><%= st[:text] %></strong><% unless st[:done] %> <span class="mut2">· <%= st[:hint] %></span> <a href="<%= st[:path] %>"><%= st[:link] %></a><% end %></li>
       <% end %>
     </ul>
-    <p class="fine">Not sure what something does? <a href="<%= help_path %>">How this site works</a>.</p>
+    <p class="fine">Not sure what something does? <a href="<%= help_path %>">How this site works</a>, with a map of what to do.</p>
   </div>
 <% end %>
 <% if @reunion %>
