@@ -1,6 +1,10 @@
 <% content_for :title, "Members · #{current_family.name}" %>
 <h1>Members</h1>
-<p class="mut2">You are an organizer. Invite relatives here: each gets a one-time link (good for 7 days) that you copy and send. No email goes out yet. Paste several addresses to make several links at once.</p>
+<% if ApplicationMailer.configured? %>
+<p class="mut2">You are an organizer. Invite relatives here: each gets a one-time link (good for 7 days), emailed to them if you leave the box ticked, and shown here so you can copy it too. Paste several addresses to invite several people at once.</p>
+<% else %>
+<p class="mut2">You are an organizer. Invite relatives here: each gets a one-time link (good for 7 days) that you copy and send. Email sending is not connected yet (see Email below). Paste several addresses to make several links at once.</p>
+<% end %>
 <%= form_with scope: :invite, url: members_path, class: "stack" do |f| %>
   <label>Email addresses (one or more) <%= f.text_area :emails, rows: 3, required: true, value: @prefill&.email, placeholder: "cousin@example.com, aunt@example.com" %></label>
   <div class="row">
@@ -20,7 +24,11 @@
   <p class="mut2">Email is on. Messages are sent as <strong><%= ApplicationMailer.from_address %></strong> <%= ApplicationMailer.settings_summary %>.</p>
   <%= button_to "Send myself a test email", test_email_path, method: :post, class: "link" %>
 <% else %>
-  <p class="mut2">Email sending is not connected yet, so invitations are links you copy and send, and no reminder emails go out.</p>
+  <p class="mut2">Email sending is not connected yet, so invitations are links you copy and send, and no reminder emails go out. This site cannot see all of the settings it needs:</p>
+  <ul class="list">
+    <% MailSettings.checklist.each do |name, set| %><li><code><%= name %></code> <span class="tag <%= set ? 'pub' : 'dis' %>"><%= set ? "found" : "missing" %></span></li><% end %>
+  </ul>
+  <p class="fine">Add the missing ones to this service in Render (directly, or through the shared environment group, which must be linked to this service). The site restarts when they change.</p>
 <% end %>
 
 <h2>Family name</h2>

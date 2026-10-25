@@ -75,14 +75,15 @@ Rails.application.configure do
   # Email goes out over any SMTP provider (SMTP_ADDRESS, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD), the same
   # convention as Parallex Advisory. With no SMTP_ADDRESS nothing is sent and the app falls back to copyable links.
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.perform_deliveries = ENV["SMTP_ADDRESS"].present?
+  require_relative "../../lib/mail_settings"
+  config.action_mailer.perform_deliveries = MailSettings.configured?
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.smtp_settings = {
-    address: ENV["SMTP_ADDRESS"], port: ENV.fetch("SMTP_PORT", 587).to_i,
-    user_name: ENV["SMTP_USERNAME"], password: ENV["SMTP_PASSWORD"],
+    address: MailSettings.host, port: MailSettings.port,
+    user_name: MailSettings.username, password: MailSettings.password,
     authentication: :plain,
     # Port 465 providers (Cloudflare Email Service; Resend also offers it) use implicit TLS: set SMTP_TLS=true.
-    tls: ENV["SMTP_TLS"] == "true", enable_starttls_auto: ENV["SMTP_TLS"] != "true"
+    tls: MailSettings.tls?, enable_starttls_auto: !MailSettings.tls?
   }
   # Links in emails use MAIL_HOST, else the first FAMILY_HOST, else the Render address.
   config.action_mailer.default_url_options = { host: ENV["MAIL_HOST"].presence || ENV["FAMILY_HOST"].to_s.split(",").first&.strip.presence || "parallex-family.onrender.com", protocol: "https" }

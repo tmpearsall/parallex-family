@@ -3,7 +3,7 @@
 # Running twice, or missing a day, is harmless: ReminderRunner never repeats a reminder, and each item is due on a
 # window of dates.
 Rails.application.config.after_initialize do
-  next unless Rails.env.production? && ENV["SMTP_ADDRESS"].present? && ENV["REMINDER_SCHEDULER"] != "off"
+  next unless Rails.env.production? && MailSettings.configured? && ENV["REMINDER_SCHEDULER"] != "off"
   next unless defined?(Rails::Server) || ENV["PUMA_CONTROL_URL"] || $PROGRAM_NAME.include?("puma")
 
   Thread.new do
