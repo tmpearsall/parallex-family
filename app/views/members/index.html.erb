@@ -56,7 +56,7 @@
 <h2>In this <%= terms.group %></h2>
 <div class="scroll"><table class="t"><tr><th>Name</th><th>Email</th><th><%= terms.person_col %></th><th>Role</th><th></th></tr>
 <% @memberships.each do |m| %>
-  <tr><td><%= m.user.label %><%= " (owner)" if m.owner? %></td><td><%= m.user.email %></td><td><%= m.person&.display_name %></td><td><%= m.owner? ? "owner" : m.role %></td>
+  <tr><td><%= m.user.label %><%= " (owner)" if m.owner? %></td><td><%= m.user.email %><% es = @email_status[m.user.email.downcase] %><% if EmailLog::PROBLEM.include?(es) %> <span class="tag dis">email <%= es %></span><% end %></td><td><%= m.person&.display_name %></td><td><%= m.owner? ? "owner" : m.role %></td>
     <td><% if m.user_id != current_user.id && !m.owner? %>
       <% if owner? %>
         <%= button_to (m.organizer? ? "Make member" : "Make organizer"), member_path(m, role: (m.organizer? ? "member" : "organizer")), method: :patch, class: "link", form: { class: "inline" } %>

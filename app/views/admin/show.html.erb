@@ -7,6 +7,8 @@
     <p><a href="<%= new_person_path %>">Add a person</a> · <a href="<%= import_people_path %>">Import a spreadsheet</a> · <a href="<%= help_path(anchor: 'start') %>">See the map</a></p></div>
   <div class="card"><h2 style="margin-top:0"><a href="<%= members_path %>">Access</a></h2>
     <p>Invite <%= terms.invitees %>, see who has an account, make someone an organizer, and fix email settings. <%= "#{@pending_invitations} waiting to accept." if @pending_invitations.positive? %></p></div>
+  <div class="card"><h2 style="margin-top:0"><a href="<%= needs_a_call_path %>">Needs a call</a></h2>
+    <p>Who the site is probably not reaching: bounced email, no email, reminders off, survey non-answers. <%= "#{@not_reached} to look at." if @not_reached.to_i.positive? %></p></div>
   <div class="card"><h2 style="margin-top:0"><a href="<%= surveys_path %>">Surveys</a></h2>
     <p>Ask a few questions, such as which dates work, and email everyone a personal link. <%= "#{@open_surveys} open now." if @open_surveys.positive? %></p></div>
   <div class="card"><h2 style="margin-top:0"><a href="<%= new_announcement_path %>">Send a reminder</a></h2>

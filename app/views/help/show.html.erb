@@ -57,6 +57,7 @@
   <li><strong>Ask <%= terms.the_people %> a question, such as which dates work:</strong> <a href="<%= surveys_path %>">Surveys</a>. Write a few questions, preview who gets it, and everyone is emailed a personal link, even people without an account. You see the answers as they come in, and can turn the suggested dates into proposed dates for a vote.</li>
   <li><strong>Add many people at once:</strong> <a href="<%= import_people_path %>">Import from a spreadsheet</a>. Columns: First name, Last name, Phone, Email, Phone 2, Street 1, Street 2, City, State, Zip. You see a preview first, and anyone already on the list is skipped.</li>
   <% unless Instance.dedicated? %><li><strong>Post to Slack:</strong> the owner can connect a Slack channel from <a href="<%= slack_path %>">Admin &rarr; Slack</a>. It gets tomorrow's meetings, new forum topics, RSVP deadlines and closing surveys: titles and counts only.</li><% end %>
+  <li><strong>See who the site is not reaching:</strong> <a href="<%= needs_a_call_path %>">Needs a call</a> lists bounced emails, people with no email, and survey non-answers, with their phone numbers, so you can reach them by hand. Email can fail without anyone noticing, so check it after something important.</li>
   <li><strong>Download everyone:</strong> <a href="<%= export_people_path(format: :csv) %>">Download as a CSV</a>.</li>
 </ul>
 <% end %>

@@ -8,6 +8,7 @@ class MembersController < TenantController
     @invitations = current_family.invitations.pending.includes(:person).order(created_at: :desc)
     @people = current_family.people.where.not(id: current_family.memberships.select(:person_id).where.not(person_id: nil)).by_name
     @prefill = current_family.people.find_by(id: params[:person_id])
+    @email_status = EmailLog.latest_statuses(@memberships.map { |m| m.user.email })
     @events = current_family.membership_events.includes(:actor_user).order(created_at: :desc).limit(15)
   end
 

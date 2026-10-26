@@ -44,6 +44,7 @@ Rails.application.routes.draw do
       post :add_people, on: :member
     end
     get "admin" => "admin#show", as: :admin
+    get "needs_a_call" => "needs_calls#show", as: :needs_a_call
     resource :slack, only: [ :show, :update, :destroy ], controller: "slack_integrations" do
       post :test
     end
@@ -94,6 +95,9 @@ Rails.application.routes.draw do
     get "board",     to: redirect { |params, _| Instance.dedicated? ? "/forum" : "/f/#{params[:family]}/forum" }
     get "board/:id", to: redirect { |params, _| Instance.dedicated? ? "/forum/#{params[:id]}" : "/f/#{params[:family]}/forum/#{params[:id]}" }
   end
+
+  # The mail service reports delivered / bounced / complained here (signed requests only).
+  post "webhooks/resend" => "webhooks#resend", as: :resend_webhook
 
   # A survey's personal link and its opt-out (public, token only).
   get   "s/:token"      => "survey_responses#show",   as: :survey_answer,  constraints: { token: /[\w-]+/ }

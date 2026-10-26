@@ -1,0 +1,32 @@
+<% content_for :title, "Needs a call · #{current_family.name}" %>
+<p class="fine"><a href="<%= admin_path %>">&larr; Admin</a></p>
+<h1>Needs a call</h1>
+<p class="mut2">Email, texts and websites all fail sometimes. This is who the site is probably <strong>not</strong> reaching, with the phone numbers you have. Nothing is sent from here.</p>
+
+<% def contact(p) = [ p.phone, p.phone2 ].compact.join(" · ").presence || "no phone on file" %>
+
+<h2>Email is not working</h2>
+<% if @bouncing.empty? %><p class="mut2">No bounced or spam-reported addresses.</p><% else %>
+  <ul class="list"><% @bouncing.each do |p| %><li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <span class="mut2">· <%= p.email %> · <%= @status[p.email.downcase] %> · <%= contact(p) %></span></li><% end %></ul>
+  <p class="fine">Fix the address on their page, or call. A bounced address means the message never arrived.</p>
+<% end %>
+
+<h2>No email on file</h2>
+<% if @no_email.empty? %><p class="mut2">Everyone living has an email.</p><% else %>
+  <ul class="list"><% @no_email.first(200).each do |p| %><li><a href="<%= person_path(p) %>"><%= p.display_name %></a> <span class="mut2">· <%= contact(p) %></span></li><% end %></ul>
+<% end %>
+
+<% if @reminders_off.any? %>
+  <h2>Turned reminders off</h2>
+  <ul class="list"><% @reminders_off.each do |m| %><li><%= m.user.label %> <span class="mut2">· <%= m.person ? contact(m.person) : "no phone on file" %></span></li><% end %></ul>
+  <p class="fine">They chose this. Reach them yourself for anything important.</p>
+<% end %>
+
+<% @surveys.each do |s, pending| %>
+  <h2>Survey: <%= s.title %></h2>
+  <% if pending.empty? %><p class="mut2">Everyone who has not answered has been delivered the email and it is recent.</p><% else %>
+    <ul class="list"><% pending.each do |r, st| %>
+      <li><%= r.name.presence || r.email %> <span class="mut2">· <%= st ? (st == "delivered" ? "delivered, not answered" : st) : "no delivery report" %><%= " · #{contact(r.person)}" if r.person %></span></li>
+    <% end %></ul>
+  <% end %>
+<% end %>

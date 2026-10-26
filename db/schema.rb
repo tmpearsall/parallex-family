@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_26_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_26_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -82,6 +82,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_150000) do
     t.index ["family_id"], name: "index_email_deliveries_on_family_id"
     t.index ["membership_id", "kind", "item_key"], name: "index_email_deliveries_once", unique: true
     t.index ["membership_id"], name: "index_email_deliveries_on_membership_id"
+  end
+
+  create_table "email_logs", force: :cascade do |t|
+    t.bigint "family_id"
+    t.string "kind", null: false
+    t.string "to_email", null: false
+    t.string "subject"
+    t.string "status", default: "sending", null: false
+    t.string "detail"
+    t.datetime "status_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["family_id", "created_at"], name: "index_email_logs_on_family_id_and_created_at"
+    t.index ["family_id"], name: "index_email_logs_on_family_id"
+    t.index ["to_email", "created_at"], name: "index_email_logs_on_to_email_and_created_at"
   end
 
   create_table "events", force: :cascade do |t|
@@ -412,6 +427,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_26_150000) do
   add_foreign_key "date_votes", "users"
   add_foreign_key "email_deliveries", "families"
   add_foreign_key "email_deliveries", "memberships"
+  add_foreign_key "email_logs", "families"
   add_foreign_key "events", "families"
   add_foreign_key "events", "reunions"
   add_foreign_key "households", "families"

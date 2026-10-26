@@ -39,6 +39,7 @@ class ReminderRunner
       end
     end
     SlackDigest.new(today: @today).run unless Instance.dedicated?
+    EmailLog.purge_old!
     totals
   end
 

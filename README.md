@@ -93,3 +93,14 @@ never shown again, and only `https://hooks.slack.com/services/...` is accepted. 
 tomorrow's organizers' meetings, new forum topics, RSVP deadlines (3 and 1 days out), surveys closing tomorrow, and (off by
 default) that an organizer sent a reminder. Messages carry titles, times, counts and display names only. Daily items post
 once (`slack_posts`); a Slack failure never breaks a page or the daily run. Not available on a dedicated site.
+
+## Delivery tracking and Needs a call (2026-10-26)
+
+Every outgoing email is logged (`email_logs`: address, kind, subject, status) by a mail interceptor and observer; the
+internal marker headers are removed before the message leaves. The mail service (Resend) reports back to
+`POST /webhooks/resend` (delivered, bounced, complained, delayed, failed). The request is verified with the Svix scheme
+using `RESEND_WEBHOOK_SECRET` (set per service; with no secret the endpoint answers 503 and changes nothing; a bad
+signature or a timestamp more than five minutes old is a 401). Statuses show on the Access page and on organizers' Needs a
+call page (`/needs_a_call`): bounced or spam-reported addresses, people with no email, members who turned reminders off,
+and for each open survey the people who have not answered and whose email is not confirmed delivered. Phone numbers are
+shown to organizers. Nothing is sent from that page. Log entries older than 90 days are deleted by the daily run.
